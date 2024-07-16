@@ -1,0 +1,12 @@
+{
+    "profiles": {
+        "Root": {
+            "commandName": "Project",
+            "commandLineArgs": "--help"
+        },
+        "Ls": {
+            "commandName": "Project",
+            "commandLineArgs": "ls"
+        }
+    }
+}
