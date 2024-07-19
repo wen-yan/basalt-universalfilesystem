@@ -13,13 +13,31 @@ public class FileFileSystemImpl : IFileSystemImpl
     {
         this.Configuration = configuration;
     }
-    private IConfiguration Configuration { get; }
-    
-    #region MyRegion
 
-    public IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(string prefix, bool recursive)
+    private IConfiguration Configuration { get; }
+
+    #region IFileSystemImpl
+
+    public async IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(string prefix, bool recursive)
     {
-        throw new NotImplementedException();
+        IEnumerable<string> entries = Directory.EnumerateFileSystemEntries(prefix, "*", new EnumerationOptions()
+        {
+            RecurseSubdirectories = recursive,
+            ReturnSpecialDirectories = true,
+        });
+        foreach (string entry in entries)
+        {
+            if (Directory.Exists(entry))
+            {
+                yield return new(entry, false, null, null);
+            }
+            else if (System.IO.File.Exists(entry))
+            {
+                yield return new(entry, true, new FileInfo(entry).Length, System.IO.File.GetLastWriteTime(entry));
+            }
+        }
+
+        await ValueTask.CompletedTask;
     }
 
     public Task<ObjectMetadata> GetObjectMetadataAsync(string path)

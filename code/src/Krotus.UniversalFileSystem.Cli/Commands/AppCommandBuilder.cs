@@ -9,6 +9,6 @@ public partial class AppCommandBuilder : RootCliCommandBuilder
 {
     public AppCommandBuilder(IServiceProvider serviceProvider) : base(serviceProvider)
     {
-        this.Description = "Krotus Universal Filesystem";
+        this.Description = "Krotus Universal File System";
     }
 }

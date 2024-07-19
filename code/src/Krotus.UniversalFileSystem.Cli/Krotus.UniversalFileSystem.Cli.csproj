@@ -12,6 +12,13 @@
     
     <ItemGroup>
       <ProjectReference Include="..\Krotus.UniversalFileSystem.File\Krotus.UniversalFileSystem.File.csproj" />
+      <ProjectReference Include="..\Krotus.UniversalFileSystem\Krotus.UniversalFileSystem.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <None Update="appsettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

@@ -21,9 +21,13 @@ static class Program
         hostBuilder
             .ConfigureAppConfiguration((context, builder) =>
             {
-                // builder
-                //     .SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new ApplicationException())
-                //     .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true);
+                builder
+                    .SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new ApplicationException())
+                    .AddInMemoryCollection(
+                    [
+                        new("Schemes:file:ImplementationClass", "Krotus.UniversalFileSystem.File.FileFileSystemImpl"),
+                    ])
+                    .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true);
             })
             .ConfigureServices((context, services) =>
             {
@@ -39,9 +43,17 @@ static class Program
 
                     // Command line
                     .AddCommandLineSupport()
-                    
-                    // Filesystems
+
+                    // FileSystems
                     .AddFileFileSystem()
+
+                    // UniversalFileSystem
+                    .AddTransient<IUniversalFileSystemImplFactory>(serviceProvider =>
+                    {
+                        IConfiguration configuration = serviceProvider.GetRequiredService<IConfiguration>().GetSection("Schemes");
+                        return new DefaultUniversalFileSystemImplFactory(serviceProvider, configuration);
+                    })
+                    .AddTransient<IUniversalFileSystem, UniversalFileSystem>()
                     ;
             });
 

@@ -22,17 +22,19 @@ public class DefaultUniversalFileSystemImplFactory : IUniversalFileSystemImplFac
         string? implementationClass = configurationSection["ImplementationClass"];
         if (implementationClass == null)
             throw new ArgumentOutOfRangeException(nameof(scheme));  // TODO
+        
+        IFileSystemImplCreator implCreator = this.ServiceProvider.GetRequiredKeyedService<IFileSystemImplCreator>(implementationClass);
 
         IConfiguration implementationConfig = configurationSection.GetSection("ImplementationConfiguration");
 
-        Type? implementationType = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(x => x.GetTypes())
-            .SingleOrDefault(x => x.FullName == implementationClass);
+        // Type? implementationType = AppDomain.CurrentDomain.GetAssemblies()
+        //     .SelectMany(x => x.GetTypes())
+        //     .SingleOrDefault(x => x.FullName == implementationClass);
 
-        if (implementationType == null)
-            throw new ApplicationException();   // TODO
+        // if (implementationType == null)
+        //     throw new ApplicationException();   // TODO
 
-        IFileSystemImplCreator implCreator = this.ServiceProvider.GetRequiredKeyedService<IFileSystemImplCreator>(implementationType);
+        
         return implCreator.Create(implementationConfig);
     }
 }
