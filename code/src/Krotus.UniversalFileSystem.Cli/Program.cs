@@ -25,7 +25,7 @@ static class Program
                     .SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new ApplicationException())
                     .AddInMemoryCollection(
                     [
-                        new("Schemes:file:ImplementationClass", "Krotus.UniversalFileSystem.File.FileFileSystemImpl"),
+                        new("Schemes:file:ImplementationClass", typeof(FileFileSystem).FullName),
                     ])
                     .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true);
             })
@@ -48,12 +48,12 @@ static class Program
                     .AddFileFileSystem()
 
                     // UniversalFileSystem
-                    .AddTransient<IUniversalFileSystemImplFactory>(serviceProvider =>
+                    .AddTransient<IFileSystemImplFactory>(serviceProvider =>
                     {
                         IConfiguration configuration = serviceProvider.GetRequiredService<IConfiguration>().GetSection("Schemes");
-                        return new DefaultUniversalFileSystemImplFactory(serviceProvider, configuration);
+                        return new DefaultFileSystemImplFactory(serviceProvider, configuration);
                     })
-                    .AddTransient<IUniversalFileSystem, UniversalFileSystem>()
+                    .AddTransient<UniversalFileSystem>()
                     ;
             });
 

@@ -8,6 +8,6 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddFileFileSystem(this IServiceCollection services)
     {
         return services
-            .AddKeyedTransient<IFileSystemImplCreator, FileFileSystemImplCreator>(typeof(FileFileSystemImpl).FullName);
+            .AddKeyedTransient<IFileSystemFactory, FileFileSystemFactory>(typeof(FileFileSystem).FullName);
     }
 }

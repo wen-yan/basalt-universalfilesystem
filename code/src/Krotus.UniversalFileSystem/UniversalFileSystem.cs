@@ -1,28 +1,24 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Krotus.UniversalFileSystem.Core;
 
 namespace Krotus.UniversalFileSystem;
 
-public interface IUniversalFileSystem
+public class UniversalFileSystem
 {
-    IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(string prefix, bool recursive);
-}
+    private readonly Dictionary<string /*scheme*/, IFileSystem> _impls = new();
 
-public class UniversalFileSystem : IUniversalFileSystem
-{
-    private readonly Dictionary<string /*scheme*/, IFileSystemImpl> _impls = new();
-
-    public UniversalFileSystem(IUniversalFileSystemImplFactory implFactory)
+    public UniversalFileSystem(IFileSystemImplFactory implFactory)
     {
         this.ImplFactory = implFactory;
     }
 
-    private IUniversalFileSystemImplFactory ImplFactory { get; }
+    private IFileSystemImplFactory ImplFactory { get; }
 
-    private IFileSystemImpl GetImpl(string scheme)
+    private IFileSystem GetImpl(string scheme)
     {
-        if (_impls.TryGetValue(scheme, out IFileSystemImpl? impl))
+        if (_impls.TryGetValue(scheme, out IFileSystem? impl))
             return impl;
 
         impl = this.ImplFactory.Create(scheme);
@@ -30,18 +26,18 @@ public class UniversalFileSystem : IUniversalFileSystem
         return impl;
     }
 
-    private IFileSystemImpl GetImplByPath(string path)
+    private IFileSystem GetImplByPath(string path)
     {
         Uri uri = new(path);
         return this.GetImpl(uri.Scheme);
     }
 
-    #region IUniversalFileSystem
+    #region UniversalFileSystem interface
 
-    public IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(string prefix, bool recursive)
+    public IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(string prefix, bool recursive, CancellationToken cancellationToken)
     {
-        IFileSystemImpl impl = this.GetImplByPath(prefix);
-        return impl.ListObjectsAsync(prefix, recursive);
+        IFileSystem impl = this.GetImplByPath(prefix);
+        return impl.ListObjectsAsync(prefix, recursive, cancellationToken);
     }
 
     #endregion

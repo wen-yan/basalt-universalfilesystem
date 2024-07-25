@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Krotus.UniversalFileSystem.Core;
 using Microsoft.Extensions.Configuration;
@@ -6,9 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Krotus.UniversalFileSystem;
 
-public class DefaultUniversalFileSystemImplFactory : IUniversalFileSystemImplFactory
+public class DefaultFileSystemImplFactory : IFileSystemImplFactory
 {
-    public DefaultUniversalFileSystemImplFactory(IServiceProvider serviceProvider, IConfiguration configuration)
+    public DefaultFileSystemImplFactory(IServiceProvider serviceProvider, IConfiguration configuration)
     {
         this.ServiceProvider = serviceProvider;
         this.Configuration = configuration;
@@ -16,14 +17,14 @@ public class DefaultUniversalFileSystemImplFactory : IUniversalFileSystemImplFac
     private IServiceProvider ServiceProvider { get; }
     private IConfiguration Configuration { get; }
     
-    public IFileSystemImpl Create(string scheme)
+    public IFileSystem Create(string scheme)
     {
         IConfigurationSection configurationSection = this.Configuration.GetSection(scheme);
         string? implementationClass = configurationSection["ImplementationClass"];
         if (implementationClass == null)
-            throw new ArgumentOutOfRangeException(nameof(scheme));  // TODO
+            throw new KeyNotFoundException(nameof(scheme));
         
-        IFileSystemImplCreator implCreator = this.ServiceProvider.GetRequiredKeyedService<IFileSystemImplCreator>(implementationClass);
+        IFileSystemFactory factory = this.ServiceProvider.GetRequiredKeyedService<IFileSystemFactory>(implementationClass);
 
         IConfiguration implementationConfig = configurationSection.GetSection("ImplementationConfiguration");
 
@@ -35,6 +36,6 @@ public class DefaultUniversalFileSystemImplFactory : IUniversalFileSystemImplFac
         //     throw new ApplicationException();   // TODO
 
         
-        return implCreator.Create(implementationConfig);
+        return factory.Create(implementationConfig);
     }
 }
