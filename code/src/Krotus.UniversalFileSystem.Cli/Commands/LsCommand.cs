@@ -34,11 +34,11 @@ partial class LsCommandBuilder : CliCommandBuilder<LsCommand, LsCommandOptions>
 
 class LsCommandOutput
 {
-    public string? Path { get; set; }
+    public Uri? Path { get; set; }
     public ObjectType ObjectType { get; set; }
     public DateTime? LastModifiedTime { get; set; }
 
-    [TabularDatasetConsole(Alignment = TabularDatasetConsoleAlignment.Right)]
+    [TabularDatasetWriter(Alignment = TabularDatasetWriterAlignment.Right)]
     public long? ContentSize { get; set; }
 }
 
@@ -50,18 +50,16 @@ class LsCommand : UniversalFileSystemCommand<LsCommandOptions>
 
     public override async ValueTask ExecuteAsync()
     {
-        await Console.Out.WriteLineAsync("from ls");
-
         IAsyncEnumerable<LsCommandOutput> results = this.UniversalFileSystem
-            .ListObjectsAsync(this.Options.Directory, this.Options.Recursive, this.CancellationToken)
+            .ListObjectsAsync(new Uri(this.Options.Directory), this.Options.Recursive, this.CancellationToken)
             .Select(metadata => new LsCommandOutput
             {
-                Path = metadata.Path.Substring(this.Options.Directory.Length),
+                Path = metadata.Path,
                 ObjectType = metadata.ObjectType,
                 LastModifiedTime = metadata.LastModifiedTime,
                 ContentSize = metadata.ContentSize
             });
 
-        await this.DatasetConsole.WriteAsync(results, this.CancellationToken);
+        await this.OutputWriter.WriteDatasetAsync(results, this.CancellationToken);
     }
 }

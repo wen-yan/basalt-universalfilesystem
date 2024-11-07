@@ -1,6 +1,4 @@
 using System;
-using System.Linq;
-using System.Reflection;
 using System.Threading;
 using Krotus.CommandLine;
 using Krotus.UniversalFileSystem.Cli.Output;
@@ -15,17 +13,11 @@ abstract class UniversalFileSystemCommand<TOptions> : Command<TOptions>
     {
         this.ServiceProvider = serviceProvider;
         this.UniversalFileSystem = this.ServiceProvider.GetRequiredService<UniversalFileSystem>();
-
-        // file a better way?
-        PropertyInfo property = typeof(TOptions).GetProperties()
-            .First(x => x.Name == nameof(AppCommandOptions.DatasetOutputType));
-
-        DatasetOutputType datasetOutputType = (DatasetOutputType)property.GetValue(this.Options)!;
-        this.DatasetConsole = this.ServiceProvider.GetRequiredKeyedService<IDatasetConsole>(datasetOutputType);
+        this.OutputWriter = this.ServiceProvider.GetRequiredService<IOutputWriter>();
     }
 
     protected IServiceProvider ServiceProvider { get; }
     protected UniversalFileSystem UniversalFileSystem { get; }
-    protected IDatasetConsole DatasetConsole { get; }
+    protected IOutputWriter OutputWriter { get; }
     protected CancellationToken CancellationToken => this.CommandContext.InvocationContext?.GetCancellationToken() ?? CancellationToken.None;
 }

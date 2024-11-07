@@ -8,10 +8,10 @@
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(OutputType)' == 'Exe' ">
-        <TargetFrameworks>net6.0</TargetFrameworks>
+        <TargetFrameworks>net8.0</TargetFrameworks>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(OutputType)' == '' Or '$(OutputType)' == 'Library' ">
-        <TargetFrameworks>net6.0</TargetFrameworks>
+        <TargetFrameworks>net8.0</TargetFrameworks>
     </PropertyGroup>
 </Project>

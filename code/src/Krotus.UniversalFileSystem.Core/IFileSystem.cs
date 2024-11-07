@@ -8,11 +8,11 @@ namespace Krotus.UniversalFileSystem.Core;
 
 public interface IFileSystem : IAsyncDisposable
 {
-    IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(string prefix, bool recursive, CancellationToken cancellationToken);
-    Task<ObjectMetadata> GetObjectMetadataAsync(string path, CancellationToken cancellationToken);
-    Task<Stream> GetObjectAsync(string path, CancellationToken cancellationToken);
-    Task PutObjectAsync(string path, Stream stream, bool overwriteIfExists, CancellationToken cancellationToken);
-    Task<bool> DeleteObjectAsync(string path, CancellationToken cancellationToken);
-    Task RenameObjectAsync(string oldPath, string newPath, bool overwriteIfExists, CancellationToken cancellationToken);
-    Task CopyObjectAsync(string sourcePath, string destPath, bool overwriteIfExists, CancellationToken cancellationToken);
+    IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive, CancellationToken cancellationToken);
+    Task<ObjectMetadata> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken);
+    Task<Stream> GetObjectAsync(Uri path, CancellationToken cancellationToken);
+    Task PutObjectAsync(Uri path, Stream stream, bool overwriteIfExists, CancellationToken cancellationToken);
+    Task<bool> DeleteObjectAsync(Uri path, CancellationToken cancellationToken);
+    Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwriteIfExists, CancellationToken cancellationToken);
+    Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwriteIfExists, CancellationToken cancellationToken);
 }

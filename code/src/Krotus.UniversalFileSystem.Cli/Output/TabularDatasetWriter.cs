@@ -8,21 +8,21 @@ using Spectre.Console;
 
 namespace Krotus.UniversalFileSystem.Cli.Output;
 
-enum TabularDatasetConsoleAlignment
+enum TabularDatasetWriterAlignment
 {
     Left,
     Center,
     Right
 }
 
-class TabularDatasetConsoleAttribute : Attribute
+class TabularDatasetWriterAttribute : Attribute
 {
     public string? ColumnName { get; set; }
-    public TabularDatasetConsoleAlignment Alignment { get; set; } = TabularDatasetConsoleAlignment.Left;
+    public TabularDatasetWriterAlignment Alignment { get; set; } = TabularDatasetWriterAlignment.Left;
     public string? ToStringMethodName { get; set; }
 }
 
-class TabularDatasetConsole : IDatasetConsole
+class TabularDatasetWriter : IDatasetWriter
 {
     public async ValueTask WriteAsync<T>(IAsyncEnumerable<T> dataset, CancellationToken cancellationToken)
     {
@@ -32,13 +32,13 @@ class TabularDatasetConsole : IDatasetConsole
         }
 
         Type type = typeof(T);
-        List<(PropertyInfo Property, TabularDatasetConsoleAttribute? Attribute, Func<object?, object?> GetValueFunc, Func<object?, object?, string?> ToStringFunc)> properties = type.GetProperties()
+        List<(PropertyInfo Property, TabularDatasetWriterAttribute? Attribute, Func<object?, object?> GetValueFunc, Func<object?, object?, string?> ToStringFunc)> properties = type.GetProperties()
             .Where(x => !x.IsSpecialName)
             .Where(x => x.CanRead)
             .Where(x => (x.GetGetMethod()?.IsPublic ?? false) && (x.GetGetMethod()?.IsStatic ?? true) == false)
             .Select(x =>
             {
-                TabularDatasetConsoleAttribute? attribute = x.GetCustomAttribute<TabularDatasetConsoleAttribute>();
+                TabularDatasetWriterAttribute? attribute = x.GetCustomAttribute<TabularDatasetWriterAttribute>();
                 Func<object?, object?> getValueFunc = item => x.GetGetMethod()?.Invoke(item, null) ?? null;
 
                 Func<object?, object?, string?> toStringFunc = DefaultToString;
@@ -61,18 +61,18 @@ class TabularDatasetConsole : IDatasetConsole
         Table table = new() { Border = TableBorder.Simple };
 
         // columns
-        foreach ((PropertyInfo Property, TabularDatasetConsoleAttribute? Attribute, Func<object?, object?> GetValueFunc, Func<object?, object?, string?> ToStringFunc) property in properties)
+        foreach ((PropertyInfo Property, TabularDatasetWriterAttribute? Attribute, Func<object?, object?> GetValueFunc, Func<object?, object?, string?> ToStringFunc) property in properties)
         {
             string columnName = property.Attribute?.ColumnName ?? property.Property.Name;
-            TabularDatasetConsoleAlignment alignment = property.Attribute?.Alignment ?? TabularDatasetConsoleAlignment.Left;
+            TabularDatasetWriterAlignment alignment = property.Attribute?.Alignment ?? TabularDatasetWriterAlignment.Left;
 
             TableColumn column = new(columnName)
             {
                 Alignment = alignment switch
                 {
-                    TabularDatasetConsoleAlignment.Left => Justify.Left,
-                    TabularDatasetConsoleAlignment.Right => Justify.Right,
-                    TabularDatasetConsoleAlignment.Center => Justify.Center,
+                    TabularDatasetWriterAlignment.Left => Justify.Left,
+                    TabularDatasetWriterAlignment.Right => Justify.Right,
+                    TabularDatasetWriterAlignment.Center => Justify.Center,
                     _ => throw new ArgumentOutOfRangeException()
                 }
             };

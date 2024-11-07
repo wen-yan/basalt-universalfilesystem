@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Krotus.UniversalFileSystem.Cli.Output;
 
-interface IDatasetConsole
+interface IDatasetWriter
 {
     ValueTask WriteAsync<T>(IAsyncEnumerable<T> dataset, CancellationToken cancellationToken);
 }

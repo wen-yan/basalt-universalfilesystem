@@ -1,12 +1,16 @@
 {
     "profiles": {
-        "Root": {
+        "ufs": {
             "commandName": "Project",
             "commandLineArgs": "--help"
         },
-        "Ls": {
+        "ls": {
             "commandName": "Project",
-            "commandLineArgs": "ls -r W:\\GitHub\\wen-yan\\Krotus.UniversalFileSystem\\code\\src\\Krotus.UniversalFileSystem.Cli\\Commands"
+            "commandLineArgs": "ls -r file://W:/GitHub/wen-yan/Krotus.UniversalFileSystem/code/src/Krotus.UniversalFileSystem.Cli"
+        },
+        "cat": {
+            "commandName": "Project",
+            "commandLineArgs": "cat file:///W:/GitHub/wen-yan/Krotus.UniversalFileSystem/code/src/Krotus.UniversalFileSystem.Cli/Program.cs"
         }
     }
 }

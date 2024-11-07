@@ -29,7 +29,7 @@ static class Program
                     [
                         new KeyValuePair<string, string?>("Schemes:file:ImplementationClass", typeof(FileFileSystem).FullName)
                     ])
-                    .AddJsonFile("appsettings.json", false, true);
+                    .AddJsonFile("appsettings.json", false, false);
             })
             .ConfigureServices((context, services) =>
             {
@@ -58,7 +58,8 @@ static class Program
                     .AddTransient<UniversalFileSystem>()
 
                     // Output
-                    .AddKeyedTransient<IDatasetConsole, TabularDatasetConsole>(DatasetOutputType.Tabular)
+                    .AddTransient<IOutputWriter, ConsoleOutputWriter>()
+                    .AddTransient<IDatasetWriter, TabularDatasetWriter>()
                     ;
             });
 
