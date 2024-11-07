@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.CommandLine;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using Krotus.CommandLine;
+using Krotus.UniversalFileSystem.Cli.Output;
 using Krotus.UniversalFileSystem.File;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +16,7 @@ namespace Krotus.UniversalFileSystem.Cli;
 
 static class Program
 {
-    static async Task<int> Main(string[] args)
+    private static async Task<int> Main(string[] args)
     {
         IHostBuilder hostBuilder = Host.CreateDefaultBuilder(args);
 
@@ -25,9 +27,9 @@ static class Program
                     .SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new ApplicationException())
                     .AddInMemoryCollection(
                     [
-                        new("Schemes:file:ImplementationClass", typeof(FileFileSystem).FullName),
+                        new KeyValuePair<string, string?>("Schemes:file:ImplementationClass", typeof(FileFileSystem).FullName)
                     ])
-                    .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true);
+                    .AddJsonFile("appsettings.json", false, true);
             })
             .ConfigureServices((context, services) =>
             {
@@ -54,6 +56,9 @@ static class Program
                         return new DefaultFileSystemImplFactory(serviceProvider, configuration);
                     })
                     .AddTransient<UniversalFileSystem>()
+
+                    // Output
+                    .AddKeyedTransient<IDatasetConsole, TabularDatasetConsole>(DatasetOutputType.Tabular)
                     ;
             });
 

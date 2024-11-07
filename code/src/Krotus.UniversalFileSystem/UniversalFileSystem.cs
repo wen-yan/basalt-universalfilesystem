@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Krotus.UniversalFileSystem.Core;
 
 namespace Krotus.UniversalFileSystem;
 
-public class UniversalFileSystem
+public class UniversalFileSystem : IAsyncDisposable
 {
     private readonly Dictionary<string /*scheme*/, IFileSystem> _impls = new();
 
@@ -15,6 +16,13 @@ public class UniversalFileSystem
     }
 
     private IFileSystemImplFactory ImplFactory { get; }
+
+    public async ValueTask DisposeAsync()
+    {
+        foreach (IFileSystem fileSystem in _impls.Values)
+            await fileSystem.DisposeAsync();
+        _impls.Clear();
+    }
 
     private IFileSystem GetImpl(string scheme)
     {

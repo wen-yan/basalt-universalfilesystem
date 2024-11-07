@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Krotus.UniversalFileSystem.Core;
 
-public interface IFileSystem: IAsyncDisposable
+public interface IFileSystem : IAsyncDisposable
 {
     IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(string prefix, bool recursive, CancellationToken cancellationToken);
     Task<ObjectMetadata> GetObjectMetadataAsync(string path, CancellationToken cancellationToken);

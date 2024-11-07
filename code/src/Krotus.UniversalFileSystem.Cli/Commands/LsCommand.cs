@@ -1,8 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.CommandLine;
+using System.Linq;
 using System.Threading.Tasks;
 using Krotus.CommandLine;
 using Krotus.CommandLine.Annotations;
-using Spectre.Console;
+using Krotus.UniversalFileSystem.Cli.Output;
+using Krotus.UniversalFileSystem.Core;
 
 namespace Krotus.UniversalFileSystem.Cli.Commands;
 
@@ -10,11 +14,11 @@ namespace Krotus.UniversalFileSystem.Cli.Commands;
 partial class LsCommandOptions
 {
     public bool Recursive { get; init; }
+
     [CliCommandSymbol(CliCommandSymbolType.Argument)]
     public string Directory { get; init; }
 }
 #nullable restore
-
 
 [CliCommandBuilder("ls", typeof(AppCommandBuilder))]
 partial class LsCommandBuilder : CliCommandBuilder<LsCommand, LsCommandOptions>
@@ -23,42 +27,41 @@ partial class LsCommandBuilder : CliCommandBuilder<LsCommand, LsCommandOptions>
     {
         this.Description = "ls";
 
-        this.RecursiveOption = new(["--recursive", "-r"], () => false, "Include subdirectories, default is false");
-        this.DirectoryArgument = new("directory", "Directory");
+        this.RecursiveOption = new Option<bool>(["--recursive", "-r"], () => false, "Include subdirectories, default is false");
+        this.DirectoryArgument = new Argument<string>("directory", "Directory");
     }
 }
 
+class LsCommandOutput
+{
+    public string? Path { get; set; }
+    public ObjectType ObjectType { get; set; }
+    public DateTime? LastModifiedTime { get; set; }
+
+    [TabularDatasetConsole(Alignment = TabularDatasetConsoleAlignment.Right)]
+    public long? ContentSize { get; set; }
+}
 
 class LsCommand : UniversalFileSystemCommand<LsCommandOptions>
 {
-    public LsCommand(CommandContext commandContext, UniversalFileSystem universalFileSystem) : base(commandContext, universalFileSystem)
+    public LsCommand(IServiceProvider serviceProvider) : base(serviceProvider)
     {
     }
 
     public override async ValueTask ExecuteAsync()
     {
         await Console.Out.WriteLineAsync("from ls");
-        // await foreach (ObjectMetadata metadata in this.UniversalFileSystem.ListObjectsAsync(this.Options.Directory, this.Options.Recursive, this.CancellationToken))
-        // {
-        //     string size = metadata.ContentSize.HasValue ? metadata.ContentSize.Value.ToString("00000000") : "        ";
-        //     string type = metadata.IsFile ? "     " : "<dir>";
-        //     string time = metadata.LastModifiedTime.HasValue ? metadata.LastModifiedTime.Value.ToString("yyyy-MM-ddTHH:mm:ss.ffff") : "                        ";
-        //     string path = metadata.Path.Substring(this.Options.Directory.Length);
-        //     await Console.Out.WriteLineAsync($"{type}  {time}  {size}  {path}");
-        // }
-        
-        var table = new Table();
-        table.AddColumn("Name");
-        table.AddColumn("Age");
-        table.AddColumn("Occupation");
 
-        table.AddRow("Alice", "23", "Software Engineer");
-        table.AddRow("Bob", "32", "Accountant");
-        table.AddRow("Charlie", "28", "Teacher");
+        IAsyncEnumerable<LsCommandOutput> results = this.UniversalFileSystem
+            .ListObjectsAsync(this.Options.Directory, this.Options.Recursive, this.CancellationToken)
+            .Select(metadata => new LsCommandOutput
+            {
+                Path = metadata.Path.Substring(this.Options.Directory.Length),
+                ObjectType = metadata.ObjectType,
+                LastModifiedTime = metadata.LastModifiedTime,
+                ContentSize = metadata.ContentSize
+            });
 
-        table.Title = new TableTitle("[underline yellow]People[/]");
-        table.Caption = new TableTitle("[grey]Some random people[/]");
-
-        AnsiConsole.Write(table);
+        await this.DatasetConsole.WriteAsync(results, this.CancellationToken);
     }
 }

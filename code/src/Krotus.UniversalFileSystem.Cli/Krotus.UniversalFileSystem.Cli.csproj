@@ -3,23 +3,24 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
     </PropertyGroup>
-    
+
     <ItemGroup>
-        <PackageReference Include="Krotus.CommandLine" Version="0.1.24-preview" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
-        <PackageReference Include="Spectre.Console.Cli" Version="0.49.1" />
+        <PackageReference Include="Krotus.CommandLine" Version="0.1.24-preview"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1"/>
+        <PackageReference Include="Spectre.Console.Cli" Version="0.49.1"/>
+        <PackageReference Include="System.Linq.Async" Version="6.0.1"/>
     </ItemGroup>
-    
+
     <ItemGroup>
-      <ProjectReference Include="..\Krotus.UniversalFileSystem.File\Krotus.UniversalFileSystem.File.csproj" />
-      <ProjectReference Include="..\Krotus.UniversalFileSystem\Krotus.UniversalFileSystem.csproj" />
+        <ProjectReference Include="..\Krotus.UniversalFileSystem.File\Krotus.UniversalFileSystem.File.csproj"/>
+        <ProjectReference Include="..\Krotus.UniversalFileSystem\Krotus.UniversalFileSystem.csproj"/>
     </ItemGroup>
-    
+
     <ItemGroup>
-      <None Update="appsettings.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

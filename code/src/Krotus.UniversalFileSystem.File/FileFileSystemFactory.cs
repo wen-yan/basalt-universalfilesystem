@@ -5,5 +5,8 @@ namespace Krotus.UniversalFileSystem.File;
 
 public class FileFileSystemFactory : IFileSystemFactory
 {
-    public IFileSystem Create(IConfiguration configuration) => new FileFileSystem();
+    public IFileSystem Create(IConfiguration configuration)
+    {
+        return new FileFileSystem();
+    }
 }

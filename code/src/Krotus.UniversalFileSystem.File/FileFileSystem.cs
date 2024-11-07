@@ -14,29 +14,26 @@ public class FileFileSystem : IFileSystem
 
     public async IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(string prefix, bool recursive, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        IEnumerable<string> entries = Directory.EnumerateFileSystemEntries(prefix, "*", new EnumerationOptions()
+        IEnumerable<string> entries = Directory.EnumerateFileSystemEntries(prefix, "*", new EnumerationOptions
         {
             RecurseSubdirectories = recursive,
-            ReturnSpecialDirectories = true,
+            ReturnSpecialDirectories = true
         });
         foreach (string entry in entries)
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (Directory.Exists(entry))
-            {
-                yield return new(entry, false, null, null);
-            }
-            else if (System.IO.File.Exists(entry))
-            {
-                yield return await this.GetObjectMetadataAsync(entry, cancellationToken);
-            }
+                yield return new ObjectMetadata(entry, ObjectType.Prefix, null, null);
+            else if (System.IO.File.Exists(entry)) yield return await this.GetObjectMetadataAsync(entry, cancellationToken);
         }
 
         await ValueTask.CompletedTask;
     }
 
     public Task<ObjectMetadata> GetObjectMetadataAsync(string path, CancellationToken cancellationToken)
-        => Task.FromResult(new ObjectMetadata(path, true, new FileInfo(path).Length, System.IO.File.GetLastWriteTime(path)));
+    {
+        return Task.FromResult(new ObjectMetadata(path, ObjectType.File, new FileInfo(path).Length, System.IO.File.GetLastWriteTime(path)));
+    }
 
     public Task<Stream> GetObjectAsync(string path, CancellationToken cancellationToken)
     {
@@ -77,8 +74,11 @@ public class FileFileSystem : IFileSystem
         System.IO.File.Copy(sourcePathUri.AbsolutePath, destPathUri.AbsolutePath, overwriteIfExists);
         return Task.CompletedTask;
     }
-    
-    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+
+    public ValueTask DisposeAsync()
+    {
+        return ValueTask.CompletedTask;
+    }
 
     #endregion
 }
