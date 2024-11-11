@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Sagittarius.Disposing;
+using Krotus.UniversalFileSystem.Cli.Utils;
 
 namespace Krotus.UniversalFileSystem.Cli.Output;
 
@@ -34,12 +34,8 @@ class ConsoleOutputWriter : IOutputWriter
     }
 
     public async ValueTask WriteAsync(string message, CancellationToken cancellationToken)
-    {
-        await Console.Out.WriteAsync(message.ToCharArray(), cancellationToken);
-    }
+        => await Console.Out.WriteAsync(message.ToCharArray(), cancellationToken);
 
     public ValueTask WriteDatasetAsync<T>(IAsyncEnumerable<T> dataset, CancellationToken cancellationToken)
-    {
-        return this.DatasetWriter.WriteAsync(dataset, cancellationToken);
-    }
+        => this.DatasetWriter.WriteAsync(dataset, cancellationToken);
 }

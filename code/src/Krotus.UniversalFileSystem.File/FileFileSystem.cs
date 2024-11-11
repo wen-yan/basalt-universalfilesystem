@@ -33,7 +33,12 @@ public class FileFileSystem : IFileSystem
 
     public Task<ObjectMetadata> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
     {
-        return Task.FromResult(new ObjectMetadata(path, ObjectType.File, new FileInfo(path.AbsolutePath).Length, System.IO.File.GetLastWriteTime(path.AbsolutePath)));
+        if (System.IO.File.Exists(path.AbsolutePath))
+            return Task.FromResult(new ObjectMetadata(path, ObjectType.File, new FileInfo(path.AbsolutePath).Length, System.IO.File.GetLastWriteTime(path.AbsolutePath)));
+        if (System.IO.Directory.Exists(path.AbsolutePath))
+            return Task.FromResult(new ObjectMetadata(path, ObjectType.Prefix, null, null));
+
+        return Task.FromException<ObjectMetadata>(new ArgumentException($"File or prefix doesn't exist, {path}"));
     }
 
     public Task<Stream> GetObjectAsync(Uri path, CancellationToken cancellationToken)
@@ -58,6 +63,10 @@ public class FileFileSystem : IFileSystem
 
     public Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwriteIfExists, CancellationToken cancellationToken)
     {
+        string? directory = Path.GetDirectoryName(newPath.AbsolutePath);
+        if (directory == null)
+            return Task.FromException(new ArgumentException($"Can't get directory from path {newPath}"));
+        Directory.CreateDirectory(directory);
         System.IO.File.Move(oldPath.AbsolutePath, newPath.AbsolutePath, overwriteIfExists);
         return Task.CompletedTask;
     }
@@ -68,10 +77,7 @@ public class FileFileSystem : IFileSystem
         return Task.CompletedTask;
     }
 
-    public ValueTask DisposeAsync()
-    {
-        return ValueTask.CompletedTask;
-    }
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
     #endregion
 }

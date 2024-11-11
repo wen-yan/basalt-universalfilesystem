@@ -8,7 +8,6 @@
         <PackageReference Include="Krotus.CommandLine" Version="0.1.24-preview"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0"/>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1"/>
-        <PackageReference Include="Sagittarius" Version="1.0.56"/>
         <PackageReference Include="Spectre.Console.Cli" Version="0.49.1"/>
         <PackageReference Include="System.Linq.Async" Version="6.0.1"/>
     </ItemGroup>

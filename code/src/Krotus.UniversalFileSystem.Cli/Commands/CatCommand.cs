@@ -12,7 +12,7 @@ namespace Krotus.UniversalFileSystem.Cli.Commands;
 partial class CatCommandOptions
 {
     [CliCommandSymbol(CliCommandSymbolType.Argument)]
-    public string Path { get; init; }
+    public Uri Path { get; init; }
 }
 #nullable restore
 
@@ -22,7 +22,7 @@ partial class CatCommandBuilder : CliCommandBuilder<CatCommand, CatCommandOption
     public CatCommandBuilder(IServiceProvider serviceProvider) : base(serviceProvider)
     {
         this.Description = "cat";
-        this.PathArgument = new Argument<string>("path", "File path");
+        this.PathArgument = new("path", "File path");
     }
 }
 
@@ -34,7 +34,7 @@ class CatCommand : UniversalFileSystemCommand<CatCommandOptions>
 
     public override async ValueTask ExecuteAsync()
     {
-        await using Stream stream = await this.UniversalFileSystem.GetObjectAsync(new Uri(this.Options.Path), this.CancellationToken);
+        await using Stream stream = await this.UniversalFileSystem.GetObjectAsync(this.Options.Path, this.CancellationToken);
         using StreamReader reader = new(stream, leaveOpen: true);
         while (true)
         {

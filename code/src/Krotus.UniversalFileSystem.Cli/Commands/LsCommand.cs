@@ -16,7 +16,7 @@ partial class LsCommandOptions
     public bool Recursive { get; init; }
 
     [CliCommandSymbol(CliCommandSymbolType.Argument)]
-    public string Directory { get; init; }
+    public Uri Directory { get; init; }
 }
 #nullable restore
 
@@ -27,8 +27,8 @@ partial class LsCommandBuilder : CliCommandBuilder<LsCommand, LsCommandOptions>
     {
         this.Description = "ls";
 
-        this.RecursiveOption = new Option<bool>(["--recursive", "-r"], () => false, "Include subdirectories, default is false");
-        this.DirectoryArgument = new Argument<string>("directory", "Directory");
+        this.RecursiveOption = new(["--recursive", "-r"], () => false, "Include subdirectories, default is false");
+        this.DirectoryArgument = new("directory", "Directory");
     }
 }
 
@@ -51,7 +51,7 @@ class LsCommand : UniversalFileSystemCommand<LsCommandOptions>
     public override async ValueTask ExecuteAsync()
     {
         IAsyncEnumerable<LsCommandOutput> results = this.UniversalFileSystem
-            .ListObjectsAsync(new Uri(this.Options.Directory), this.Options.Recursive, this.CancellationToken)
+            .ListObjectsAsync(this.Options.Directory, this.Options.Recursive, this.CancellationToken)
             .Select(metadata => new LsCommandOutput
             {
                 Path = metadata.Path,
