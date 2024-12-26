@@ -15,6 +15,10 @@
         "mv": {
             "commandName": "Project",
             "commandLineArgs": "mv --source file:///W:/temp/Commands --dest file:///W:/temp/Commands2"
+        },
+        "rm": {
+            "commandName": "Project",
+            "commandLineArgs": "rm"
         }
     }
 }
