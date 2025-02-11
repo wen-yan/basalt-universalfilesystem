@@ -3,44 +3,36 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+
 using BasaltHexagons.UniversalFileSystem.Core;
 
 namespace BasaltHexagons.UniversalFileSystem;
 
-public class UniversalFileSystem : IAsyncDisposable
+class UniversalFileSystem : IUniversalFileSystem
 {
     private readonly Dictionary<string /*scheme*/, IFileSystem> _impls = new();
 
-    public UniversalFileSystem(IFileSystemImplFactory implFactory)
+    public UniversalFileSystem(IFileSystemCreator implCreator)
     {
-        this.ImplFactory = implFactory;
+        this.ImplCreator = implCreator;
     }
 
-    private IFileSystemImplFactory ImplFactory { get; }
-
-    public async ValueTask DisposeAsync()
-    {
-        foreach (IFileSystem fileSystem in _impls.Values)
-            await fileSystem.DisposeAsync();
-        _impls.Clear();
-    }
+    private IFileSystemCreator ImplCreator { get; }
 
     private IFileSystem GetImpl(string scheme)
     {
         if (_impls.TryGetValue(scheme, out IFileSystem? impl))
             return impl;
 
-        impl = this.ImplFactory.Create(scheme);
+        impl = this.ImplCreator.Create(scheme);
         _impls.Add(scheme, impl);
         return impl;
     }
 
-    private IFileSystem GetImpl(Uri uri)
-    {
-        return this.GetImpl(uri.Scheme);
-    }
+    private IFileSystem GetImpl(Uri uri) => this.GetImpl(uri.Scheme);
 
-    #region UniversalFileSystem interface
+
+    #region IUniversalFileSystem
 
     public IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive, CancellationToken cancellationToken)
     {
@@ -100,5 +92,14 @@ public class UniversalFileSystem : IAsyncDisposable
         }
     }
 
+    #endregion
+
+    #region IAsyncDisposable
+    public async ValueTask DisposeAsync()
+    {
+        foreach (IFileSystem fileSystem in _impls.Values)
+            await fileSystem.DisposeAsync();
+        _impls.Clear();
+    }
     #endregion
 }

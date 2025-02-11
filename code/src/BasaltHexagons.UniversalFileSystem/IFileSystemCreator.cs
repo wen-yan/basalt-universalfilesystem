@@ -2,7 +2,7 @@ using BasaltHexagons.UniversalFileSystem.Core;
 
 namespace BasaltHexagons.UniversalFileSystem;
 
-public interface IFileSystemImplFactory
+interface IFileSystemCreator
 {
     IFileSystem Create(string scheme);
 }

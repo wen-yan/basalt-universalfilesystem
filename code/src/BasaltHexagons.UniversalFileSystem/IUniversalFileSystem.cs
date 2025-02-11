@@ -1,12 +1,14 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BasaltHexagons.UniversalFileSystem.Core;
+using BasaltHexagons.UniversalFileSystem.Core;
 
-public interface IFileSystem : IAsyncDisposable, IDisposable
+namespace BasaltHexagons.UniversalFileSystem;
+
+public interface IUniversalFileSystem : IAsyncDisposable
 {
     IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive, CancellationToken cancellationToken);
     Task<ObjectMetadata> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken);

@@ -1,11 +1,13 @@
+using System;
+
 using BasaltHexagons.UniversalFileSystem.Core;
 using Microsoft.Extensions.Configuration;
 
 namespace BasaltHexagons.UniversalFileSystem.File;
 
-public class FileFileSystemFactory : IFileSystemFactory
+class FileFileSystemFactory : IFileSystemFactory
 {
-    public IFileSystem Create(IConfiguration configuration)
+    public IFileSystem Create(IConfiguration implementationConfiguration)
     {
         return new FileFileSystem();
     }

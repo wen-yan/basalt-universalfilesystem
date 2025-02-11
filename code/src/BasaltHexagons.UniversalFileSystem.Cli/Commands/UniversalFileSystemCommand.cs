@@ -12,12 +12,12 @@ abstract class UniversalFileSystemCommand<TOptions> : Command<TOptions>
         : base(serviceProvider.GetRequiredService<CommandContext>())
     {
         this.ServiceProvider = serviceProvider;
-        this.UniversalFileSystem = this.ServiceProvider.GetRequiredService<UniversalFileSystem>();
+        this.UniversalFileSystem = this.ServiceProvider.GetRequiredService<IUniversalFileSystem>();
         this.OutputWriter = this.ServiceProvider.GetRequiredService<IOutputWriter>();
     }
 
     protected IServiceProvider ServiceProvider { get; }
-    protected UniversalFileSystem UniversalFileSystem { get; }
+    protected IUniversalFileSystem UniversalFileSystem { get; }
     protected IOutputWriter OutputWriter { get; }
     protected CancellationToken CancellationToken => this.CommandContext.InvocationContext?.GetCancellationToken() ?? CancellationToken.None;
 }

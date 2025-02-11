@@ -13,7 +13,9 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\BasaltHexagons.UniversalFileSystem.AzureBlob\BasaltHexagons.UniversalFileSystem.AzureBlob.csproj" />
         <ProjectReference Include="..\BasaltHexagons.UniversalFileSystem.File\BasaltHexagons.UniversalFileSystem.File.csproj" />
+        <ProjectReference Include="..\BasaltHexagons.UniversalFileSystem.AwsS3\BasaltHexagons.UniversalFileSystem.AwsS3.csproj" />
         <ProjectReference Include="..\BasaltHexagons.UniversalFileSystem\BasaltHexagons.UniversalFileSystem.csproj" />
     </ItemGroup>
 

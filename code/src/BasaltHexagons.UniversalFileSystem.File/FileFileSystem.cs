@@ -4,11 +4,13 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+
 using BasaltHexagons.UniversalFileSystem.Core;
+using BasaltHexagons.UniversalFileSystem.Core.Disposing;
 
 namespace BasaltHexagons.UniversalFileSystem.File;
 
-public class FileFileSystem : IFileSystem
+class FileFileSystem : AsyncDisposable, IFileSystem
 {
     #region IFileSystem
 
@@ -25,7 +27,7 @@ public class FileFileSystem : IFileSystem
             if (Directory.Exists(entry))
                 yield return new ObjectMetadata(new Uri(entry), ObjectType.Prefix, null, null);
             else if (System.IO.File.Exists(entry))
-                yield return await this.GetObjectMetadataAsync(new Uri(entry), cancellationToken);
+                yield return await this.GetObjectMetadataAsync(new Uri(entry), cancellationToken).ConfigureAwait(false);
         }
 
         await ValueTask.CompletedTask;
@@ -49,7 +51,7 @@ public class FileFileSystem : IFileSystem
     public async Task PutObjectAsync(Uri path, Stream stream, bool overwriteIfExists, CancellationToken cancellationToken)
     {
         await using FileStream fileStream = new(path.AbsolutePath, overwriteIfExists ? FileMode.Create : FileMode.CreateNew, FileAccess.Write);
-        await stream.CopyToAsync(fileStream, cancellationToken);
+        await stream.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
     }
 
     public Task<bool> DeleteObjectAsync(Uri path, CancellationToken cancellationToken)
@@ -76,8 +78,6 @@ public class FileFileSystem : IFileSystem
         System.IO.File.Copy(sourcePath.AbsolutePath, destPath.AbsolutePath, overwriteIfExists);
         return Task.CompletedTask;
     }
-
-    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
     #endregion
 }

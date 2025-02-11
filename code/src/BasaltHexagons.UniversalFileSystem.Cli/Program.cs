@@ -4,9 +4,12 @@ using System.CommandLine;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+
 using BasaltHexagons.CommandLine;
 using BasaltHexagons.UniversalFileSystem.Cli.Output;
 using BasaltHexagons.UniversalFileSystem.File;
+using BasaltHexagons.UniversalFileSystem.AwsS3;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,10 +28,6 @@ static class Program
             {
                 builder
                     .SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new ApplicationException())
-                    .AddInMemoryCollection(
-                    [
-                        new KeyValuePair<string, string?>("Schemes:file:ImplementationClass", typeof(FileFileSystem).FullName)
-                    ])
                     .AddJsonFile("appsettings.json", false, false);
             })
             .ConfigureServices((context, services) =>
@@ -48,14 +47,14 @@ static class Program
 
                     // FileSystems
                     .AddFileFileSystem()
+                    .AddAwsS3FileSystem()
 
                     // UniversalFileSystem
-                    .AddTransient<IFileSystemImplFactory>(serviceProvider =>
+                    .AddTransient<IUniversalFileSystem>(serviceProvider =>
                     {
-                        IConfiguration configuration = serviceProvider.GetRequiredService<IConfiguration>().GetSection("Schemes");
-                        return new DefaultFileSystemImplFactory(serviceProvider, configuration);
+                        IUniversalFileSystem universalFileSystem = UniversalFileSystemFactory.Create(serviceProvider, serviceProvider.GetRequiredService<IConfiguration>());
+                        return universalFileSystem;
                     })
-                    .AddTransient<UniversalFileSystem>()
 
                     // Output
                     .AddTransient<IOutputWriter, ConsoleOutputWriter>()

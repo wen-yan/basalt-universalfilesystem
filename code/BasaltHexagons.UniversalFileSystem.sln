@@ -1,5 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7955D5E3-0739-4EA7-AA7E-A015D1300D1A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasaltHexagons.UniversalFileSystem", "src\BasaltHexagons.UniversalFileSystem\BasaltHexagons.UniversalFileSystem.csproj", "{68C2F58E-AED8-48AA-B7AA-B65775246BAB}"
@@ -9,6 +12,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasaltHexagons.UniversalFileSystem.File", "src\BasaltHexagons.UniversalFileSystem.File\BasaltHexagons.UniversalFileSystem.File.csproj", "{925710A5-39AD-4A44-A714-2EDD51A005B6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasaltHexagons.UniversalFileSystem.Cli", "src\BasaltHexagons.UniversalFileSystem.Cli\BasaltHexagons.UniversalFileSystem.Cli.csproj", "{1C960235-B580-4EE8-87E2-8A21054DD2BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasaltHexagons.UniversalFileSystem.AwsS3", "src\BasaltHexagons.UniversalFileSystem.AwsS3\BasaltHexagons.UniversalFileSystem.AwsS3.csproj", "{EFE05FDF-CF85-4713-944A-E60879E48186}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasaltHexagons.UniversalFileSystem.AzureBlob", "src\BasaltHexagons.UniversalFileSystem.AzureBlob\BasaltHexagons.UniversalFileSystem.AzureBlob.csproj", "{95295199-EDDA-43FB-B3D2-463DA5BAC7C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,11 +39,24 @@ Global
 		{1C960235-B580-4EE8-87E2-8A21054DD2BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C960235-B580-4EE8-87E2-8A21054DD2BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C960235-B580-4EE8-87E2-8A21054DD2BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFE05FDF-CF85-4713-944A-E60879E48186}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFE05FDF-CF85-4713-944A-E60879E48186}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFE05FDF-CF85-4713-944A-E60879E48186}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFE05FDF-CF85-4713-944A-E60879E48186}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95295199-EDDA-43FB-B3D2-463DA5BAC7C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95295199-EDDA-43FB-B3D2-463DA5BAC7C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95295199-EDDA-43FB-B3D2-463DA5BAC7C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95295199-EDDA-43FB-B3D2-463DA5BAC7C3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{68C2F58E-AED8-48AA-B7AA-B65775246BAB} = {7955D5E3-0739-4EA7-AA7E-A015D1300D1A}
 		{99BD94CE-3D2C-41B9-863C-8908A4EB8C47} = {7955D5E3-0739-4EA7-AA7E-A015D1300D1A}
 		{925710A5-39AD-4A44-A714-2EDD51A005B6} = {7955D5E3-0739-4EA7-AA7E-A015D1300D1A}
 		{1C960235-B580-4EE8-87E2-8A21054DD2BD} = {7955D5E3-0739-4EA7-AA7E-A015D1300D1A}
+		{EFE05FDF-CF85-4713-944A-E60879E48186} = {7955D5E3-0739-4EA7-AA7E-A015D1300D1A}
+		{95295199-EDDA-43FB-B3D2-463DA5BAC7C3} = {7955D5E3-0739-4EA7-AA7E-A015D1300D1A}
 	EndGlobalSection
 EndGlobal
