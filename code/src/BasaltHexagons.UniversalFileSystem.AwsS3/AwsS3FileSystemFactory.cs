@@ -34,10 +34,10 @@ enum CredentialType
 ///     Type: Custom/Configuration
 ///     Credentials
 ///         Type: Anonymous/Basic/EnvironmentVariables/Profile
-///         AccessKey: <access-key>     # Type = Basic
-///         SecretKey: <secret-key>     # Type = Basic
-///         ProfileName: <profile-name> # Type = Profile
-///     Config
+///         AccessKey:     # Type = Basic
+///         SecretKey:     # Type = Basic
+///         ProfileName:   # Type = Profile
+///     Options
 ///         RegionEndpoint:
 ///         ServiceURL:
 ///         ForcePathStyle: true/false
@@ -104,7 +104,7 @@ class AwsS3FileSystemFactory : IFileSystemFactory
 
         Exception InvalidCredentialsTypeException(string? credentialsTypeStr)
         {
-            return new ApplicationException($"Unkown S3 file system credentials type [{credentialsTypeStr ?? "<null>"}], valid values are [{string.Join(", ", Enum.GetNames<CredentialType>())}]");
+            return new ApplicationException($"Unknown S3 file system credentials type [{credentialsTypeStr ?? "<null>"}], valid values are [{string.Join(", ", Enum.GetNames<CredentialType>())}]");
         }
 
         // credentials
@@ -125,12 +125,12 @@ class AwsS3FileSystemFactory : IFileSystemFactory
 
         // config
         AmazonS3Config config = new AmazonS3Config();
-        string? regionEndpoint = implementationConfiguration["Config:RegionEndpoint"];
-        string? serviceURL = implementationConfiguration["Config:ServiceURL"];
-        string? forcePathStyleStr = implementationConfiguration["Config:ForcePathStyle"];
+        string? regionEndpoint = implementationConfiguration["Options:RegionEndpoint"];
+        string? serviceUrl = implementationConfiguration["Options:ServiceURL"];
+        string? forcePathStyleStr = implementationConfiguration["Options:ForcePathStyle"];
 
         if (regionEndpoint != null) config.RegionEndpoint = RegionEndpoint.GetBySystemName(regionEndpoint);
-        if (serviceURL != null) config.ServiceURL = serviceURL;
+        if (serviceUrl != null) config.ServiceURL = serviceUrl;
         if (forcePathStyleStr != null)
         {
             if (!bool.TryParse(forcePathStyleStr, out bool forcePathStyle))

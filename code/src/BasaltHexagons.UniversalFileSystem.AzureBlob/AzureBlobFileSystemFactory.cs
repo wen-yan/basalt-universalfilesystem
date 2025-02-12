@@ -1,12 +1,9 @@
 ﻿using System;
-
 using Azure.Identity;
 using Azure.Storage;
 using Azure.Storage.Blobs;
-
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.Core.Configuration;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,8 +20,8 @@ enum ImplementationConfigurationType
 
 enum CredentialType
 {
-    Default,    // DefaultAzureCredential
-    SharedKey,  // StorageSharedKeyCredential
+    Default, // DefaultAzureCredential
+    SharedKey, // StorageSharedKeyCredential
 }
 
 /// <summary>
@@ -33,8 +30,8 @@ enum CredentialType
 ///     Credentials
 ///         Type: Default/SharedKey
 ///         AccountName:     # Type = SharedKey
-///         AccountKey:      # Tppe = SharedKey
-///     Config:
+///         AccountKey:      # Type = SharedKey
+///     Options:
 ///         ServiceUri: 
 /// </summary>
 class AzureBlobFileSystemFactory : IFileSystemFactory
@@ -75,18 +72,18 @@ class AzureBlobFileSystemFactory : IFileSystemFactory
     {
         Exception InvalidCredentialsTypeException(string? credentialsTypeStr)
         {
-            return new ApplicationException($"Unkown credentials type [{credentialsTypeStr ?? "<null>"}], valid values are [{string.Join(", ", Enum.GetNames<CredentialType>())}]");
+            return new ApplicationException($"Unknown credentials type [{credentialsTypeStr ?? "<null>"}], valid values are [{string.Join(", ", Enum.GetNames<CredentialType>())}]");
         }
 
-        string GetServiceUri() => implementationConfiguration.GetValue<string>("Config:ServiceUri", () => throw new ApplicationException("ServiceUri is not set"));
+        string GetServiceUri() => implementationConfiguration.GetValue<string>("Options:ServiceUri", () => throw new ApplicationException("ServiceUri is not set"));
 
-        BlobServiceClient CreateDefaultCredentailClient()
+        BlobServiceClient CreateDefaultCredentialClient()
         {
             string serviceUri = GetServiceUri();
             return new BlobServiceClient(new Uri(serviceUri), new DefaultAzureCredential());
         }
 
-        BlobServiceClient CreateSharedKeyCredentailClient()
+        BlobServiceClient CreateSharedKeyCredentialClient()
         {
             string serviceUri = GetServiceUri();
             string accountName = implementationConfiguration.GetValue<string>("Credentials:AccountName", () => throw new ApplicationException("AccountName is not set"));
@@ -102,8 +99,8 @@ class AzureBlobFileSystemFactory : IFileSystemFactory
 
         BlobServiceClient client = credentialsType switch
         {
-            CredentialType.Default => CreateDefaultCredentailClient(),
-            CredentialType.SharedKey => CreateSharedKeyCredentailClient(),
+            CredentialType.Default => CreateDefaultCredentialClient(),
+            CredentialType.SharedKey => CreateSharedKeyCredentialClient(),
             _ => throw InvalidCredentialsTypeException(credentialsTypeStr),
         };
         return client;

@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.CommandLine;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
-
 using BasaltHexagons.CommandLine;
 using BasaltHexagons.UniversalFileSystem.Cli.Output;
 using BasaltHexagons.UniversalFileSystem.File;
 using BasaltHexagons.UniversalFileSystem.AwsS3;
-
+using BasaltHexagons.UniversalFileSystem.AzureBlob;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Yaml;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -28,7 +27,12 @@ static class Program
             {
                 builder
                     .SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new ApplicationException())
-                    .AddJsonFile("appsettings.json", false, false);
+#if DEBUG
+                    .AddYamlFile("appsettings-test.yaml", false, false)
+#else
+                    .AddYamlFile($"{Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".ufs", "config.yaml")}", false, false)
+#endif
+                    ;
             })
             .ConfigureServices((context, services) =>
             {
@@ -48,13 +52,10 @@ static class Program
                     // FileSystems
                     .AddFileFileSystem()
                     .AddAwsS3FileSystem()
+                    .AddAzureBlobFileSystem()
 
                     // UniversalFileSystem
-                    .AddTransient<IUniversalFileSystem>(serviceProvider =>
-                    {
-                        IUniversalFileSystem universalFileSystem = UniversalFileSystemFactory.Create(serviceProvider, serviceProvider.GetRequiredService<IConfiguration>());
-                        return universalFileSystem;
-                    })
+                    .AddTransient<IUniversalFileSystem>(serviceProvider => UniversalFileSystemFactory.Create(serviceProvider, serviceProvider.GetRequiredService<IConfiguration>()))
 
                     // Output
                     .AddTransient<IOutputWriter, ConsoleOutputWriter>()

@@ -32,6 +32,10 @@
         "s3-cat": {
             "commandName": "Project",
             "commandLineArgs": "cat s3://test-bucket/test/start-localstack.sh"
+        },
+        "abfss-ls": {
+            "commandName": "Project",
+            "commandLineArgs": "ls -r abfss://ufs-test/"
         }
     }
 }

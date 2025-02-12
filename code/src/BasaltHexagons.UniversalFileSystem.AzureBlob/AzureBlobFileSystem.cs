@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-
+using Azure;
 using Azure.Storage.Blobs;
-
+using Azure.Storage.Blobs.Models;
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.Core.Disposing;
 
@@ -21,6 +23,7 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
     private BlobServiceClient Client { get; }
 
     #region IFileSystem
+
     public Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwriteIfExists, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
@@ -41,9 +44,28 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
         throw new NotImplementedException();
     }
 
-    public IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive, CancellationToken cancellationToken)
+    public async IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        (string container, string key) = this.DeconstructUri(prefix);
+
+        BlobContainerClient containerClient = this.Client.GetBlobContainerClient("ufs-test");
+
+        if (!await containerClient.ExistsAsync(cancellationToken)) yield break;
+
+        await foreach (BlobHierarchyItem blobHierarchyItem in containerClient.GetBlobsByHierarchyAsync(prefix: key, delimiter: "/", cancellationToken: cancellationToken).ConfigureAwait(false))
+        {
+            if (blobHierarchyItem.IsPrefix)
+            {
+                Uri path = new(prefix, new Uri(blobHierarchyItem.Prefix, UriKind.Relative));
+                yield return new ObjectMetadata(path, ObjectType.Prefix, null, null);
+            }
+            else
+            {
+                // Uri path = this.ConstructUir(prefix.Scheme, obj.BucketName, obj.Key);
+                Uri path = new(prefix, new Uri(blobHierarchyItem.Blob.Name, UriKind.Relative));
+                yield return new ObjectMetadata(path, ObjectType.File, blobHierarchyItem.Blob.Properties.ContentLength, blobHierarchyItem.Blob.Properties.LastModified?.UtcDateTime);
+            }
+        }
     }
 
     public Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwriteIfExists, CancellationToken cancellationToken)
@@ -55,5 +77,13 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
     {
         throw new NotImplementedException();
     }
+
     #endregion
+
+    private (string Container, string Key) DeconstructUri(Uri uri)
+    {
+        string bucket = uri.Host;
+        string key = uri.AbsolutePath.TrimStart('/');
+        return (bucket, key);
+    }
 }

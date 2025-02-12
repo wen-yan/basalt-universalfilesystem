@@ -37,7 +37,7 @@ class LsCommandOutput
 {
     public Uri? Path { get; set; }
     public ObjectType ObjectType { get; set; }
-    public DateTime? LastModifiedTime { get; set; }
+    public DateTime? LastModifiedTimeUtc { get; set; }
 
     [TabularDatasetWriter(Alignment = TabularDatasetWriterAlignment.Right)]
     public long? ContentSize { get; set; }
@@ -57,7 +57,7 @@ class LsCommand : UniversalFileSystemCommand<LsCommandOptions>
             {
                 Path = metadata.Path,
                 ObjectType = metadata.ObjectType,
-                LastModifiedTime = metadata.LastModifiedTime,
+                LastModifiedTimeUtc = metadata.LastModifiedTimeUtc,
                 ContentSize = metadata.ContentSize
             });
 

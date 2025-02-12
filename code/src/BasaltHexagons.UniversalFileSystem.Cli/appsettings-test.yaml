@@ -1,0 +1,27 @@
+BasaltHexagons:
+    UniversalFileSystem:
+        Schemes:
+            file:
+                ImplementationFactoryClass: BasaltHexagons.UniversalFileSystem.File.FileFileSystemFactory
+                ImplementationConfiguration:
+            s3:
+                ImplementationFactoryClass: BasaltHexagons.UniversalFileSystem.AwsS3.AwsS3FileSystemFactory
+                ImplementationConfiguration:
+                    Type: Configuration
+                    Credentials:
+                        Type: Basic
+                        AccessKey: test
+                        SecretKey: test
+                    Options:
+                        ServiceURL: http://localhost:4566
+                        ForcePathStyle: true
+            abfss:
+                ImplementationFactoryClass: BasaltHexagons.UniversalFileSystem.AzureBlob.AzureBlobFileSystemFactory
+                ImplementationConfiguration:
+                    Type: Configuration
+                    Credentials:
+                        Type: SharedKey
+                        AccountName: devstoreaccount1
+                        AccountKey: Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
+                    Options:
+                        ServiceUri: http://localhost:10000/devstoreaccount1

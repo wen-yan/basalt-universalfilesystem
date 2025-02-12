@@ -6,7 +6,7 @@ namespace BasaltHexagons.UniversalFileSystem.AzureBlob;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddAwsS3FileSystem(this IServiceCollection services)
+    public static IServiceCollection AddAzureBlobFileSystem(this IServiceCollection services)
     {
         return services
             .AddKeyedTransient<IFileSystemFactory, AzureBlobFileSystemFactory>(typeof(AzureBlobFileSystemFactory).FullName);
