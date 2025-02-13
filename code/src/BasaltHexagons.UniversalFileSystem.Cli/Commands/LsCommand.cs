@@ -10,7 +10,6 @@ using BasaltHexagons.UniversalFileSystem.Core;
 
 namespace BasaltHexagons.UniversalFileSystem.Cli.Commands;
 
-#nullable disable
 partial class LsCommandOptions
 {
     [CliCommandSymbol]
@@ -19,7 +18,6 @@ partial class LsCommandOptions
     [CliCommandSymbol(CliCommandSymbolType.Argument)]
     public Uri Directory { get; init; }
 }
-#nullable restore
 
 [CliCommandBuilder("ls", typeof(AppCommandBuilder))]
 partial class LsCommandBuilder : CliCommandBuilder<LsCommand, LsCommandOptions>

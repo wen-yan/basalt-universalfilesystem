@@ -8,13 +8,11 @@ using BasaltHexagons.UniversalFileSystem.Cli.Output;
 
 namespace BasaltHexagons.UniversalFileSystem.Cli.Commands;
 
-#nullable disable
 partial class CatCommandOptions
 {
     [CliCommandSymbol(CliCommandSymbolType.Argument)]
     public Uri Path { get; init; }
 }
-#nullable restore
 
 [CliCommandBuilder("cat", typeof(AppCommandBuilder))]
 partial class CatCommandBuilder : CliCommandBuilder<CatCommand, CatCommandOptions>

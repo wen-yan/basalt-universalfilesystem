@@ -7,7 +7,6 @@ using BasaltHexagons.UniversalFileSystem.Cli.Output;
 
 namespace BasaltHexagons.UniversalFileSystem.Cli.Commands;
 
-#nullable disable
 partial class RemoveCommandOptions
 {
     [CliCommandSymbol(CliCommandSymbolType.Argument)]
@@ -15,7 +14,6 @@ partial class RemoveCommandOptions
     [CliCommandSymbol]
     public bool NoConfirm { get; init; }
 }
-#nullable restore
 
 [CliCommandBuilder("rm", typeof(AppCommandBuilder))]
 partial class RemoveCommandBuilder : CliCommandBuilder<RemoveCommand, RemoveCommandOptions>

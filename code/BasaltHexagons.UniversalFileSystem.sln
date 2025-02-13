@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasaltHexagons.UniversalFil
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasaltHexagons.UniversalFileSystem.AzureBlob", "src\BasaltHexagons.UniversalFileSystem.AzureBlob\BasaltHexagons.UniversalFileSystem.AzureBlob.csproj", "{95295199-EDDA-43FB-B3D2-463DA5BAC7C3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{13929D5B-7301-4101-8FD1-3246FDEDD279}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasaltHexagons.UniversalFileSystem.IntegrationTests", "tests\BasaltHexagons.UniversalFileSystem.IntegrationTests\BasaltHexagons.UniversalFileSystem.IntegrationTests.csproj", "{13DC0317-36BB-456F-9F1F-06F08461BFFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +51,10 @@ Global
 		{95295199-EDDA-43FB-B3D2-463DA5BAC7C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95295199-EDDA-43FB-B3D2-463DA5BAC7C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95295199-EDDA-43FB-B3D2-463DA5BAC7C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13DC0317-36BB-456F-9F1F-06F08461BFFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13DC0317-36BB-456F-9F1F-06F08461BFFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13DC0317-36BB-456F-9F1F-06F08461BFFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13DC0317-36BB-456F-9F1F-06F08461BFFC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,5 +66,6 @@ Global
 		{1C960235-B580-4EE8-87E2-8A21054DD2BD} = {7955D5E3-0739-4EA7-AA7E-A015D1300D1A}
 		{EFE05FDF-CF85-4713-944A-E60879E48186} = {7955D5E3-0739-4EA7-AA7E-A015D1300D1A}
 		{95295199-EDDA-43FB-B3D2-463DA5BAC7C3} = {7955D5E3-0739-4EA7-AA7E-A015D1300D1A}
+		{13DC0317-36BB-456F-9F1F-06F08461BFFC} = {13929D5B-7301-4101-8FD1-3246FDEDD279}
 	EndGlobalSection
 EndGlobal

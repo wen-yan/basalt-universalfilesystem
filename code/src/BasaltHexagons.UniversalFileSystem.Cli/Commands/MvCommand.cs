@@ -7,14 +7,12 @@ using BasaltHexagons.UniversalFileSystem.Core;
 
 namespace BasaltHexagons.UniversalFileSystem.Cli.Commands;
 
-#nullable disable
 partial class MvCommandOptions
 {
     [CliCommandSymbol] public Uri Source { get; init; }
     [CliCommandSymbol] public Uri Destination { get; init; }
     [CliCommandSymbol] public bool Overwrite { get; init; }
 }
-#nullable restore
 
 [CliCommandBuilder("mv", typeof(AppCommandBuilder))]
 partial class MvCommandBuilder : CliCommandBuilder<MvCommand, MvCommandOptions>
