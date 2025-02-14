@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace BasaltHexagons.UniversalFileSystem.IntegrationTests.TestMethods;
 
-public abstract class GetObjectMetadataTests
+public abstract class GetObjectMetadataTests : FileSystemMethodTestsBase
 {
     [TestMethod]
     public async Task GetObjectMetadata_BasicTest()

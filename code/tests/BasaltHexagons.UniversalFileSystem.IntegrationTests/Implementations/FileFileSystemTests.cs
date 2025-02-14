@@ -1,9 +1,15 @@
+using System;
 using BasaltHexagons.UniversalFileSystem.IntegrationTests.TestMethods;
 
 namespace BasaltHexagons.UniversalFileSystem.IntegrationTests.Implementations;
 
-public interface IFileFileSystemTests : IFileSystemTestsBase
+public interface IFileFileSystemTests : IFileSystemMethodTests
 {
+    IUniversalFileSystem IFileSystemMethodTests.GetUniversalFileSystem()
+    {
+        Console.WriteLine("IFileFileSystemTests.GetUniversalFileSystem()");
+        return null!; //throw new System.NotImplementedException();
+    }
 }
 
 [TestClass]
