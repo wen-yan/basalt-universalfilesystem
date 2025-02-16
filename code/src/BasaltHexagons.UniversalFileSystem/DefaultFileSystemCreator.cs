@@ -21,7 +21,7 @@ class DefaultFileSystemCreator : IFileSystemCreator
 
     public IFileSystem Create(string scheme)
     {
-        IConfigurationSection configurationSection = this.Configuration.GetSection($"BasaltHexagons:UniversalFileSystem:Schemes:{scheme}");
+        IConfigurationSection configurationSection = this.Configuration.GetSection($"Schemes:{scheme}");
 
         string? implementationFactoryClass = configurationSection["ImplementationFactoryClass"];
         if (implementationFactoryClass == null)

@@ -3,6 +3,10 @@
     <!-- <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/> -->
 
     <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.2" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\..\src\BasaltHexagons.UniversalFileSystem.AwsS3\BasaltHexagons.UniversalFileSystem.AwsS3.csproj" />
       <ProjectReference Include="..\..\src\BasaltHexagons.UniversalFileSystem.AzureBlob\BasaltHexagons.UniversalFileSystem.AzureBlob.csproj" />
       <ProjectReference Include="..\..\src\BasaltHexagons.UniversalFileSystem.File\BasaltHexagons.UniversalFileSystem.File.csproj" />

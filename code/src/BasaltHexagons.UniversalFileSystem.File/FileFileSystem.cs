@@ -50,6 +50,9 @@ class FileFileSystem : AsyncDisposable, IFileSystem
 
     public async Task PutObjectAsync(Uri path, Stream stream, bool overwriteIfExists, CancellationToken cancellationToken)
     {
+        string? dir = Path.GetDirectoryName(path.AbsolutePath);
+        if (dir != null)
+            Directory.CreateDirectory(dir);
         await using FileStream fileStream = new(path.AbsolutePath, overwriteIfExists ? FileMode.Create : FileMode.CreateNew, FileAccess.Write);
         await stream.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
     }

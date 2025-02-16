@@ -55,7 +55,11 @@ static class Program
                     .AddAzureBlobFileSystem()
 
                     // UniversalFileSystem
-                    .AddTransient<IUniversalFileSystem>(serviceProvider => UniversalFileSystemFactory.Create(serviceProvider, serviceProvider.GetRequiredService<IConfiguration>()))
+                    .AddTransient<IUniversalFileSystem>(serviceProvider =>
+                    {
+                        IConfigurationSection config = serviceProvider.GetRequiredService<IConfiguration>().GetSection("BasaltHexagons:UniversalFileSystem");
+                        return UniversalFileSystemFactory.Create(serviceProvider, config);
+                    })
 
                     // Output
                     .AddTransient<IOutputWriter, ConsoleOutputWriter>()

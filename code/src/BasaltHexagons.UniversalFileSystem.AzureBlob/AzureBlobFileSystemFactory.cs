@@ -1,24 +1,18 @@
 ﻿using System;
+
 using Azure.Identity;
 using Azure.Storage;
 using Azure.Storage.Blobs;
+
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.Core.Configuration;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BasaltHexagons.UniversalFileSystem.AzureBlob;
 
-enum ImplementationConfigurationType
-{
-    // BlobServiceClient instance is provided by keyed service from IServiceProvider, using key `AzureBlobFileSystemFactory.CustomClientServiceKey`
-    Custom,
-
-    // Use configuration to create client instance
-    Configuration,
-}
-
-enum CredentialType
+enum ClientCredentialType
 {
     Default, // DefaultAzureCredential
     SharedKey, // StorageSharedKeyCredential
@@ -26,13 +20,12 @@ enum CredentialType
 
 /// <summary>
 /// ImplementationConfiguration
-///     Type: Custom/Configuration
-///     Credentials
-///         Type: Default/SharedKey
-///         AccountName:     # Type = SharedKey
-///         AccountKey:      # Type = SharedKey
-///     Options:
+///     Client:                  # if not exists, get it from depedency injection
 ///         ServiceUri: 
+///         Credentials
+///             Type: Default/SharedKey
+///             AccountName:     # Type = SharedKey
+///             AccountKey:      # Type = SharedKey
 /// </summary>
 class AzureBlobFileSystemFactory : IFileSystemFactory
 {
@@ -47,62 +40,42 @@ class AzureBlobFileSystemFactory : IFileSystemFactory
 
     public IFileSystem Create(IConfiguration implementationConfiguration)
     {
-        Exception InvalidConfigurationTypeException(string? configurationTypeStr)
-        {
-            return new ApplicationException($"Unknown Azure blob file system implementation configuration type [{configurationTypeStr ?? "<null>"}], valid values are [{string.Join(", ", Enum.GetNames<ImplementationConfigurationType>())}]");
-        }
+        IConfigurationSection clientConfig = implementationConfiguration.GetSection("Client");
 
-        string? configurationTypeStr = implementationConfiguration["Type"];
-        if (!Enum.TryParse(configurationTypeStr, true, out ImplementationConfigurationType configurationType))
-        {
-            throw InvalidConfigurationTypeException(configurationTypeStr);
-        }
-
-        BlobServiceClient client = configurationType switch
-        {
-            ImplementationConfigurationType.Custom => this.ServiceProvider.GetRequiredKeyedService<BlobServiceClient>(CustomClientServiceKey),
-            ImplementationConfigurationType.Configuration => this.CreateBlobServiceClientFromConfiguration(implementationConfiguration),
-            _ => throw InvalidConfigurationTypeException(configurationTypeStr),
-        };
+        BlobServiceClient client =  clientConfig.Exists()
+            ? this.CreateBlobServiceClientFromConfiguration(clientConfig)
+            : this.ServiceProvider.GetRequiredKeyedService<BlobServiceClient>(CustomClientServiceKey);
 
         return new AzureBlobFileSystem(client);
     }
 
     private BlobServiceClient CreateBlobServiceClientFromConfiguration(IConfiguration implementationConfiguration)
     {
-        Exception InvalidCredentialsTypeException(string? credentialsTypeStr)
-        {
-            return new ApplicationException($"Unknown credentials type [{credentialsTypeStr ?? "<null>"}], valid values are [{string.Join(", ", Enum.GetNames<CredentialType>())}]");
-        }
+        ClientCredentialType clientCredentialType = implementationConfiguration.GetEnumValue<ClientCredentialType>("Credentials:Type");
 
-        string GetServiceUri() => implementationConfiguration.GetValue<string>("Options:ServiceUri", () => throw new ApplicationException("ServiceUri is not set"));
-
-        BlobServiceClient CreateDefaultCredentialClient()
+        BlobServiceClient client = clientCredentialType switch
         {
-            string serviceUri = GetServiceUri();
-            return new BlobServiceClient(new Uri(serviceUri), new DefaultAzureCredential());
-        }
-
-        BlobServiceClient CreateSharedKeyCredentialClient()
-        {
-            string serviceUri = GetServiceUri();
-            string accountName = implementationConfiguration.GetValue<string>("Credentials:AccountName", () => throw new ApplicationException("AccountName is not set"));
-            string accountKey = implementationConfiguration.GetValue<string>("Credentials:AccountKey", () => throw new ApplicationException("AccountKey is not set"));
-            return new BlobServiceClient(new Uri(serviceUri), new StorageSharedKeyCredential(accountName, accountKey));
-        }
-
-        string? credentialsTypeStr = implementationConfiguration["Credentials:Type"];
-        if (!Enum.TryParse(credentialsTypeStr, true, out CredentialType credentialsType))
-        {
-            throw InvalidCredentialsTypeException(credentialsTypeStr);
-        }
-
-        BlobServiceClient client = credentialsType switch
-        {
-            CredentialType.Default => CreateDefaultCredentialClient(),
-            CredentialType.SharedKey => CreateSharedKeyCredentialClient(),
-            _ => throw InvalidCredentialsTypeException(credentialsTypeStr),
+            ClientCredentialType.Default => CreateDefaultCredentialClient(implementationConfiguration),
+            ClientCredentialType.SharedKey => CreateSharedKeyCredentialClient(implementationConfiguration),
+            _ => throw new ConfigurationException($"Unknown client credential type [{clientCredentialType}]"),
         };
         return client;
     }
+
+    // Create client
+    private BlobServiceClient CreateDefaultCredentialClient(IConfiguration implementationConfiguration)
+    {
+        string serviceUri = GetServiceUri(implementationConfiguration);
+        return new BlobServiceClient(new Uri(serviceUri), new DefaultAzureCredential());
+    }
+
+    private BlobServiceClient CreateSharedKeyCredentialClient(IConfiguration implementationConfiguration)
+    {
+        string serviceUri = GetServiceUri(implementationConfiguration);
+        string accountName = implementationConfiguration.GetValue<string>("Credentials:AccountName");
+        string accountKey = implementationConfiguration.GetValue<string>("Credentials:AccountKey");
+        return new BlobServiceClient(new Uri(serviceUri), new StorageSharedKeyCredential(accountName, accountKey));
+    }
+
+    private string GetServiceUri(IConfiguration implementationConfiguration) => implementationConfiguration.GetValue<string>("ServiceUri");
 }

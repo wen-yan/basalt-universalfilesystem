@@ -6,24 +6,15 @@ using Amazon.Runtime.CredentialManagement;
 using Amazon.S3;
 
 using BasaltHexagons.UniversalFileSystem.Core;
+using BasaltHexagons.UniversalFileSystem.Core.Configuration;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BasaltHexagons.UniversalFileSystem.AwsS3;
 
-enum ImplementationConfigurationType
+enum clientCredentialType
 {
-    // IAmazonS3 instance is provided by keyed service from IServiceProvider, using key `AwsS3FileSystemFactory.CustomClientServiceKey`
-    Custom,
-
-    // Use configuration to create IAmazonS3 instance
-    Configuration,
-}
-
-enum CredentialType
-{
-    Anonymous,                  // AnonymousAWSCredentials
     Basic,                      // BasicAWSCredentials
     EnvironmentVariables,       // EnvironmentVariablesAWSCredentials
     Profile,                    // StoredProfileAWSCredentials
@@ -31,16 +22,16 @@ enum CredentialType
 
 /// <summary>
 /// ImplementationConfiguration
-///     Type: Custom/Configuration
-///     Credentials
-///         Type: Anonymous/Basic/EnvironmentVariables/Profile
-///         AccessKey:     # Type = Basic
-///         SecretKey:     # Type = Basic
-///         ProfileName:   # Type = Profile
-///     Options
-///         RegionEndpoint:
-///         ServiceURL:
-///         ForcePathStyle: true/false
+///     Client:
+///         Credentials
+///             Type: Anonymous/Basic/EnvironmentVariables/Profile
+///             AccessKey:     # Type = Basic
+///             SecretKey:     # Type = Basic
+///             ProfileName:   # Type = Profile
+///         Options
+///             RegionEndpoint:
+///             ServiceURL:
+///             ForcePathStyle: true/false
 /// </summary>
 class AwsS3FileSystemFactory : IFileSystemFactory
 {
@@ -55,91 +46,59 @@ class AwsS3FileSystemFactory : IFileSystemFactory
 
     public IFileSystem Create(IConfiguration implementationConfiguration)
     {
-        Exception InvalidConfigurationTypeException(string? configurationTypeStr)
-        {
-            return new ApplicationException($"Unknown S3 file system implementation configuration type [{configurationTypeStr ?? "<null>"}], valid values are [{string.Join(", ", Enum.GetNames<ImplementationConfigurationType>())}]");
-        }
+        IConfigurationSection clientConfig = implementationConfiguration.GetSection("Client");
 
-        string? configurationTypeStr = implementationConfiguration["Type"];
-        if (!Enum.TryParse(configurationTypeStr, true, out ImplementationConfigurationType configurationType))
-        {
-            throw InvalidConfigurationTypeException(configurationTypeStr);
-        }
+        IAmazonS3 client = clientConfig.Exists()
+            ? this.CreateAmazonS3ClientFromConfiguration(clientConfig)
+            : this.ServiceProvider.GetRequiredKeyedService<IAmazonS3>(CustomClientServiceKey);
 
-        IAmazonS3 amazonS3Client = configurationType switch
-        {
-            ImplementationConfigurationType.Custom => this.ServiceProvider.GetRequiredKeyedService<IAmazonS3>(CustomClientServiceKey),
-            ImplementationConfigurationType.Configuration => this.CreateAmazonS3ClientFromConfiguration(implementationConfiguration),
-            _ => throw InvalidConfigurationTypeException(configurationTypeStr),
-        };
-
-        return new AwsS3FileSystem(amazonS3Client);
+        return new AwsS3FileSystem(client);
     }
 
     private IAmazonS3 CreateAmazonS3ClientFromConfiguration(IConfiguration implementationConfiguration)
     {
-        AWSCredentials CreateBasicAWSCredentials()
-        {
-            string? accessKey = implementationConfiguration["Credentials:AccessKey"];
-            string? secretKey = implementationConfiguration["Credentials:SecretKey"];
-            return new BasicAWSCredentials(accessKey, secretKey);
-        }
-
-        AWSCredentials CreateStoredProfileAWSCredentials()
-        {
-            string? profileName = implementationConfiguration["Credentials:ProfileName"];
-
-            SharedCredentialsFile credentialsFile = new SharedCredentialsFile();
-            CredentialProfile? credentialProfile = profileName == null
-                ? null
-                : credentialsFile.TryGetProfile(profileName, out CredentialProfile value) ? value : null;
-
-            if (credentialProfile == null)
-            {
-                throw new ApplicationException($"Unknown profile name [{profileName}]");
-            }
-
-            return credentialProfile.GetAWSCredentials(credentialsFile);
-        }
-
-        Exception InvalidCredentialsTypeException(string? credentialsTypeStr)
-        {
-            return new ApplicationException($"Unknown S3 file system credentials type [{credentialsTypeStr ?? "<null>"}], valid values are [{string.Join(", ", Enum.GetNames<CredentialType>())}]");
-        }
-
         // credentials
-        string? credentialsTypeStr = implementationConfiguration["Credentials:Type"];
-        if (!Enum.TryParse(credentialsTypeStr, true, out CredentialType credentialsType))
-        {
-            throw InvalidCredentialsTypeException(credentialsTypeStr);
-        }
+        clientCredentialType clientCredentialType = implementationConfiguration.GetEnumValue<clientCredentialType>("Credentials:Type");
 
-        AWSCredentials credentials = credentialsType switch
+        AWSCredentials credentials = clientCredentialType switch
         {
-            CredentialType.Anonymous => new AnonymousAWSCredentials(),
-            CredentialType.Basic => CreateBasicAWSCredentials(),
-            CredentialType.EnvironmentVariables => new EnvironmentVariablesAWSCredentials(),
-            CredentialType.Profile => CreateStoredProfileAWSCredentials(),
-            _ => throw InvalidCredentialsTypeException(credentialsTypeStr),
+            clientCredentialType.Basic => CreateBasicAWSCredentials(implementationConfiguration),
+            clientCredentialType.EnvironmentVariables => new EnvironmentVariablesAWSCredentials(),
+            clientCredentialType.Profile => CreateStoredProfileAWSCredentials(implementationConfiguration),
+            _ => throw new ConfigurationException($"Unknown client credential type [{clientCredentialType}]"),
         };
 
         // config
         AmazonS3Config config = new AmazonS3Config();
-        string? regionEndpoint = implementationConfiguration["Options:RegionEndpoint"];
-        string? serviceUrl = implementationConfiguration["Options:ServiceURL"];
-        string? forcePathStyleStr = implementationConfiguration["Options:ForcePathStyle"];
+        string? regionEndpoint = implementationConfiguration.GetValue<string>("Options:RegionEndpoint", () => null);
+        string? serviceUrl = implementationConfiguration.GetValue<string>("Options:ServiceURL", () => null);
+        bool? forcePathStyle = implementationConfiguration.GetBoolValue("Options:ForcePathStyle", () => null);
 
         if (regionEndpoint != null) config.RegionEndpoint = RegionEndpoint.GetBySystemName(regionEndpoint);
         if (serviceUrl != null) config.ServiceURL = serviceUrl;
-        if (forcePathStyleStr != null)
-        {
-            if (!bool.TryParse(forcePathStyleStr, out bool forcePathStyle))
-            {
-                throw new ApplicationException($"Unknown force path style [{forcePathStyleStr}], valid values are [true, false or optional]");
-            }
-            config.ForcePathStyle = forcePathStyle;
-        }
+        if (forcePathStyle != null) config.ForcePathStyle = forcePathStyle.Value;
 
         return new AmazonS3Client(credentials, config);
+    }
+
+    // Create client
+    private AWSCredentials CreateBasicAWSCredentials(IConfiguration implementationConfiguration)
+    {
+        string accessKey = implementationConfiguration.GetValue<string>("Credentials:AccessKey");
+        string secretKey = implementationConfiguration.GetValue<string>("Credentials:SecretKey");
+        return new BasicAWSCredentials(accessKey, secretKey);
+    }
+
+    private AWSCredentials CreateStoredProfileAWSCredentials(IConfiguration implementationConfiguration)
+    {
+        string profileName = implementationConfiguration.GetValue<string>("Credentials:ProfileName");
+
+        SharedCredentialsFile credentialsFile = new SharedCredentialsFile();
+        CredentialProfile? credentialProfile = credentialsFile.TryGetProfile(profileName, out CredentialProfile value) ? value : null;
+
+        if (credentialProfile == null)
+            throw new ConfigurationException($"Unknown profile name [{profileName}]");
+
+        return credentialProfile.GetAWSCredentials(credentialsFile);
     }
 }

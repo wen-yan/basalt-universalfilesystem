@@ -64,7 +64,7 @@ class FileSystemWrapper : AsyncDisposable, IFileSystem
     public Task PutObjectAsync(Uri path, Stream stream, bool overwriteIfExists, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
-        return this.PutObjectAsync(path, stream, overwriteIfExists, cancellationToken);
+        return this.FileSystem.PutObjectAsync(path, stream, overwriteIfExists, cancellationToken);
     }
 
     #endregion
