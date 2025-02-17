@@ -4,7 +4,6 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.Core.Disposing;
 
@@ -24,23 +23,22 @@ class FileFileSystem : AsyncDisposable, IFileSystem
         foreach (string entry in entries)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (Directory.Exists(entry))
-                yield return new ObjectMetadata(new Uri(entry), ObjectType.Prefix, null, null);
-            else if (System.IO.File.Exists(entry))
-                yield return await this.GetObjectMetadataAsync(new Uri(entry), cancellationToken).ConfigureAwait(false);
+            ObjectMetadata? metadata = await this.GetObjectMetadataAsync(new Uri(entry), cancellationToken);
+            if (metadata != null)
+                yield return metadata;
         }
 
         await ValueTask.CompletedTask;
     }
 
-    public Task<ObjectMetadata> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
+    public Task<ObjectMetadata?> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
     {
         if (System.IO.File.Exists(path.AbsolutePath))
-            return Task.FromResult(new ObjectMetadata(path, ObjectType.File, new FileInfo(path.AbsolutePath).Length, System.IO.File.GetLastWriteTime(path.AbsolutePath)));
+            return Task.FromResult<ObjectMetadata?>(new ObjectMetadata(path, ObjectType.File, new FileInfo(path.AbsolutePath).Length, System.IO.File.GetLastWriteTime(path.AbsolutePath)));
         if (System.IO.Directory.Exists(path.AbsolutePath))
-            return Task.FromResult(new ObjectMetadata(path, ObjectType.Prefix, null, null));
+            return Task.FromResult<ObjectMetadata?>(new ObjectMetadata(path, ObjectType.Prefix, null, null));
 
-        return Task.FromException<ObjectMetadata>(new ArgumentException($"File or prefix doesn't exist, {path}"));
+        return Task.FromResult<ObjectMetadata?>(null);
     }
 
     public Task<Stream> GetObjectAsync(Uri path, CancellationToken cancellationToken)

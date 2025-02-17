@@ -4,10 +4,8 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-
 using Amazon.S3;
 using Amazon.S3.Model;
-
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.Core.Disposing;
 
@@ -24,6 +22,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
 
 
     #region IFileSystem
+
     public async Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwriteIfExists, CancellationToken cancellationToken)
     {
         // TODO: overwriteIfExists
@@ -54,9 +53,9 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
         return response.ResponseStream;
     }
 
-    public async Task<ObjectMetadata> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
+    public async Task<ObjectMetadata?> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
     {
-        GetObjectMetadataRequest request = new GetObjectMetadataRequest();
+        GetObjectMetadataRequest request = new();
         (request.BucketName, request.Key) = this.DeconstructUri(path);
         GetObjectMetadataResponse response = await this.Client.GetObjectMetadataAsync(request, cancellationToken);
         return new ObjectMetadata(path, ObjectType.File, response.ContentLength, response.LastModified);
@@ -77,6 +76,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
                 Uri path = this.ConstructUir(prefix.Scheme, obj.BucketName, obj.Key);
                 yield return new ObjectMetadata(path, ObjectType.File, obj.Size, obj.LastModified);
             }
+
             if (!response.IsTruncated)
                 break;
 
@@ -93,13 +93,11 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
     public async Task PutObjectAsync(Uri path, Stream stream, bool overwriteIfExists, CancellationToken cancellationToken)
     {
         // TODO: overwriteIfExists
-        PutObjectRequest request = new PutObjectRequest()
-        {
-            InputStream = stream
-        };
+        PutObjectRequest request = new PutObjectRequest() { InputStream = stream };
         (request.BucketName, request.Key) = this.DeconstructUri(path);
         PutObjectResponse response = await this.Client.PutObjectAsync(request, cancellationToken);
     }
+
     #endregion IFileSystem
 
 

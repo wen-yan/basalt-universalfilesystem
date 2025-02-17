@@ -3,13 +3,13 @@ using System.Threading.Tasks;
 
 namespace BasaltHexagons.UniversalFileSystem.IntegrationTests.TestMethods;
 
-
-public class ListObjectsTests : FileSystemMethodTestsBase
+[TestClass]
+public class ListObjectsTests
 {
-    [TestMethod]
-    public async Task ListObjects_BasicTest()
+    [DataTestMethod]
+    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    public async Task ListObjects_BasicTest(IUniversalFileSystem ufs)
     {
-        IUniversalFileSystem fs = this.GetUniversalFileSystem();
         Console.WriteLine("ListObjects_BasicTest");
         await Task.CompletedTask;
     }

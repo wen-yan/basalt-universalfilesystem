@@ -39,7 +39,7 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
         throw new NotImplementedException();
     }
 
-    public Task<ObjectMetadata> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
+    public Task<ObjectMetadata?> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

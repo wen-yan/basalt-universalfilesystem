@@ -9,7 +9,7 @@ namespace BasaltHexagons.UniversalFileSystem.Core;
 public interface IFileSystem : IAsyncDisposable, IDisposable
 {
     IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive, CancellationToken cancellationToken);
-    Task<ObjectMetadata> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken);
+    Task<ObjectMetadata?> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken);
     Task<Stream> GetObjectAsync(Uri path, CancellationToken cancellationToken);
     Task PutObjectAsync(Uri path, Stream stream, bool overwriteIfExists, CancellationToken cancellationToken);
     Task<bool> DeleteObjectAsync(Uri path, CancellationToken cancellationToken);

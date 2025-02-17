@@ -33,10 +33,11 @@ class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
         return this.GetImpl(prefix).ListObjectsAsync(prefix, recursive, cancellationToken);
     }
 
-    public Task<ObjectMetadata> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
+    public async Task<ObjectMetadata> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
-        return this.GetImpl(path).GetObjectMetadataAsync(path, cancellationToken);
+        ObjectMetadata? metadata = await this.GetImpl(path).GetObjectMetadataAsync(path, cancellationToken);
+        return metadata ?? throw new ArgumentException($"The path does not exist, {path}");
     }
 
     public Task<Stream> GetObjectAsync(Uri path, CancellationToken cancellationToken)

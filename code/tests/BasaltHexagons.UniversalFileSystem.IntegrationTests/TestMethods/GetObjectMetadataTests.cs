@@ -1,32 +1,63 @@
 using System;
-using System.IO;
 using System.Threading.Tasks;
-
 using BasaltHexagons.UniversalFileSystem.Core;
 
 namespace BasaltHexagons.UniversalFileSystem.IntegrationTests.TestMethods;
 
-public abstract class GetObjectMetadataTests : FileSystemMethodTestsBase
+[TestClass]
+public class GetObjectMetadataTests
 {
-    [TestMethod]
-    public async Task GetObjectMetadata_BasicTest()
+    [DataTestMethod]
+    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    public async Task GetObjectMetadata_FileTest(IUniversalFileSystem ufs)
     {
-        var ufs = this.GetUniversalFileSystem();
-
         // setup
-        await using MemoryStream stream = new MemoryStream();
-        await using(TextWriter writer = new StreamWriter(stream, leaveOpen: true))
-        {
-            writer.WriteLine("first test");
-        }
-        stream.Seek(0, SeekOrigin.Begin);
-
-        await ufs.PutObjectAsync("test.txt", stream, true, default);
+        await ufs.PutObjectAsync("test.txt", "test content", true);
 
         // test
-        ObjectMetadata metadata = await ufs.GetObjectMetadataAsync("test.txt", default);
+        ObjectMetadata metadata = await ufs.GetObjectMetadataAsync("test.txt");
 
         // Verify
         Assert.IsNotNull(metadata);
+        Assert.AreEqual(ObjectType.File, metadata.ObjectType);
+        Assert.AreEqual("test content".Length, metadata.ContentSize);
+        Assert.IsNotNull(metadata.LastModifiedTimeUtc);
+    }
+
+    [DataTestMethod]
+    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    public async Task GetObjectMetadata_PrefixTest(IUniversalFileSystem ufs)
+    {
+        // setup
+        await ufs.PutObjectAsync("dir/test.txt", "test content", true);
+
+        // test
+        ObjectMetadata metadata = await ufs.GetObjectMetadataAsync("dir");
+
+        // Verify
+        Assert.IsNotNull(metadata);
+        Assert.AreEqual(ObjectType.Prefix, metadata.ObjectType);
+        Assert.IsNull(metadata.ContentSize);
+        Assert.IsNull(metadata.LastModifiedTimeUtc);
+    }
+
+    [DataTestMethod]
+    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    public async Task GetObjectMetadata_NotExistsTest(IUniversalFileSystem ufs)
+    {
+        // test
+        try
+        {
+            ObjectMetadata metadata = await ufs.GetObjectMetadataAsync("test.txt");
+            Assert.Fail("Expected exception is not thrown.");
+        }
+        catch (ArgumentException ex)
+        {
+            Assert.IsTrue(ex.Message.StartsWith("The path does not exist"));
+        }
+        catch (Exception)
+        {
+            Assert.Fail("Expected exception is not thrown.");
+        }
     }
 }
