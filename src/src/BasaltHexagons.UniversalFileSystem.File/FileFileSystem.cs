@@ -15,6 +15,9 @@ class FileFileSystem : AsyncDisposable, IFileSystem
 
     public async IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
+        if (!Directory.Exists(prefix.AbsolutePath))
+            yield break;
+
         IEnumerable<string> entries = Directory.EnumerateFileSystemEntries(prefix.AbsolutePath, "*", new EnumerationOptions
         {
             RecurseSubdirectories = recursive,

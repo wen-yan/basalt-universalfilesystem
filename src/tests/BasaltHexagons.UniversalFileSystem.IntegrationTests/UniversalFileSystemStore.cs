@@ -22,15 +22,18 @@ public abstract class UniversalFileSystemStore
         string root = $"{Environment.CurrentDirectory}/IntegrationTests/file";
 
         // Delete all files
-        foreach (string file in Directory.GetFiles(root))
+        if (Directory.Exists(root))
         {
-            System.IO.File.Delete(file);
-        }
+            foreach (string file in Directory.GetFiles(root))
+            {
+                System.IO.File.Delete(file);
+            }
 
-        // Delete all subdirectories and their contents
-        foreach (string subDirectory in Directory.GetDirectories(root))
-        {
-            Directory.Delete(subDirectory, true); // true for recursive deletion
+            // Delete all subdirectories and their contents
+            foreach (string subDirectory in Directory.GetDirectories(root))
+            {
+                Directory.Delete(subDirectory, true); // true for recursive deletion
+            }
         }
 
         return CreateUniversalFileSystem(
