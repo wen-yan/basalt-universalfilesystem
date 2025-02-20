@@ -34,7 +34,7 @@ class FileFileSystem : AsyncDisposable, IFileSystem
     public Task<ObjectMetadata?> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
     {
         if (System.IO.File.Exists(path.AbsolutePath))
-            return Task.FromResult<ObjectMetadata?>(new ObjectMetadata(path, ObjectType.File, new FileInfo(path.AbsolutePath).Length, System.IO.File.GetLastWriteTime(path.AbsolutePath)));
+            return Task.FromResult<ObjectMetadata?>(new ObjectMetadata(path, ObjectType.File, new FileInfo(path.AbsolutePath).Length, System.IO.File.GetLastWriteTimeUtc(path.AbsolutePath)));
         if (System.IO.Directory.Exists(path.AbsolutePath))
             return Task.FromResult<ObjectMetadata?>(new ObjectMetadata(path, ObjectType.Prefix, null, null));
 

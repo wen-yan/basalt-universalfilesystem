@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.File;
@@ -16,15 +17,29 @@ public abstract class UniversalFileSystemStore
         yield return [CreateFileUniversalFileSystem()];
     }
 
-    private static IUniversalFileSystem CreateFileUniversalFileSystem()
+    private static MethodTestsUniversalFileSystemWrapper CreateFileUniversalFileSystem()
     {
+        string root = $"{Environment.CurrentDirectory}/IntegrationTests/file";
+
+        // Delete all files
+        foreach (string file in Directory.GetFiles(root))
+        {
+            System.IO.File.Delete(file);
+        }
+
+        // Delete all subdirectories and their contents
+        foreach (string subDirectory in Directory.GetDirectories(root))
+        {
+            Directory.Delete(subDirectory, true); // true for recursive deletion
+        }
+
         return CreateUniversalFileSystem(
             builder => { builder.AddInMemoryCollection(new Dictionary<string, string?> { ["UniversalFileSystem:Schemes:file:ImplementationFactoryClass"] = "BasaltHexagons.UniversalFileSystem.File.FileFileSystemFactory" }); },
             services => services.AddFileFileSystem(),
-            $"file://{Environment.CurrentDirectory}/IntegrationTests/file/");
+            $"file://{root}/");
     }
 
-    private static IUniversalFileSystem CreateUniversalFileSystem(Action<IConfigurationBuilder> configurationBuilder, Func<IServiceCollection, IServiceCollection> servicesBuilder, string baseUri)
+    private static MethodTestsUniversalFileSystemWrapper CreateUniversalFileSystem(Action<IConfigurationBuilder> configurationBuilder, Func<IServiceCollection, IServiceCollection> servicesBuilder, string baseUri)
     {
         IHost host = Host.CreateDefaultBuilder()
             .ConfigureAppConfiguration((context, builder) => configurationBuilder(builder))
@@ -39,11 +54,11 @@ public abstract class UniversalFileSystemStore
             })
             .Build();
 
-        IUniversalFileSystem ufs = new MethodTestsUniversalFileSystemWrapper(host, new Uri(baseUri), host.Services.GetRequiredService<IUniversalFileSystem>());
+        MethodTestsUniversalFileSystemWrapper ufs = new(host, new Uri(baseUri), host.Services.GetRequiredService<IUniversalFileSystem>());
 
         // delete all files
         List<ObjectMetadata> allFiles = ufs.ListObjectsAsync("", true, default).ToListAsync().Result;
-        foreach(ObjectMetadata file in allFiles)
+        foreach (ObjectMetadata file in allFiles)
             ufs.DeleteObjectAsync(file.Path, default).Wait();
         return ufs;
     }

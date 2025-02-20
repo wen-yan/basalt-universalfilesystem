@@ -9,7 +9,7 @@ public class GetObjectMetadataTests
 {
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task GetObjectMetadata_FileTest(IUniversalFileSystem ufs)
+    public async Task GetObjectMetadata_FileTest(MethodTestsUniversalFileSystemWrapper ufs)
     {
         // setup
         await ufs.PutObjectAsync("test.txt", "test content", true);
@@ -26,7 +26,7 @@ public class GetObjectMetadataTests
 
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task GetObjectMetadata_PrefixTest(IUniversalFileSystem ufs)
+    public async Task GetObjectMetadata_PrefixTest(MethodTestsUniversalFileSystemWrapper ufs)
     {
         // setup
         await ufs.PutObjectAsync("dir/test.txt", "test content", true);
@@ -43,7 +43,7 @@ public class GetObjectMetadataTests
 
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task GetObjectMetadata_NotExistsTest(IUniversalFileSystem ufs)
+    public async Task GetObjectMetadata_NotExistsTest(MethodTestsUniversalFileSystemWrapper ufs)
     {
         // test
         try

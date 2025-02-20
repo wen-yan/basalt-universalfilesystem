@@ -1,5 +1,8 @@
-using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using BasaltHexagons.UniversalFileSystem.Core;
+using BasaltHexagons.UniversalFileSystem.TestUtils;
 
 namespace BasaltHexagons.UniversalFileSystem.IntegrationTests.TestMethods;
 
@@ -8,9 +11,123 @@ public class ListObjectsTests
 {
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task ListObjects_BasicTest(IUniversalFileSystem ufs)
+    public async Task ListObjects_InRootTest(MethodTestsUniversalFileSystemWrapper ufs)
     {
-        Console.WriteLine("ListObjects_BasicTest");
-        await Task.CompletedTask;
+        // setup
+        await ufs.PutObjectAsync("test1.txt", "test content 1", true);
+        await ufs.PutObjectAsync("test2.txt", "test content 2", true);
+
+        // test
+        List<ObjectMetadata> objects = await ufs.ListObjectsAsync("", false)
+            .OrderBy(x => x.Path.ToString())
+            .ToListAsync();
+
+        // verify
+        AssertObjectMetadataListAreEquivalent(
+            [
+                ufs.MakeObjectMetadata("test1.txt", ObjectType.File, "test content 1".Length),
+                ufs.MakeObjectMetadata("test2.txt", ObjectType.File, "test content 2".Length),
+            ],
+            objects);
+    }
+
+    [DataTestMethod]
+    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    public async Task ListObjects_InSubFolderTest(MethodTestsUniversalFileSystemWrapper ufs)
+    {
+        // setup
+        await ufs.PutObjectAsync("dir/test1.txt", "test content 1", true);
+        await ufs.PutObjectAsync("dir/test2.txt", "test content 2", true);
+
+        // test
+        List<ObjectMetadata> objects = await ufs.ListObjectsAsync("", false)
+            .OrderBy(x => x.Path.ToString())
+            .ToListAsync();
+
+        // verify
+        AssertObjectMetadataListAreEquivalent(
+            [
+                ufs.MakeObjectMetadata("dir", ObjectType.Prefix, null, null),
+            ],
+            objects);
+    }
+
+    [DataTestMethod]
+    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    public async Task ListObjects_InSubFolderBothFileAndPrefixTest(MethodTestsUniversalFileSystemWrapper ufs)
+    {
+        // setup
+        await ufs.PutObjectAsync("dir1/dir2/test1.txt", "test content 1", true);
+        await ufs.PutObjectAsync("dir1/test2.txt", "test content 2", true);
+
+        // test
+        List<ObjectMetadata> objects = await ufs.ListObjectsAsync("dir1", false)
+            .OrderBy(x => x.Path.ToString())
+            .ToListAsync();
+
+        // verify
+        AssertObjectMetadataListAreEquivalent(
+            [
+                ufs.MakeObjectMetadata("dir1/dir2", ObjectType.Prefix, null, null),
+                ufs.MakeObjectMetadata("dir1/test2.txt", ObjectType.File, "test content 2".Length),
+            ],
+            objects);
+    }
+
+    [DataTestMethod]
+    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    public async Task ListObjects_RecursiveTest(MethodTestsUniversalFileSystemWrapper ufs)
+    {
+        // setup
+        await ufs.PutObjectAsync("dir1/dir2/test1.txt", "test content 1", true);
+        await ufs.PutObjectAsync("dir1/test2.txt", "test content 2", true);
+
+        // test
+        List<ObjectMetadata> objects = await ufs.ListObjectsAsync("dir1", true)
+            .OrderBy(x => x.Path.ToString())
+            .ToListAsync();
+
+        // verify
+        AssertObjectMetadataListAreEquivalent(
+            [
+                ufs.MakeObjectMetadata("dir1/dir2", ObjectType.Prefix, null, null),
+                ufs.MakeObjectMetadata("dir1/dir2/test1.txt", ObjectType.File, "test content 1".Length),
+                ufs.MakeObjectMetadata("dir1/test2.txt", ObjectType.File, "test content 2".Length),
+            ],
+            objects);
+    }
+
+    [DataTestMethod]
+    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    public async Task ListObjects_RecursiveMoreLevelsTest(MethodTestsUniversalFileSystemWrapper ufs)
+    {
+        // setup
+        await ufs.PutObjectAsync("dir1/dir2/test1.txt", "test content 1", true);
+        await ufs.PutObjectAsync("dir1/dir3/test2.txt", "test content 2", true);
+        await ufs.PutObjectAsync("dir1/dir3/dir4/test3.txt", "test content 3", true);
+        await ufs.PutObjectAsync("dir1/test4.txt", "test content 4", true);
+
+        // test
+        List<ObjectMetadata> objects = await ufs.ListObjectsAsync("dir1", true)
+            .OrderBy(x => x.Path.ToString())
+            .ToListAsync();
+
+        // verify
+        AssertObjectMetadataListAreEquivalent(
+            [
+                ufs.MakeObjectMetadata("dir1/dir2", ObjectType.Prefix, null, null),
+                ufs.MakeObjectMetadata("dir1/dir3", ObjectType.Prefix, null, null),
+                ufs.MakeObjectMetadata("dir1/dir3/dir4", ObjectType.Prefix, null, null),
+                ufs.MakeObjectMetadata("dir1/dir2/test1.txt", ObjectType.File, "test content 1".Length),
+                ufs.MakeObjectMetadata("dir1/dir3/test2.txt", ObjectType.File, "test content 2".Length),
+                ufs.MakeObjectMetadata("dir1/dir3/dir4/test3.txt", ObjectType.File, "test content 3".Length),
+                ufs.MakeObjectMetadata("dir1/test4.txt", ObjectType.File, "test content 3".Length),
+            ],
+            objects);
+    }
+
+    private void AssertObjectMetadataListAreEquivalent(IEnumerable<ObjectMetadata> expected, IEnumerable<ObjectMetadata> actual)
+    {
+        EnumerableAssert.AreEquivalent(expected, actual, new ObjectMetadataLastModifiedTimeUtcRangeEqualityComparer());
     }
 }

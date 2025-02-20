@@ -9,7 +9,7 @@ public class PutObjectTests
 {
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task PutObject_FileInRootTest(IUniversalFileSystem ufs)
+    public async Task PutObject_FileInRootTest(MethodTestsUniversalFileSystemWrapper ufs)
     {
         // test
         await ufs.PutObjectAsync("test.txt", "test content", true);
@@ -27,7 +27,7 @@ public class PutObjectTests
 
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task PutObject_FileInSubDirectoryTest(IUniversalFileSystem ufs)
+    public async Task PutObject_FileInSubDirectoryTest(MethodTestsUniversalFileSystemWrapper ufs)
     {
         // test
         await ufs.PutObjectAsync("dir/test.txt", "test content", true);
@@ -51,7 +51,7 @@ public class PutObjectTests
 
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task PutObject_OverwriteTest(IUniversalFileSystem ufs)
+    public async Task PutObject_OverwriteTest(MethodTestsUniversalFileSystemWrapper ufs)
     {
         // test
         await ufs.PutObjectAsync("test.txt", "test content 1", false);
@@ -82,7 +82,7 @@ public class PutObjectTests
 
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task PutObject_NotOverwriteTest(IUniversalFileSystem ufs)
+    public async Task PutObject_NotOverwriteTest(MethodTestsUniversalFileSystemWrapper ufs)
     {
         // test
         await ufs.PutObjectAsync("test.txt", "test content 1", true);
