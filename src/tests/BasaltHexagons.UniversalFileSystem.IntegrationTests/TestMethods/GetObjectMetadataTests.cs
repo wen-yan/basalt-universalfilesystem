@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using BasaltHexagons.UniversalFileSystem.Core;
 
@@ -9,13 +8,13 @@ public class GetObjectMetadataTests
 {
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task GetObjectMetadata_FileTest(MethodTestsUniversalFileSystemWrapper ufs)
+    public async Task GetObjectMetadata_File(UniversalFileSystemTestWrapper ufs)
     {
         // setup
         await ufs.PutObjectAsync("test.txt", "test content", true);
 
         // test
-        ObjectMetadata metadata = await ufs.GetObjectMetadataAsync("test.txt");
+        ObjectMetadata? metadata = await ufs.GetObjectMetadataAsync("test.txt");
 
         // Verify
         Assert.IsNotNull(metadata);
@@ -26,13 +25,13 @@ public class GetObjectMetadataTests
 
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task GetObjectMetadata_PrefixTest(MethodTestsUniversalFileSystemWrapper ufs)
+    public async Task GetObjectMetadata_Prefix(UniversalFileSystemTestWrapper ufs)
     {
         // setup
         await ufs.PutObjectAsync("dir/test.txt", "test content", true);
 
         // test
-        ObjectMetadata metadata = await ufs.GetObjectMetadataAsync("dir");
+        ObjectMetadata? metadata = await ufs.GetObjectMetadataAsync("dir");
 
         // Verify
         Assert.IsNotNull(metadata);
@@ -43,21 +42,12 @@ public class GetObjectMetadataTests
 
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task GetObjectMetadata_NotExistsTest(MethodTestsUniversalFileSystemWrapper ufs)
+    public async Task GetObjectMetadata_NotExists(UniversalFileSystemTestWrapper ufs)
     {
         // test
-        try
-        {
-            ObjectMetadata metadata = await ufs.GetObjectMetadataAsync("test.txt");
-            Assert.Fail("Expected exception is not thrown.");
-        }
-        catch (ArgumentException ex)
-        {
-            Assert.IsTrue(ex.Message.StartsWith("The path does not exist"));
-        }
-        catch (Exception)
-        {
-            Assert.Fail("Expected exception is not thrown.");
-        }
+        ObjectMetadata? metadata = await ufs.GetObjectMetadataAsync("test.txt");
+
+        // verify
+        Assert.IsNull(metadata);
     }
 }

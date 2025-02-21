@@ -9,9 +9,9 @@ using Microsoft.Extensions.Hosting;
 
 namespace BasaltHexagons.UniversalFileSystem.IntegrationTests;
 
-public class MethodTestsUniversalFileSystemWrapper : AsyncDisposable, IUniversalFileSystem
+public class UniversalFileSystemTestWrapper : AsyncDisposable, IUniversalFileSystem
 {
-    public MethodTestsUniversalFileSystemWrapper(IHost host, Uri baseUri, IUniversalFileSystem inner)
+    public UniversalFileSystemTestWrapper(IHost host, Uri baseUri, IUniversalFileSystem inner)
     {
         this.Host = host;
         this.BaseUri = baseUri;
@@ -36,6 +36,8 @@ public class MethodTestsUniversalFileSystemWrapper : AsyncDisposable, IUniversal
     public ObjectMetadata MakeObjectMetadata(string path, ObjectType objectType, long? contentSize)
         => this.MakeObjectMetadata(path, objectType, contentSize, DateTime.UtcNow);
 
+
+
     public Task CopyObjectAsync(string sourcePath, string destPath, bool overwriteIfExists, CancellationToken cancellationToken = default)
         => this.CopyObjectAsync(new Uri(sourcePath, UriKind.RelativeOrAbsolute), new Uri(destPath, UriKind.RelativeOrAbsolute), overwriteIfExists, cancellationToken);
 
@@ -49,7 +51,7 @@ public class MethodTestsUniversalFileSystemWrapper : AsyncDisposable, IUniversal
         return await reader.ReadToEndAsync(cancellationToken);
     }
 
-    public Task<ObjectMetadata> GetObjectMetadataAsync(string path, CancellationToken cancellationToken = default)
+    public Task<ObjectMetadata?> GetObjectMetadataAsync(string path, CancellationToken cancellationToken = default)
         => this.GetObjectMetadataAsync(new Uri(path, UriKind.RelativeOrAbsolute), cancellationToken);
 
 
@@ -73,6 +75,9 @@ public class MethodTestsUniversalFileSystemWrapper : AsyncDisposable, IUniversal
         await this.PutObjectAsync(new Uri(path, UriKind.RelativeOrAbsolute), stream, overwriteIfExists, cancellationToken);
     }
 
+    public Task<bool> ExistsAsync(string path, CancellationToken cancellationToken = default)
+        => this.ExistsAsync(new Uri(path, UriKind.Relative), cancellationToken);
+
     #endregion
 
     #region IUniversalFileSystem
@@ -86,7 +91,7 @@ public class MethodTestsUniversalFileSystemWrapper : AsyncDisposable, IUniversal
     public Task<Stream> GetObjectAsync(Uri path, CancellationToken cancellationToken)
         => this.Inner.GetObjectAsync(this.GetFullPath(path), cancellationToken);
 
-    public Task<ObjectMetadata> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
+    public Task<ObjectMetadata?> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
         => this.Inner.GetObjectMetadataAsync(this.GetFullPath(path), cancellationToken);
 
     public IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive, CancellationToken cancellationToken)

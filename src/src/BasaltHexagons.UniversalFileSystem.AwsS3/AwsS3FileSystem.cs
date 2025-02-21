@@ -26,7 +26,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
     public async Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwriteIfExists, CancellationToken cancellationToken)
     {
         // TODO: overwriteIfExists
-        CopyObjectRequest request = new CopyObjectRequest();
+        CopyObjectRequest request = new();
         (request.SourceBucket, request.SourceKey) = this.DeconstructUri(sourcePath);
         (request.DestinationBucket, request.DestinationKey) = this.DeconstructUri(destPath);
 
@@ -35,7 +35,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
 
     public async Task<bool> DeleteObjectAsync(Uri path, CancellationToken cancellationToken)
     {
-        DeleteObjectRequest request = new DeleteObjectRequest();
+        DeleteObjectRequest request = new();
         (request.BucketName, request.Key) = this.DeconstructUri(path);
 
         DeleteObjectResponse response = await this.Client.DeleteObjectAsync(request, cancellationToken).ConfigureAwait(false);
@@ -44,7 +44,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
 
     public async Task<Stream> GetObjectAsync(Uri path, CancellationToken cancellationToken)
     {
-        GetObjectRequest request = new GetObjectRequest();
+        GetObjectRequest request = new();
         (request.BucketName, request.Key) = this.DeconstructUri(path);
 
         GetObjectResponse response = await this.Client.GetObjectAsync(request, cancellationToken);
@@ -64,7 +64,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
     public async IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         // TODO: how to handle recursive?
-        ListObjectsV2Request request = new ListObjectsV2Request();
+        ListObjectsV2Request request = new();
         (request.BucketName, request.Prefix) = this.DeconstructUri(prefix);
 
         while (true)
@@ -93,7 +93,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
     public async Task PutObjectAsync(Uri path, Stream stream, bool overwriteIfExists, CancellationToken cancellationToken)
     {
         // TODO: overwriteIfExists
-        PutObjectRequest request = new PutObjectRequest() { InputStream = stream };
+        PutObjectRequest request = new() { InputStream = stream };
         (request.BucketName, request.Key) = this.DeconstructUri(path);
         PutObjectResponse response = await this.Client.PutObjectAsync(request, cancellationToken);
     }

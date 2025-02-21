@@ -17,7 +17,7 @@ public abstract class UniversalFileSystemStore
         yield return [CreateFileUniversalFileSystem()];
     }
 
-    private static MethodTestsUniversalFileSystemWrapper CreateFileUniversalFileSystem()
+    private static UniversalFileSystemTestWrapper CreateFileUniversalFileSystem()
     {
         string root = $"{Environment.CurrentDirectory}/IntegrationTests/file";
 
@@ -42,7 +42,7 @@ public abstract class UniversalFileSystemStore
             $"file://{root}/");
     }
 
-    private static MethodTestsUniversalFileSystemWrapper CreateUniversalFileSystem(Action<IConfigurationBuilder> configurationBuilder, Func<IServiceCollection, IServiceCollection> servicesBuilder, string baseUri)
+    private static UniversalFileSystemTestWrapper CreateUniversalFileSystem(Action<IConfigurationBuilder> configurationBuilder, Func<IServiceCollection, IServiceCollection> servicesBuilder, string baseUri)
     {
         IHost host = Host.CreateDefaultBuilder()
             .ConfigureAppConfiguration((context, builder) => configurationBuilder(builder))
@@ -57,10 +57,10 @@ public abstract class UniversalFileSystemStore
             })
             .Build();
 
-        MethodTestsUniversalFileSystemWrapper ufs = new(host, new Uri(baseUri), host.Services.GetRequiredService<IUniversalFileSystem>());
+        UniversalFileSystemTestWrapper ufs = new(host, new Uri(baseUri), host.Services.GetRequiredService<IUniversalFileSystem>());
 
         // delete all files
-        List<ObjectMetadata> allFiles = ufs.ListObjectsAsync("", true, default).ToListAsync().Result;
+        List<ObjectMetadata> allFiles = ufs.ListObjectsAsync("", true).ToListAsync().Result;
         foreach (ObjectMetadata file in allFiles)
             ufs.DeleteObjectAsync(file.Path, default).Wait();
         return ufs;

@@ -1,5 +1,3 @@
-using System;
-
 using Microsoft.Extensions.Configuration;
 
 namespace BasaltHexagons.UniversalFileSystem.Core;
