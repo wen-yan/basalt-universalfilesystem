@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.File;
+using BasaltHexagons.UniversalFileSystem.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,7 +15,16 @@ public abstract class UniversalFileSystemStore
 {
     public static IEnumerable<object[]> GetAllUniversalFileSystems()
     {
+        yield return [CreateMemoryUniversalFileSystem()];
         yield return [CreateFileUniversalFileSystem()];
+    }
+
+    private static UniversalFileSystemTestWrapper CreateMemoryUniversalFileSystem()
+    {
+        return CreateUniversalFileSystem(
+            builder => { builder.AddInMemoryCollection(new Dictionary<string, string?> { ["UniversalFileSystem:Schemes:memory:ImplementationFactoryClass"] = "BasaltHexagons.UniversalFileSystem.Memory.MemoryFileSystemFactory" }); },
+            services => services.AddMemoryFileSystem(),
+            $"memory://");
     }
 
     private static UniversalFileSystemTestWrapper CreateFileUniversalFileSystem()

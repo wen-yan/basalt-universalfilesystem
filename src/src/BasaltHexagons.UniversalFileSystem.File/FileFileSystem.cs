@@ -15,33 +15,60 @@ class FileFileSystem : AsyncDisposable, IFileSystem
 
     public async IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        if (!Directory.Exists(prefix.AbsolutePath))
-            yield break;
-
-        IEnumerable<string> entries = Directory.EnumerateFileSystemEntries(prefix.AbsolutePath, "*", new EnumerationOptions
+        EnumerationOptions enumerationOptions = new()
         {
-            RecurseSubdirectories = recursive,
+            RecurseSubdirectories = false,
             ReturnSpecialDirectories = false
-        });
-        foreach (string entry in entries)
+        };
+
+        async IAsyncEnumerable<ObjectMetadata> EnumerateDirectoryAsync(string directory, string startsWith, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            ObjectMetadata? metadata = await this.GetObjectMetadataAsync(new Uri(entry), cancellationToken);
-            if (metadata != null)
-                yield return metadata;
+            foreach (string entry in Directory.EnumerateFiles(directory, "*", enumerationOptions))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if (!entry.Contains(startsWith)) continue;
+
+                ObjectMetadata? metadata = await this.GetObjectMetadataInternalAsync(new Uri(entry), false);
+                if (metadata != null)
+                    yield return metadata;
+            }
+
+            foreach (string entry in Directory.EnumerateDirectories(directory, "*", enumerationOptions))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if (!entry.Contains(startsWith)) continue;
+
+                ObjectMetadata? metadata = await this.GetObjectMetadataInternalAsync(new Uri(entry), true);
+                if (metadata != null)
+                    yield return metadata;
+
+                if (!recursive) continue;
+
+                await foreach (ObjectMetadata objectMetadata in EnumerateDirectoryAsync(entry, string.Empty, cancellationToken))
+                {
+                    yield return objectMetadata;
+                }
+            }
         }
 
-        await ValueTask.CompletedTask;
+        int lastSlashIndex = prefix.AbsolutePath.LastIndexOf('/');
+        string directory = prefix.AbsolutePath.Substring(0, lastSlashIndex);
+        string startsWith = prefix.AbsolutePath.Substring(lastSlashIndex + 1);
+
+        if (!Directory.Exists(directory))
+            yield break;
+
+        await foreach (ObjectMetadata objectMetadata in EnumerateDirectoryAsync(directory, startsWith, cancellationToken))
+        {
+            yield return objectMetadata;
+        }
     }
 
     public Task<ObjectMetadata?> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
     {
-        if (System.IO.File.Exists(path.AbsolutePath))
-            return Task.FromResult<ObjectMetadata?>(new ObjectMetadata(path, ObjectType.File, new FileInfo(path.AbsolutePath).Length, System.IO.File.GetLastWriteTimeUtc(path.AbsolutePath)));
-        if (System.IO.Directory.Exists(path.AbsolutePath))
-            return Task.FromResult<ObjectMetadata?>(new ObjectMetadata(path, ObjectType.Prefix, null, null));
-
-        return Task.FromResult<ObjectMetadata?>(null);
+        return this.GetObjectMetadataInternalAsync(path, false);
     }
 
     public Task<Stream> GetObjectAsync(Uri path, CancellationToken cancellationToken)
@@ -84,4 +111,14 @@ class FileFileSystem : AsyncDisposable, IFileSystem
     }
 
     #endregion
+
+    private Task<ObjectMetadata?> GetObjectMetadataInternalAsync(Uri path, bool returnDirectory)
+    {
+        if (System.IO.File.Exists(path.AbsolutePath))
+            return Task.FromResult<ObjectMetadata?>(new ObjectMetadata(path, ObjectType.File, new FileInfo(path.AbsolutePath).Length, System.IO.File.GetLastWriteTimeUtc(path.AbsolutePath)));
+        if (returnDirectory && System.IO.Directory.Exists(path.AbsolutePath))
+            return Task.FromResult<ObjectMetadata?>(new ObjectMetadata(new Uri($"{path}/"), ObjectType.Prefix, null, null));
+
+        return Task.FromResult<ObjectMetadata?>(null);
+    }
 }

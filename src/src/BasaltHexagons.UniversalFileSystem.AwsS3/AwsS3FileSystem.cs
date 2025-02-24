@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -57,8 +58,15 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
     {
         GetObjectMetadataRequest request = new();
         (request.BucketName, request.Key) = this.DeconstructUri(path);
-        GetObjectMetadataResponse response = await this.Client.GetObjectMetadataAsync(request, cancellationToken);
-        return new ObjectMetadata(path, ObjectType.File, response.ContentLength, response.LastModified);
+        try
+        {
+            GetObjectMetadataResponse response = await this.Client.GetObjectMetadataAsync(request, cancellationToken);
+            return new ObjectMetadata(path, ObjectType.File, response.ContentLength, response.LastModified);
+        }
+        catch (AmazonS3Exception ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            return null;
+        }
     }
 
     public async IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive, [EnumeratorCancellation] CancellationToken cancellationToken)

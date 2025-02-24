@@ -27,7 +27,6 @@ public class PutObjectTests
 
         // verify
         UniversalFileSystemAssert.VerifyObject(ufs, "dir/test.txt", ObjectType.File, "test content");
-        UniversalFileSystemAssert.VerifyObject(ufs, "dir", ObjectType.Prefix, null);
     }
 
     [DataTestMethod]

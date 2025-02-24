@@ -1,23 +1,20 @@
 ﻿using System;
-
 using Amazon;
 using Amazon.Runtime;
 using Amazon.Runtime.CredentialManagement;
 using Amazon.S3;
-
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.Core.Configuration;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BasaltHexagons.UniversalFileSystem.AwsS3;
 
-enum clientCredentialType
+enum ClientCredentialType
 {
-    Basic,                      // BasicAWSCredentials
-    EnvironmentVariables,       // EnvironmentVariablesAWSCredentials
-    Profile,                    // StoredProfileAWSCredentials
+    Basic, // BasicAWSCredentials
+    EnvironmentVariables, // EnvironmentVariablesAWSCredentials
+    Profile, // StoredProfileAWSCredentials
 }
 
 /// <summary>
@@ -58,18 +55,18 @@ class AwsS3FileSystemFactory : IFileSystemFactory
     private IAmazonS3 CreateAmazonS3ClientFromConfiguration(IConfiguration implementationConfiguration)
     {
         // credentials
-        clientCredentialType clientCredentialType = implementationConfiguration.GetEnumValue<clientCredentialType>("Credentials:Type");
+        ClientCredentialType clientCredentialType = implementationConfiguration.GetEnumValue<ClientCredentialType>("Credentials:Type");
 
         AWSCredentials credentials = clientCredentialType switch
         {
-            clientCredentialType.Basic => CreateBasicAWSCredentials(implementationConfiguration),
-            clientCredentialType.EnvironmentVariables => new EnvironmentVariablesAWSCredentials(),
-            clientCredentialType.Profile => CreateStoredProfileAWSCredentials(implementationConfiguration),
+            ClientCredentialType.Basic => CreateBasicAWSCredentials(implementationConfiguration),
+            ClientCredentialType.EnvironmentVariables => new EnvironmentVariablesAWSCredentials(),
+            ClientCredentialType.Profile => CreateStoredProfileAWSCredentials(implementationConfiguration),
             _ => throw new ConfigurationException($"Unknown client credential type [{clientCredentialType}]"),
         };
 
         // config
-        AmazonS3Config config = new AmazonS3Config();
+        AmazonS3Config config = new();
         string? regionEndpoint = implementationConfiguration.GetValue<string>("Options:RegionEndpoint", () => null);
         string? serviceUrl = implementationConfiguration.GetValue<string>("Options:ServiceURL", () => null);
         bool? forcePathStyle = implementationConfiguration.GetBoolValue("Options:ForcePathStyle", () => null);

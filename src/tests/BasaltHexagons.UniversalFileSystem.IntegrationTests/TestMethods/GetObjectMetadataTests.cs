@@ -34,10 +34,7 @@ public class GetObjectMetadataTests
         ObjectMetadata? metadata = await ufs.GetObjectMetadataAsync("dir");
 
         // Verify
-        Assert.IsNotNull(metadata);
-        Assert.AreEqual(ObjectType.Prefix, metadata.ObjectType);
-        Assert.IsNull(metadata.ContentSize);
-        Assert.IsNull(metadata.LastModifiedTimeUtc);
+        Assert.IsNull(metadata);
     }
 
     [DataTestMethod]

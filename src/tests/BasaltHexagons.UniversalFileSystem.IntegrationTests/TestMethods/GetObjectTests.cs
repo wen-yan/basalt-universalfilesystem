@@ -46,6 +46,7 @@ public class GetObjectTests
         }
         catch (Exception)
         {
+            // ignored
         }
     }
 
@@ -64,6 +65,7 @@ public class GetObjectTests
         }
         catch (Exception)
         {
+            // ignored
         }
     }
 }

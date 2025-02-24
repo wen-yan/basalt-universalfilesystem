@@ -9,6 +9,7 @@
         <ProjectReference Include="..\..\src\BasaltHexagons.UniversalFileSystem.AwsS3\BasaltHexagons.UniversalFileSystem.AwsS3.csproj"/>
         <ProjectReference Include="..\..\src\BasaltHexagons.UniversalFileSystem.AzureBlob\BasaltHexagons.UniversalFileSystem.AzureBlob.csproj"/>
         <ProjectReference Include="..\..\src\BasaltHexagons.UniversalFileSystem.File\BasaltHexagons.UniversalFileSystem.File.csproj"/>
+        <ProjectReference Include="..\..\src\BasaltHexagons.UniversalFileSystem.Memory\BasaltHexagons.UniversalFileSystem.Memory.csproj" />
         <ProjectReference Include="..\..\src\BasaltHexagons.UniversalFileSystem\BasaltHexagons.UniversalFileSystem.csproj"/>
         <ProjectReference Include="..\BasaltHexagons.UniversalFileSystem.TestUtils\BasaltHexagons.UniversalFileSystem.TestUtils.csproj"/>
     </ItemGroup>
