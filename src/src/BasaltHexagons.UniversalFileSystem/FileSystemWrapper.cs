@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,6 +15,7 @@ namespace BasaltHexagons.UniversalFileSystem;
 /// - Check if object is disposed
 /// - Handle exceptions
 /// </summary>
+[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class FileSystemWrapper : AsyncDisposable, IFileSystem
 {
     public FileSystemWrapper(IFileSystem fileSystem)
@@ -71,7 +73,7 @@ class FileSystemWrapper : AsyncDisposable, IFileSystem
 
     protected override async ValueTask AsyncDisposeManagedObjects()
     {
-        await this.FileSystem.DisposeAsync().ConfigureAwait(false);
+        await this.FileSystem.DisposeAsync();
         await base.AsyncDisposeManagedObjects();
     }
 }

@@ -3,10 +3,10 @@ BasaltHexagons:
         Schemes:
             file:
                 ImplementationFactoryClass: BasaltHexagons.UniversalFileSystem.File.FileFileSystemFactory
-                ImplementationConfiguration:
+                Implementation:
             s3:
                 ImplementationFactoryClass: BasaltHexagons.UniversalFileSystem.AwsS3.AwsS3FileSystemFactory
-                ImplementationConfiguration:
+                Implementation:
                     Client:
                         Credentials:
                             Type: Basic
@@ -15,13 +15,14 @@ BasaltHexagons:
                         Options:
                             ServiceURL: http://localhost:4566
                             ForcePathStyle: true
+                    Settings:
+                        CreateBucketIfNotExists: false
             abfss:
                 ImplementationFactoryClass: BasaltHexagons.UniversalFileSystem.AzureBlob.AzureBlobFileSystemFactory
-                ImplementationConfiguration:
+                Implementation:
                     Client:
                         ServiceUri: http://localhost:10000/devstoreaccount1
                         Credentials:
                             Type: SharedKey
                             AccountName: devstoreaccount1
                             AccountKey: Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
-

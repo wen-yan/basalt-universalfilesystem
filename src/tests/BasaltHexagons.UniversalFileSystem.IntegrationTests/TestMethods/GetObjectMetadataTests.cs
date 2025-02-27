@@ -17,10 +17,7 @@ public class GetObjectMetadataTests
         ObjectMetadata? metadata = await ufs.GetObjectMetadataAsync("test.txt");
 
         // Verify
-        Assert.IsNotNull(metadata);
-        Assert.AreEqual(ObjectType.File, metadata.ObjectType);
-        Assert.AreEqual("test content".Length, metadata.ContentSize);
-        Assert.IsNotNull(metadata.LastModifiedTimeUtc);
+        UniversalFileSystemAssert.VerifyObject(ufs, "test.txt", ObjectType.File, "test content", metadata);
     }
 
     [DataTestMethod]

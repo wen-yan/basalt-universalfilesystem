@@ -1,15 +1,17 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace BasaltHexagons.UniversalFileSystem.Core.Disposing;
 
+[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 public abstract class AsyncDisposable : Disposable, IAsyncDisposable
 {
     #region IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
-        await AsyncDisposeManagedObjects().ConfigureAwait(false);
+        await AsyncDisposeManagedObjects();
         Dispose(disposing: false);
         GC.SuppressFinalize(this);
     }

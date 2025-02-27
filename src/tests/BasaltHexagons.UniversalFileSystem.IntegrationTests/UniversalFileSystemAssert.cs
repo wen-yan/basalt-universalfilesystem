@@ -1,3 +1,4 @@
+using System;
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.TestUtils;
 
@@ -10,6 +11,11 @@ public static class UniversalFileSystemAssert
         ObjectMetadata? actualMetadata = ufs.GetObjectMetadataAsync(path).Result;
         Assert.IsNotNull(actualMetadata);
 
+        VerifyObject(ufs, path, objectType, content, actualMetadata);
+    }
+
+    public static void VerifyObject(UniversalFileSystemTestWrapper ufs, string path, ObjectType objectType, string? content, ObjectMetadata? actualMetadata)
+    {
         ObjectMetadata expectedMetadata = objectType == ObjectType.File
             ? ufs.MakeObjectMetadata(path, objectType, content?.Length)
             : ufs.MakeObjectMetadata(path, objectType, content?.Length, null);

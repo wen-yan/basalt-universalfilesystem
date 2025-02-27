@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using BasaltHexagons.UniversalFileSystem.Core;
+using BasaltHexagons.UniversalFileSystem.TestUtils;
 
 namespace BasaltHexagons.UniversalFileSystem.IntegrationTests.TestMethods;
 
@@ -61,14 +62,7 @@ public class MoveObjectTests
         await ufs.PutObjectAsync("test2.txt", "test content2", false);
 
         // test
-        try
-        {
-            await ufs.MoveObjectAsync("test.txt", "test2.txt", false);
-            Assert.Fail("Expected exception was not thrown.");
-        }
-        catch
-        {
-        }
+        Assert.That.ExpectException(async () => await ufs.MoveObjectAsync("test.txt", "test2.txt", false));
 
         // verify
         UniversalFileSystemAssert.VerifyObject(ufs, "test.txt", ObjectType.File, "test content");
@@ -83,17 +77,9 @@ public class MoveObjectTests
         await ufs.PutObjectAsync("test.txt", "test content", false);
 
         // test
-        await ufs.MoveObjectAsync("test.txt", "test.txt", true);
+        Assert.That.ExpectException(async () => await ufs.MoveObjectAsync("test.txt", "test.txt", true));
 
         // verify
         UniversalFileSystemAssert.VerifyObject(ufs, "test.txt", ObjectType.File, "test content");
-    }
-
-    [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task MoveObject_MoveToDifferentFileSystem(UniversalFileSystemTestWrapper ufs)
-    {
-        // TODO: need memory file system
-        await Task.CompletedTask;
     }
 }

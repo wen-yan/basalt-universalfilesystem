@@ -4,12 +4,12 @@ using System.Linq;
 
 namespace BasaltHexagons.UniversalFileSystem.TestUtils;
 
-public static class EnumerableAssert
+public static class CollectionAssertExtensions
 {
-    public static void AreEquivalent<T>(IEnumerable<T> expected, IEnumerable<T> actual) where T : notnull
-        => AreEquivalent(expected, actual, EqualityComparer<T>.Default);
+    public static void AreEquivalent<T>(this CollectionAssert assert, IEnumerable<T> expected, IEnumerable<T> actual) where T : notnull
+        => assert.AreEquivalent(expected, actual, EqualityComparer<T>.Default);
 
-    public static void AreEquivalent<T>(IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T> comparer) where T : notnull
+    public static void AreEquivalent<T>(this CollectionAssert _, IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T> comparer) where T : notnull
     {
         List<T> expectedList = expected.ToList();
         List<T> actualList = actual.ToList();

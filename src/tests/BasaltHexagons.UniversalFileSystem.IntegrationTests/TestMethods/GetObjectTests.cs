@@ -1,5 +1,5 @@
-using System;
 using System.Threading.Tasks;
+using BasaltHexagons.UniversalFileSystem.TestUtils;
 
 namespace BasaltHexagons.UniversalFileSystem.IntegrationTests.TestMethods;
 
@@ -39,15 +39,8 @@ public class GetObjectTests
     public async Task GetObject_FileNotExists(UniversalFileSystemTestWrapper ufs)
     {
         // test
-        try
-        {
-            string content = await ufs.GetObjectAsync("test.txt");
-            Assert.Fail("Expected exception is not thrown.");
-        }
-        catch (Exception)
-        {
-            // ignored
-        }
+        Assert.That.ExpectException(async () => await ufs.GetObjectAsync("test.txt"));
+        await Task.CompletedTask;
     }
 
     [DataTestMethod]
@@ -58,14 +51,6 @@ public class GetObjectTests
         await ufs.PutObjectAsync("dir/test.txt", "test content", true);
 
         // test
-        try
-        {
-            string content = await ufs.GetObjectAsync("dir");
-            Assert.Fail("Expected exception is not thrown.");
-        }
-        catch (Exception)
-        {
-            // ignored
-        }
+        Assert.That.ExpectException(async () => await ufs.GetObjectAsync("dir"));
     }
 }

@@ -216,6 +216,6 @@ public class ListObjectsTests
 
     private void AssertObjectMetadataListAreEquivalent(IEnumerable<ObjectMetadata> expected, IEnumerable<ObjectMetadata> actual)
     {
-        EnumerableAssert.AreEquivalent(expected, actual, new ObjectMetadataLastModifiedTimeUtcRangeEqualityComparer());
+        CollectionAssert.That.AreEquivalent(expected, actual, new ObjectMetadataLastModifiedTimeUtcRangeEqualityComparer());
     }
 }
