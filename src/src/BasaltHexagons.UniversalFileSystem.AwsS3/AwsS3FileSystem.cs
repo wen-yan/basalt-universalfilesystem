@@ -43,7 +43,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
         (request.SourceBucket, request.SourceKey) = DeconstructUri(sourcePath);
         (request.DestinationBucket, request.DestinationKey) = DeconstructUri(destPath);
 
-        await this.TryCreateBucketIfNotExists(request.DestinationBucket, cancellationToken);
+        await this.TryCreateBucketIfNotExistsAsync(request.DestinationBucket, cancellationToken);
         await this.Client.CopyObjectAsync(request, cancellationToken);
     }
 
@@ -141,8 +141,6 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
 
     public async Task PutObjectAsync(Uri path, Stream stream, bool overwriteIfExists, CancellationToken cancellationToken)
     {
-        (string bucketName, string key) = DeconstructUri(path);
-
         if (!overwriteIfExists)
         {
             ObjectMetadata? existingObject = await this.GetObjectMetadataAsync(path, cancellationToken);
@@ -150,7 +148,8 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
                 throw new ArgumentException($"Object {path} already exists.");
         }
 
-        await this.TryCreateBucketIfNotExists(bucketName, cancellationToken);
+        (string bucketName, string key) = DeconstructUri(path);
+        await this.TryCreateBucketIfNotExistsAsync(bucketName, cancellationToken);
 
         PutObjectRequest request = new()
         {
@@ -192,17 +191,17 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
         return (bucket, key);
     }
 
-    private async Task TryCreateBucketIfNotExists(string bucketName, CancellationToken cancellationToken)
+    private async Task TryCreateBucketIfNotExistsAsync(string bucketName, CancellationToken cancellationToken)
     {
-        if (this.Settings.GetBoolValue("Options:CreateBucketIfNotExists", () => null) ?? false)
-            return;
-
-        // Check if bucket exists or not
-        PutBucketRequest request = new()
+        if (this.Settings.GetBoolValue("CreateBucketIfNotExists", () => null) ?? false)
         {
-            BucketName = bucketName,
-        };
+            // TODO: Check if bucket exists or not
+            PutBucketRequest request = new()
+            {
+                BucketName = bucketName,
+            };
 
-        PutBucketResponse response = await this.Client.PutBucketAsync(request, cancellationToken);
+            PutBucketResponse response = await this.Client.PutBucketAsync(request, cancellationToken);
+        }
     }
 }

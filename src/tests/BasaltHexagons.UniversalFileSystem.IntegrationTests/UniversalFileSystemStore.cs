@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using BasaltHexagons.UniversalFileSystem.AwsS3;
+using BasaltHexagons.UniversalFileSystem.AzureBlob;
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.File;
 using BasaltHexagons.UniversalFileSystem.Memory;
@@ -19,6 +20,7 @@ public abstract class UniversalFileSystemStore
         yield return [CreateMemoryUniversalFileSystem()];
         yield return [CreateFileUniversalFileSystem()];
         yield return [CreateAwsS3UniversalFileSystem()];
+        yield return [CreateAzureBlobUniversalFileSystem()];
     }
 
     private static UniversalFileSystemTestWrapper CreateMemoryUniversalFileSystem()
@@ -72,6 +74,25 @@ public abstract class UniversalFileSystemStore
             },
             services => services.AddAwsS3FileSystem(),
             $"s3://ufs-integration-test-s3");
+    }
+    
+    private static UniversalFileSystemTestWrapper CreateAzureBlobUniversalFileSystem()
+    {
+        return CreateUniversalFileSystem(
+            builder =>
+            {
+                builder.AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["Schemes:abfss:ImplementationFactoryClass"] = "BasaltHexagons.UniversalFileSystem.AzureBlob.AzureBlobFileSystemFactory",
+                    ["Schemes:abfss:Implementation:Client:ServiceUri"] = "http://localhost:10000/devstoreaccount1",
+                    ["Schemes:abfss:Implementation:Client:Credentials:Type"] = "SharedKey",
+                    ["Schemes:abfss:Implementation:Client:Credentials:AccountName"] = "devstoreaccount1",
+                    ["Schemes:abfss:Implementation:Client:Credentials:AccountKey"] = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==",
+                    ["Schemes:abfss:Implementation:Settings:CreateBlobContainerIfNotExists"] = "true",
+                });
+            },
+            services => services.AddAzureBlobFileSystem(),
+            $"abfss://ufs-integration-test-abfss");
     }
 
     private static UniversalFileSystemTestWrapper CreateUniversalFileSystem(Action<IConfigurationBuilder> configurationBuilder, Func<IServiceCollection, IServiceCollection> servicesBuilder, string baseUri)

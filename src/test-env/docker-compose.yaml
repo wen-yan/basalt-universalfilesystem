@@ -14,9 +14,28 @@ services:
       - LOCALSTACK_SERVICES=s3
     entrypoint: /startup.sh
     healthcheck:
-      test: curl -s http://localhost:4566/_localstack/health | jq -e '.services.s3 == "available"'
+      test: curl -s http://localhost:4566/_localstack/health | jq -e '.services.s3 == "available" or .services.s3 == "running"'
       interval: 30s
       timeout: 10s
       start_period: 3m
       start_interval: 10s
       retries: 20
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:3.33.0
+    container_name: azurite
+    hostname: azurite
+    ports:
+      # blob
+      # CredentialType: StorageSharedKeyCredential
+      # AccountName: devstoreaccount1
+      # AccountKey: Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
+      # ServiceUri: http://localhost:10000/devstoreaccount1
+      - 10000:10000 # blob
+      - 10001:10001 # queue
+      - 10002:10002 # table
+    # healthcheck:
+    #   test: curl -f http://localhost:10000/devstoreaccount1 || exit 1
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
