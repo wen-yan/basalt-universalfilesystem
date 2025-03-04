@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Amazon;
 using Amazon.Runtime;
 using Amazon.Runtime.CredentialManagement;
@@ -18,7 +19,7 @@ enum ClientCredentialType
 }
 
 /// <summary>
-/// ImplementationConfiguration
+/// Implementation:
 ///     Client:
 ///         Credentials
 ///             Type: Anonymous/Basic/EnvironmentVariables/Profile
@@ -29,7 +30,10 @@ enum ClientCredentialType
 ///             RegionEndpoint:
 ///             ServiceURL:
 ///             ForcePathStyle: true/false
+///     Settings:
+///         CreateBucketIfNotExists: false
 /// </summary>
+[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class AwsS3FileSystemFactory : IFileSystemFactory
 {
     public const string CustomClientServiceKey = "BasaltHexagons.UniversalFileSystem.AwsS3.AwsS3FileSystemFactory.CustomAmazonS3Client";
@@ -49,7 +53,7 @@ class AwsS3FileSystemFactory : IFileSystemFactory
             ? this.CreateAmazonS3ClientFromConfiguration(clientConfig)
             : this.ServiceProvider.GetRequiredKeyedService<IAmazonS3>(CustomClientServiceKey);
 
-        return new AwsS3FileSystem(client);
+        return new AwsS3FileSystem(client, implementationConfiguration.GetSection("Settings"));
     }
 
     private IAmazonS3 CreateAmazonS3ClientFromConfiguration(IConfiguration implementationConfiguration)

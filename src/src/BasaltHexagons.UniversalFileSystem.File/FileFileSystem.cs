@@ -9,6 +9,7 @@ using BasaltHexagons.UniversalFileSystem.Core.Disposing;
 
 namespace BasaltHexagons.UniversalFileSystem.File;
 
+[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class FileFileSystem : AsyncDisposable, IFileSystem
 {
     #region IFileSystem
@@ -82,7 +83,7 @@ class FileFileSystem : AsyncDisposable, IFileSystem
         if (dir != null)
             Directory.CreateDirectory(dir);
         await using FileStream fileStream = new(path.AbsolutePath, overwriteIfExists ? FileMode.Create : FileMode.CreateNew, FileAccess.Write);
-        await stream.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
+        await stream.CopyToAsync(fileStream, cancellationToken);
     }
 
     public Task<bool> DeleteObjectAsync(Uri path, CancellationToken cancellationToken)
@@ -96,16 +97,28 @@ class FileFileSystem : AsyncDisposable, IFileSystem
 
     public Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwriteIfExists, CancellationToken cancellationToken)
     {
+        if (oldPath == newPath)
+            throw new ArgumentException("Can't move object to itself.");
+
         string? directory = Path.GetDirectoryName(newPath.AbsolutePath);
         if (directory == null)
             return Task.FromException(new ArgumentException($"Can't get directory from path {newPath}"));
         Directory.CreateDirectory(directory);
+
         System.IO.File.Move(oldPath.AbsolutePath, newPath.AbsolutePath, overwriteIfExists);
         return Task.CompletedTask;
     }
 
     public Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwriteIfExists, CancellationToken cancellationToken)
     {
+        if (sourcePath == destPath)
+            throw new ArgumentException("Can't move object to itself.");
+
+        string? directory = Path.GetDirectoryName(destPath.AbsolutePath);
+        if (directory == null)
+            return Task.FromException(new ArgumentException($"Can't get directory from path {destPath}"));
+        Directory.CreateDirectory(directory);
+
         System.IO.File.Copy(sourcePath.AbsolutePath, destPath.AbsolutePath, overwriteIfExists);
         return Task.CompletedTask;
     }

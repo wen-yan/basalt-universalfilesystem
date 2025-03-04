@@ -1,0 +1,22 @@
+
+
+services:
+  localstack:
+    image: localstack/localstack:3.3.0
+    container_name: localstack
+    hostname: localstack
+    ports:
+      - 4566:4566
+    volumes:
+      - ./localstack/root/.aws/credentials:/root/.aws/credentials
+      - ./localstack/startup.sh:/startup.sh
+    environment:
+      - LOCALSTACK_SERVICES=s3
+    entrypoint: /startup.sh
+    healthcheck:
+      test: curl -s http://localhost:4566/_localstack/health | jq -e '.services.s3 == "available"'
+      interval: 30s
+      timeout: 10s
+      start_period: 3m
+      start_interval: 10s
+      retries: 20

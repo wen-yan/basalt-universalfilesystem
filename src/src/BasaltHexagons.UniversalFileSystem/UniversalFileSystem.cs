@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using BasaltHexagons.UniversalFileSystem.Core;
@@ -9,6 +10,7 @@ using BasaltHexagons.UniversalFileSystem.Core.Disposing;
 
 namespace BasaltHexagons.UniversalFileSystem;
 
+[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
 {
     private readonly ConcurrentDictionary<string /*scheme*/, IFileSystem> _impls = new();

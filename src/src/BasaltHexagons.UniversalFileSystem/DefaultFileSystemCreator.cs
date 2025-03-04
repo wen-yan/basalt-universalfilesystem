@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using System.Runtime.CompilerServices;
 using BasaltHexagons.UniversalFileSystem.Core;
 
 using Microsoft.Extensions.Configuration;
@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BasaltHexagons.UniversalFileSystem;
 
+[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class DefaultFileSystemCreator : IFileSystemCreator
 {
     public DefaultFileSystemCreator(IServiceProvider serviceProvider, IConfiguration configuration)
@@ -28,7 +29,7 @@ class DefaultFileSystemCreator : IFileSystemCreator
             throw new KeyNotFoundException(nameof(scheme));
 
         IFileSystemFactory factory = this.ServiceProvider.GetRequiredKeyedService<IFileSystemFactory>(implementationFactoryClass);
-        IConfiguration implementationConfig = configurationSection.GetSection("ImplementationConfiguration");
+        IConfiguration implementationConfig = configurationSection.GetSection("Implementation");
 
         return new FileSystemWrapper(factory.Create(implementationConfig));
     }

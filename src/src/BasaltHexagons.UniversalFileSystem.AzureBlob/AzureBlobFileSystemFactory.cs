@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Runtime.CompilerServices;
 using Azure.Identity;
 using Azure.Storage;
 using Azure.Storage.Blobs;
@@ -19,7 +19,7 @@ enum ClientCredentialType
 }
 
 /// <summary>
-/// ImplementationConfiguration
+/// Implementation:
 ///     Client:                  # if not exists, get it from depedency injection
 ///         ServiceUri: 
 ///         Credentials
@@ -27,6 +27,7 @@ enum ClientCredentialType
 ///             AccountName:     # Type = SharedKey
 ///             AccountKey:      # Type = SharedKey
 /// </summary>
+[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class AzureBlobFileSystemFactory : IFileSystemFactory
 {
     public const string CustomClientServiceKey = "BasaltHexagons.UniversalFileSystem.AzureBlob.AzureBlobFileSystemFactory.CustomBlobServiceClient";

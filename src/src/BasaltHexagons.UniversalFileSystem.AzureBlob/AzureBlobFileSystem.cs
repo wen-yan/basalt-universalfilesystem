@@ -14,6 +14,7 @@ using BasaltHexagons.UniversalFileSystem.Core.Disposing;
 
 namespace BasaltHexagons.UniversalFileSystem.AzureBlob;
 
+[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
 {
     public AzureBlobFileSystem(BlobServiceClient client)
@@ -53,7 +54,7 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
 
         if (!await containerClient.ExistsAsync(cancellationToken)) yield break;
 
-        await foreach (BlobHierarchyItem blobHierarchyItem in containerClient.GetBlobsByHierarchyAsync(prefix: key, delimiter: "/", cancellationToken: cancellationToken).ConfigureAwait(false))
+        await foreach (BlobHierarchyItem blobHierarchyItem in containerClient.GetBlobsByHierarchyAsync(prefix: key, delimiter: "/", cancellationToken: cancellationToken))
         {
             if (blobHierarchyItem.IsPrefix)
             {

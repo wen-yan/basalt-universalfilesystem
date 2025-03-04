@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using BasaltHexagons.UniversalFileSystem.Core;
@@ -10,6 +11,7 @@ namespace BasaltHexagons.UniversalFileSystem.Memory;
 
 record File(byte[] Content, DateTime LastModifiedTimeUtc);
 
+[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class MemoryFileSystem : AsyncDisposable, IFileSystem
 {
     private Dictionary<string, File> _files = new();
@@ -89,6 +91,9 @@ class MemoryFileSystem : AsyncDisposable, IFileSystem
 
     public Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwriteIfExists, CancellationToken cancellationToken)
     {
+        if (oldPath == newPath)
+            throw new ArgumentException("Can't move object to itself");
+
         bool oldExists = _files.TryGetValue(oldPath.AbsolutePath, out File? file);
         if (!oldExists)
             throw new ArgumentException($"File not found: {oldPath}", nameof(oldPath));
@@ -104,6 +109,9 @@ class MemoryFileSystem : AsyncDisposable, IFileSystem
 
     public Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwriteIfExists, CancellationToken cancellationToken)
     {
+        if (sourcePath == destPath)
+            throw new ArgumentException("Can't copy object to itself");
+
         bool sourceExists = _files.TryGetValue(sourcePath.AbsolutePath, out File? file);
         if (!sourceExists)
             throw new ArgumentException($"Source file not found: {sourcePath}", nameof(sourcePath));
@@ -118,15 +126,5 @@ class MemoryFileSystem : AsyncDisposable, IFileSystem
 
     #endregion
 
-    private static Uri MakeUri(Uri seed, string path)
-    {
-        Uri result = new Uri(seed, path);
-        // Uri result = new UriBuilder()
-        // {
-        //     Scheme = seed.Scheme,
-        //     Host = seed.Host,
-        //     Path = path,
-        // }.Uri;
-        return result;
-    }
+    private static Uri MakeUri(Uri seed, string path) => new(seed, path);
 }
