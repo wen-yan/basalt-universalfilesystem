@@ -47,7 +47,7 @@ class AzureBlobFileSystemFactory : IFileSystemFactory
             ? this.CreateBlobServiceClientFromConfiguration(clientConfig)
             : this.ServiceProvider.GetRequiredKeyedService<BlobServiceClient>(CustomClientServiceKey);
 
-        return new AzureBlobFileSystem(client);
+        return new AzureBlobFileSystem(client, implementationConfiguration.GetSection("Settings"));
     }
 
     private BlobServiceClient CreateBlobServiceClientFromConfiguration(IConfiguration implementationConfiguration)
