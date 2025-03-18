@@ -71,9 +71,9 @@ class FileSystemWrapper : AsyncDisposable, IFileSystem
 
     #endregion
 
-    protected override async ValueTask AsyncDisposeManagedObjects()
+    protected override async ValueTask DisposeManagedObjectsAsync()
     {
         await this.FileSystem.DisposeAsync();
-        await base.AsyncDisposeManagedObjects();
+        await base.DisposeManagedObjectsAsync();
     }
 }

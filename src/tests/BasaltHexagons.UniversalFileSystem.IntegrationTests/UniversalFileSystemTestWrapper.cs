@@ -105,11 +105,11 @@ public class UniversalFileSystemTestWrapper : AsyncDisposable, IUniversalFileSys
 
     #endregion
 
-    protected override async ValueTask AsyncDisposeManagedObjects()
+    protected override async ValueTask DisposeManagedObjectsAsync()
     {
         await this.Inner.DisposeAsync();
         this.Host.Dispose();
-        await base.AsyncDisposeManagedObjects();
+        await base.DisposeManagedObjectsAsync();
     }
 
     // make test case easy to read

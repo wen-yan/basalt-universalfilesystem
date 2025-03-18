@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
-using Azure.Storage.Sas;
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.Core.Configuration;
 using BasaltHexagons.UniversalFileSystem.Core.Disposing;
+using BasaltHexagons.UniversalFileSystem.Core.IO;
 using Microsoft.Extensions.Configuration;
 
 namespace BasaltHexagons.UniversalFileSystem.AzureBlob;
@@ -66,14 +64,12 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
 
     public async Task<Stream> GetObjectAsync(Uri path, CancellationToken cancellationToken)
     {
-        // TODO: close BlobDownloadStreamingResult too
         BlobClient blobClient = this.GetBlobClient(path);
-        Response<BlobDownloadStreamingResult> response =
-            await blobClient.DownloadStreamingAsync(cancellationToken: cancellationToken);
+        Response<BlobDownloadStreamingResult> response = await blobClient.DownloadStreamingAsync(cancellationToken: cancellationToken);
         if (!response.HasValue || response.Value.Content == null)
             throw new ArgumentException($"Object {path} not found.");
-
-        return response.Value.Content;
+        
+        return new StreamWrapper(response.Value.Content, [], [response.Value]);
     }
 
     public async Task<ObjectMetadata?> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)

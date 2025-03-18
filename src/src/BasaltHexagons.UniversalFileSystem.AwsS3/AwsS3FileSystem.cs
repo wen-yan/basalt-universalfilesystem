@@ -11,6 +11,7 @@ using Amazon.S3.Util;
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.Core.Configuration;
 using BasaltHexagons.UniversalFileSystem.Core.Disposing;
+using BasaltHexagons.UniversalFileSystem.Core.IO;
 using Microsoft.Extensions.Configuration;
 
 namespace BasaltHexagons.UniversalFileSystem.AwsS3;
@@ -65,9 +66,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
         (request.BucketName, request.Key) = DeconstructUri(path);
 
         GetObjectResponse response = await this.Client.GetObjectAsync(request, cancellationToken);
-
-        // TODO: how to dispose `response` object
-        return response.ResponseStream;
+        return new StreamWrapper(response.ResponseStream, [], [response]);
     }
 
     public async Task<ObjectMetadata?> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
@@ -165,10 +164,10 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
 
     #region AsyncDisposable
 
-    protected override ValueTask AsyncDisposeManagedObjects()
+    protected override ValueTask DisposeManagedObjectsAsync()
     {
         this.Client.Dispose();
-        return base.AsyncDisposeManagedObjects();
+        return base.DisposeManagedObjectsAsync();
     }
 
     #endregion AsyncDisposable
@@ -195,13 +194,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
     {
         if (this.Settings.GetBoolValue("CreateBucketIfNotExists", () => null) ?? false)
         {
-            // TODO: Check if bucket exists or not
-            PutBucketRequest request = new()
-            {
-                BucketName = bucketName,
-            };
-
-            PutBucketResponse response = await this.Client.PutBucketAsync(request, cancellationToken);
+            await this.Client.EnsureBucketExistsAsync(bucketName);
         }
     }
 }

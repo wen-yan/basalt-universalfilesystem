@@ -98,12 +98,12 @@ class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
 
     #region AsyncDisposable
 
-    protected override async ValueTask AsyncDisposeManagedObjects()
+    protected override async ValueTask DisposeManagedObjectsAsync()
     {
         foreach (IFileSystem fileSystem in _impls.Values)
             await fileSystem.DisposeAsync();
         _impls.Clear();
-        await base.AsyncDisposeManagedObjects();
+        await base.DisposeManagedObjectsAsync();
     }
 
     #endregion
