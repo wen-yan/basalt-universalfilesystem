@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\BasaltHexagons.UniversalFileSystem.Core\BasaltHexagons.UniversalFileSystem.Core.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Google.Authentication" Version="0.74.0" />
+        <PackageReference Include="Google.Cloud.Storage.V1" Version="4.11.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+    </ItemGroup>
+
+</Project>
