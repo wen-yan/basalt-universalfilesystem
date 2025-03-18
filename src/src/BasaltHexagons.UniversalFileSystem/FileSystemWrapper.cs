@@ -27,10 +27,10 @@ class FileSystemWrapper : AsyncDisposable, IFileSystem
 
     #region IFileSystem
 
-    public Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwriteIfExists, CancellationToken cancellationToken)
+    public Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwrite, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
-        return this.FileSystem.CopyObjectAsync(sourcePath, destPath, overwriteIfExists, cancellationToken);
+        return this.FileSystem.CopyObjectAsync(sourcePath, destPath, overwrite, cancellationToken);
     }
 
     public Task<bool> DeleteObjectAsync(Uri path, CancellationToken cancellationToken)
@@ -57,16 +57,22 @@ class FileSystemWrapper : AsyncDisposable, IFileSystem
         return this.FileSystem.ListObjectsAsync(prefix, recursive, cancellationToken);
     }
 
-    public Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwriteIfExists, CancellationToken cancellationToken)
+    public Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
-        return this.FileSystem.MoveObjectAsync(oldPath, newPath, overwriteIfExists, cancellationToken);
+        return this.FileSystem.MoveObjectAsync(oldPath, newPath, overwrite, cancellationToken);
     }
 
-    public Task PutObjectAsync(Uri path, Stream stream, bool overwriteIfExists, CancellationToken cancellationToken)
+    public Task PutObjectAsync(Uri path, Stream stream, bool overwrite, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
-        return this.FileSystem.PutObjectAsync(path, stream, overwriteIfExists, cancellationToken);
+        return this.FileSystem.PutObjectAsync(path, stream, overwrite, cancellationToken);
+    }
+
+    public Task<bool> DoesFileExistAsync(Uri path, CancellationToken cancellationToken)
+    {
+        this.CheckIsDisposed();
+        return this.FileSystem.DoesFileExistAsync(path, cancellationToken);
     }
 
     #endregion

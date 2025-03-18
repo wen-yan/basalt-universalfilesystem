@@ -31,13 +31,11 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
 
     #region IFileSystem
 
-    public async Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwriteIfExists, CancellationToken cancellationToken)
+    public async Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwrite, CancellationToken cancellationToken)
     {
-        if (!overwriteIfExists)
+        if (!overwrite && await this.DoesFileExistAsync(destPath, cancellationToken))
         {
-            ObjectMetadata? existingObject = await this.GetObjectMetadataAsync(destPath, cancellationToken);
-            if (existingObject != null)
-                throw new ArgumentException($"Object {destPath} already exists.");
+            throw new ArgumentException($"Object {destPath} already exists.");
         }
 
         CopyObjectRequest request = new();
@@ -50,7 +48,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
 
     public async Task<bool> DeleteObjectAsync(Uri path, CancellationToken cancellationToken)
     {
-        if ((await this.GetObjectMetadataAsync(path, cancellationToken)) == null)
+        if (!await this.DoesFileExistAsync(path, cancellationToken))
             return false;
 
         DeleteObjectRequest request = new();
@@ -132,19 +130,17 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
         }
     }
 
-    public async Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwriteIfExists, CancellationToken cancellationToken)
+    public async Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
     {
-        await this.CopyObjectAsync(oldPath, newPath, overwriteIfExists, cancellationToken);
+        await this.CopyObjectAsync(oldPath, newPath, overwrite, cancellationToken);
         await this.DeleteObjectAsync(oldPath, cancellationToken);
     }
 
-    public async Task PutObjectAsync(Uri path, Stream stream, bool overwriteIfExists, CancellationToken cancellationToken)
+    public async Task PutObjectAsync(Uri path, Stream stream, bool overwrite, CancellationToken cancellationToken)
     {
-        if (!overwriteIfExists)
+        if (!overwrite && await this.DoesFileExistAsync(path, cancellationToken))
         {
-            ObjectMetadata? existingObject = await this.GetObjectMetadataAsync(path, cancellationToken);
-            if (existingObject != null)
-                throw new ArgumentException($"Object {path} already exists.");
+            throw new ArgumentException($"Object {path} already exists.");
         }
 
         (string bucketName, string key) = DeconstructUri(path);
@@ -158,6 +154,8 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
         };
         PutObjectResponse response = await this.Client.PutObjectAsync(request, cancellationToken);
     }
+
+    public async Task<bool> DoesFileExistAsync(Uri path, CancellationToken cancellationToken) => (await this.GetObjectMetadataAsync(path, cancellationToken)) != null;
 
     #endregion IFileSystem
 

@@ -18,7 +18,7 @@ public class MoveObjectTests
         await ufs.MoveObjectAsync("test.txt", "test2.txt", false);
 
         // verify
-        Assert.IsFalse(await ufs.ExistsAsync("test.txt"));
+        Assert.IsFalse(await ufs.DoesFileExistAsync("test.txt"));
         UniversalFileSystemAssert.VerifyObject(ufs, "test2.txt", ObjectType.File, "test content");
     }
 
@@ -33,7 +33,7 @@ public class MoveObjectTests
         await ufs.MoveObjectAsync("test.txt", "dir/test.txt", false);
 
         // verify
-        Assert.IsFalse(await ufs.ExistsAsync("test.txt"));
+        Assert.IsFalse(await ufs.DoesFileExistAsync("test.txt"));
         UniversalFileSystemAssert.VerifyObject(ufs, "dir/test.txt", ObjectType.File, "test content");
     }
 
@@ -49,7 +49,7 @@ public class MoveObjectTests
         await ufs.MoveObjectAsync("test.txt", "test2.txt", true);
 
         // verify
-        Assert.IsFalse(await ufs.ExistsAsync("test.txt"));
+        Assert.IsFalse(await ufs.DoesFileExistAsync("test.txt"));
         UniversalFileSystemAssert.VerifyObject(ufs, "test2.txt", ObjectType.File, "test content");
     }
 

@@ -30,13 +30,13 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
 
     #region IFileSystem
 
-    public async Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwriteIfExists,
+    public async Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwrite,
         CancellationToken cancellationToken)
     {
         BlobClient sourceBlobClient = this.GetBlobClient(sourcePath);
         BlobClient destBlobClient = this.GetBlobClient(destPath);
 
-        if (!overwriteIfExists && await destBlobClient.ExistsAsync(cancellationToken))
+        if (!overwrite && await this.DoesFileExistAsync(destPath, cancellationToken))
         {
             throw new ArgumentException($"Object {destPath} already exists.");
         }
@@ -68,15 +68,14 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
         Response<BlobDownloadStreamingResult> response = await blobClient.DownloadStreamingAsync(cancellationToken: cancellationToken);
         if (!response.HasValue || response.Value.Content == null)
             throw new ArgumentException($"Object {path} not found.");
-        
+
         return new StreamWrapper(response.Value.Content, [], [response.Value]);
     }
 
     public async Task<ObjectMetadata?> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
     {
         BlobClient blobClient = this.GetBlobClient(path);
-        Response<bool> existsResponse = await blobClient.ExistsAsync(cancellationToken);
-        if (!existsResponse.HasValue || !existsResponse.Value)
+        if (!await this.DoesFileExistAsync(path, cancellationToken))
             return null;
 
         BlobProperties properties = await blobClient.GetPropertiesAsync(cancellationToken: cancellationToken);
@@ -120,25 +119,29 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
         }
     }
 
-    public async Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwriteIfExists, CancellationToken cancellationToken)
+    public async Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
     {
-        await this.CopyObjectAsync(oldPath, newPath, overwriteIfExists, cancellationToken);
+        await this.CopyObjectAsync(oldPath, newPath, overwrite, cancellationToken);
         await this.DeleteObjectAsync(oldPath, cancellationToken);
     }
 
-    public async Task PutObjectAsync(Uri path, Stream stream, bool overwriteIfExists,
-        CancellationToken cancellationToken)
+    public async Task PutObjectAsync(Uri path, Stream stream, bool overwrite, CancellationToken cancellationToken)
     {
-        if (!overwriteIfExists)
+        if (!overwrite && await this.DoesFileExistAsync(path, cancellationToken))
         {
-            ObjectMetadata? existingObject = await this.GetObjectMetadataAsync(path, cancellationToken);
-            if (existingObject != null)
-                throw new ArgumentException($"Object {path} already exists.");
+            throw new ArgumentException($"Object {path} already exists.");
         }
 
         await this.TryCreateBlobContainerIfNotExistsAsync(path, cancellationToken);
         BlobClient blobClient = this.GetBlobClient(path);
-        await blobClient.UploadAsync(stream, overwriteIfExists, cancellationToken);
+        await blobClient.UploadAsync(stream, overwrite, cancellationToken);
+    }
+
+    public async Task<bool> DoesFileExistAsync(Uri path, CancellationToken cancellationToken)
+    {
+        BlobClient blobClient = this.GetBlobClient(path);
+        Response<bool> response = await blobClient.ExistsAsync(cancellationToken);
+        return response.HasValue && response.Value;
     }
 
     #endregion
