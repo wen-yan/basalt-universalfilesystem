@@ -35,31 +35,31 @@ class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
         return this.GetImpl(prefix).ListObjectsAsync(prefix, recursive, cancellationToken);
     }
 
-    public Task<ObjectMetadata?> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
+    public Task<ObjectMetadata?> GetFileMetadataAsync(Uri path, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
-        return this.GetImpl(path).GetObjectMetadataAsync(path, cancellationToken);
+        return this.GetImpl(path).GetFileMetadataAsync(path, cancellationToken);
     }
 
-    public Task<Stream> GetObjectAsync(Uri path, CancellationToken cancellationToken)
+    public Task<Stream> GetFileAsync(Uri path, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
-        return this.GetImpl(path).GetObjectAsync(path, cancellationToken);
+        return this.GetImpl(path).GetFileAsync(path, cancellationToken);
     }
 
-    public Task PutObjectAsync(Uri path, Stream stream, bool overwrite, CancellationToken cancellationToken)
+    public Task PutFileAsync(Uri path, Stream stream, bool overwrite, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
-        return this.GetImpl(path).PutObjectAsync(path, stream, overwrite, cancellationToken);
+        return this.GetImpl(path).PutFileAsync(path, stream, overwrite, cancellationToken);
     }
 
-    public Task<bool> DeleteObjectAsync(Uri path, CancellationToken cancellationToken)
+    public Task<bool> DeleteFileAsync(Uri path, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
-        return this.GetImpl(path).DeleteObjectAsync(path, cancellationToken);
+        return this.GetImpl(path).DeleteFileAsync(path, cancellationToken);
     }
 
-    public async Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
+    public async Task MoveFileAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
         IFileSystem impl1 = this.GetImpl(oldPath);
@@ -67,17 +67,17 @@ class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
 
         if (!ReferenceEquals(impl1, impl2))
         {
-            await using Stream stream = await impl1.GetObjectAsync(oldPath, cancellationToken);
-            await impl2.PutObjectAsync(newPath, stream, overwrite, cancellationToken);
-            await impl2.DeleteObjectAsync(oldPath, cancellationToken);
+            await using Stream stream = await impl1.GetFileAsync(oldPath, cancellationToken);
+            await impl2.PutFileAsync(newPath, stream, overwrite, cancellationToken);
+            await impl2.DeleteFileAsync(oldPath, cancellationToken);
         }
         else
         {
-            await impl1.MoveObjectAsync(oldPath, newPath, overwrite, cancellationToken);
+            await impl1.MoveFileAsync(oldPath, newPath, overwrite, cancellationToken);
         }
     }
 
-    public async Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwrite, CancellationToken cancellationToken)
+    public async Task CopyFileAsync(Uri sourcePath, Uri destPath, bool overwrite, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
         IFileSystem impl1 = this.GetImpl(sourcePath);
@@ -85,12 +85,12 @@ class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
 
         if (!ReferenceEquals(impl1, impl2))
         {
-            await using Stream stream = await impl1.GetObjectAsync(sourcePath, cancellationToken);
-            await impl2.PutObjectAsync(destPath, stream, overwrite, cancellationToken);
+            await using Stream stream = await impl1.GetFileAsync(sourcePath, cancellationToken);
+            await impl2.PutFileAsync(destPath, stream, overwrite, cancellationToken);
         }
         else
         {
-            await impl1.CopyObjectAsync(sourcePath, destPath, overwrite, cancellationToken);
+            await impl1.CopyFileAsync(sourcePath, destPath, overwrite, cancellationToken);
         }
     }
 

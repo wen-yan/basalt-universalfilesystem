@@ -35,7 +35,7 @@ class MvCommand : UniversalFileSystemCommand<MvCommandOptions>
 
     public override async ValueTask ExecuteAsync()
     {
-        ObjectMetadata? metadata = await this.UniversalFileSystem.GetObjectMetadataAsync(this.Options.Source, this.CancellationToken);
+        ObjectMetadata? metadata = await this.UniversalFileSystem.GetFileMetadataAsync(this.Options.Source, this.CancellationToken);
         if (metadata == null)
         {
             throw new Exception($"File or prefix not found: {this.Options.Source}");
@@ -64,7 +64,7 @@ class MvCommand : UniversalFileSystemCommand<MvCommandOptions>
 
     private async ValueTask MoveObjectAsync(Uri source, Uri destination)
     {
-        await this.UniversalFileSystem.MoveObjectAsync(source, destination, this.Options.Overwrite, this.CancellationToken);
+        await this.UniversalFileSystem.MoveFileAsync(source, destination, this.Options.Overwrite, this.CancellationToken);
         await this.OutputWriter.WriteLineAsync($"Moved file {source} to {destination}", this.CancellationToken);
     }
 }

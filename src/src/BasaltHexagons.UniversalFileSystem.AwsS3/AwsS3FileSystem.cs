@@ -31,7 +31,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
 
     #region IFileSystem
 
-    public async Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwrite, CancellationToken cancellationToken)
+    public async Task CopyFileAsync(Uri sourcePath, Uri destPath, bool overwrite, CancellationToken cancellationToken)
     {
         if (!overwrite && await this.DoesFileExistAsync(destPath, cancellationToken))
         {
@@ -46,7 +46,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
         await this.Client.CopyObjectAsync(request, cancellationToken);
     }
 
-    public async Task<bool> DeleteObjectAsync(Uri path, CancellationToken cancellationToken)
+    public async Task<bool> DeleteFileAsync(Uri path, CancellationToken cancellationToken)
     {
         if (!await this.DoesFileExistAsync(path, cancellationToken))
             return false;
@@ -58,7 +58,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
         return true;
     }
 
-    public async Task<Stream> GetObjectAsync(Uri path, CancellationToken cancellationToken)
+    public async Task<Stream> GetFileAsync(Uri path, CancellationToken cancellationToken)
     {
         GetObjectRequest request = new();
         (request.BucketName, request.Key) = DeconstructUri(path);
@@ -67,7 +67,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
         return new StreamWrapper(response.ResponseStream, [], [response]);
     }
 
-    public async Task<ObjectMetadata?> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
+    public async Task<ObjectMetadata?> GetFileMetadataAsync(Uri path, CancellationToken cancellationToken)
     {
         GetObjectMetadataRequest request = new();
         (request.BucketName, request.Key) = DeconstructUri(path);
@@ -130,13 +130,13 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
         }
     }
 
-    public async Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
+    public async Task MoveFileAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
     {
-        await this.CopyObjectAsync(oldPath, newPath, overwrite, cancellationToken);
-        await this.DeleteObjectAsync(oldPath, cancellationToken);
+        await this.CopyFileAsync(oldPath, newPath, overwrite, cancellationToken);
+        await this.DeleteFileAsync(oldPath, cancellationToken);
     }
 
-    public async Task PutObjectAsync(Uri path, Stream stream, bool overwrite, CancellationToken cancellationToken)
+    public async Task PutFileAsync(Uri path, Stream stream, bool overwrite, CancellationToken cancellationToken)
     {
         if (!overwrite && await this.DoesFileExistAsync(path, cancellationToken))
         {
@@ -155,7 +155,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
         PutObjectResponse response = await this.Client.PutObjectAsync(request, cancellationToken);
     }
 
-    public async Task<bool> DoesFileExistAsync(Uri path, CancellationToken cancellationToken) => (await this.GetObjectMetadataAsync(path, cancellationToken)) != null;
+    public async Task<bool> DoesFileExistAsync(Uri path, CancellationToken cancellationToken) => (await this.GetFileMetadataAsync(path, cancellationToken)) != null;
 
     #endregion IFileSystem
 
