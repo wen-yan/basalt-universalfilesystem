@@ -24,22 +24,18 @@ class FileFileSystem : AsyncDisposable, IFileSystem
 
         async IAsyncEnumerable<ObjectMetadata> EnumerateDirectoryAsync(string directory, string startsWith)
         {
-            foreach (string entry in Directory.EnumerateFiles(directory, "*", enumerationOptions))
+            foreach (string entry in Directory.EnumerateFiles(directory, $"{startsWith}*", enumerationOptions))
             {
                 cancellationToken.ThrowIfCancellationRequested();
-
-                if (!entry.Contains(startsWith)) continue;  // TODO: is it correct?
 
                 ObjectMetadata? metadata = await this.GetObjectMetadataInternalAsync(new Uri(entry), false, cancellationToken);
                 if (metadata != null)
                     yield return metadata;
             }
 
-            foreach (string entry in Directory.EnumerateDirectories(directory, "*", enumerationOptions))
+            foreach (string entry in Directory.EnumerateDirectories(directory, $"{startsWith}*", enumerationOptions))
             {
                 cancellationToken.ThrowIfCancellationRequested();
-
-                if (!entry.Contains(startsWith)) continue;  // TODO: is it correct?
 
                 ObjectMetadata? metadata = await this.GetObjectMetadataInternalAsync(new Uri(entry), true, cancellationToken);
                 if (metadata != null)
@@ -61,7 +57,7 @@ class FileFileSystem : AsyncDisposable, IFileSystem
         Uri directoryUri = new UriBuilder()
         {
             Scheme = prefix.Scheme,
-            Host = null,
+            Host = prefix.Host,
             Path = directory,
         }.Uri;
 
@@ -74,17 +70,17 @@ class FileFileSystem : AsyncDisposable, IFileSystem
         }
     }
 
-    public Task<ObjectMetadata?> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
+    public Task<ObjectMetadata?> GetFileMetadataAsync(Uri path, CancellationToken cancellationToken)
     {
         return this.GetObjectMetadataInternalAsync(path, false, cancellationToken);
     }
 
-    public Task<Stream> GetObjectAsync(Uri path, CancellationToken cancellationToken)
+    public Task<Stream> GetFileAsync(Uri path, CancellationToken cancellationToken)
     {
         return Task.FromResult((Stream)new FileStream(path.AbsolutePath, FileMode.Open, FileAccess.Read));
     }
 
-    public async Task PutObjectAsync(Uri path, Stream stream, bool overwrite, CancellationToken cancellationToken)
+    public async Task PutFileAsync(Uri path, Stream stream, bool overwrite, CancellationToken cancellationToken)
     {
         string? dir = Path.GetDirectoryName(path.AbsolutePath);
         if (dir != null)
@@ -93,7 +89,7 @@ class FileFileSystem : AsyncDisposable, IFileSystem
         await stream.CopyToAsync(fileStream, cancellationToken);
     }
 
-    public async Task<bool> DeleteObjectAsync(Uri path, CancellationToken cancellationToken)
+    public async Task<bool> DeleteFileAsync(Uri path, CancellationToken cancellationToken)
     {
         if (!await this.DoesFileExistAsync(path, cancellationToken))
             return false;
@@ -102,7 +98,7 @@ class FileFileSystem : AsyncDisposable, IFileSystem
         return true;
     }
 
-    public Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
+    public Task MoveFileAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
     {
         if (oldPath == newPath)
             throw new ArgumentException("Can't move object to itself.");
@@ -116,7 +112,7 @@ class FileFileSystem : AsyncDisposable, IFileSystem
         return Task.CompletedTask;
     }
 
-    public Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwrite, CancellationToken cancellationToken)
+    public Task CopyFileAsync(Uri sourcePath, Uri destPath, bool overwrite, CancellationToken cancellationToken)
     {
         if (sourcePath == destPath)
             throw new ArgumentException("Can't move object to itself.");

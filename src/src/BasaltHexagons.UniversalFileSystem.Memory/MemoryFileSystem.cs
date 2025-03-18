@@ -56,21 +56,21 @@ class MemoryFileSystem : AsyncDisposable, IFileSystem
         return GetObjectsAsync(prefix.AbsolutePath);
     }
 
-    public Task<ObjectMetadata?> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
+    public Task<ObjectMetadata?> GetFileMetadataAsync(Uri path, CancellationToken cancellationToken)
     {
         return _files.TryGetValue(path.AbsolutePath, out File? file)
             ? Task.FromResult<ObjectMetadata?>(new ObjectMetadata(path, ObjectType.File, file.Content.Length, file.LastModifiedTimeUtc))
             : Task.FromResult<ObjectMetadata?>(null);
     }
 
-    public Task<Stream> GetObjectAsync(Uri path, CancellationToken cancellationToken)
+    public Task<Stream> GetFileAsync(Uri path, CancellationToken cancellationToken)
     {
         return _files.TryGetValue(path.AbsolutePath, out File? file)
             ? Task.FromResult<Stream>(new MemoryStream(file.Content))
             : throw new ArgumentException($"File not found: {path}", nameof(path));
     }
 
-    public async Task PutObjectAsync(Uri path, Stream stream, bool overwrite, CancellationToken cancellationToken)
+    public async Task PutFileAsync(Uri path, Stream stream, bool overwrite, CancellationToken cancellationToken)
     {
         if (!overwrite && await this.DoesFileExistAsync(path, cancellationToken))
             throw new ArgumentException($"File already exists: {path}", nameof(path));
@@ -80,7 +80,7 @@ class MemoryFileSystem : AsyncDisposable, IFileSystem
         _files[path.AbsolutePath] = new File(memoryStream.ToArray(), DateTime.UtcNow);
     }
 
-    public Task<bool> DeleteObjectAsync(Uri path, CancellationToken cancellationToken)
+    public Task<bool> DeleteFileAsync(Uri path, CancellationToken cancellationToken)
     {
         bool exists = _files.TryGetValue(path.AbsolutePath, out File? _);
         if (exists)
@@ -88,7 +88,7 @@ class MemoryFileSystem : AsyncDisposable, IFileSystem
         return Task.FromResult(exists);
     }
 
-    public async Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
+    public async Task MoveFileAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
     {
         if (oldPath == newPath)
             throw new ArgumentException("Can't move object to itself");
@@ -104,7 +104,7 @@ class MemoryFileSystem : AsyncDisposable, IFileSystem
         _files[newPath.AbsolutePath] = file!;
     }
 
-    public async Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwrite, CancellationToken cancellationToken)
+    public async Task CopyFileAsync(Uri sourcePath, Uri destPath, bool overwrite, CancellationToken cancellationToken)
     {
         if (sourcePath == destPath)
             throw new ArgumentException("Can't copy object to itself");

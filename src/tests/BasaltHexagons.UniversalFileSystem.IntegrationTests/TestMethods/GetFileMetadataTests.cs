@@ -4,17 +4,17 @@ using BasaltHexagons.UniversalFileSystem.Core;
 namespace BasaltHexagons.UniversalFileSystem.IntegrationTests.TestMethods;
 
 [TestClass]
-public class GetObjectMetadataTests
+public class GetFileMetadataTests
 {
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task GetObjectMetadata_File(UniversalFileSystemTestWrapper ufs)
+    public async Task GetFileMetadata_File(UniversalFileSystemTestWrapper ufs)
     {
         // setup
-        await ufs.PutObjectAsync("test.txt", "test content", true);
+        await ufs.PutFileAsync("test.txt", "test content", true);
 
         // test
-        ObjectMetadata? metadata = await ufs.GetObjectMetadataAsync("test.txt");
+        ObjectMetadata? metadata = await ufs.GetFileMetadataAsync("test.txt");
 
         // Verify
         UniversalFileSystemAssert.VerifyObject(ufs, "test.txt", ObjectType.File, "test content", metadata);
@@ -22,13 +22,13 @@ public class GetObjectMetadataTests
 
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task GetObjectMetadata_Prefix(UniversalFileSystemTestWrapper ufs)
+    public async Task GetFileMetadata_Prefix(UniversalFileSystemTestWrapper ufs)
     {
         // setup
-        await ufs.PutObjectAsync("dir/test.txt", "test content", true);
+        await ufs.PutFileAsync("dir/test.txt", "test content", true);
 
         // test
-        ObjectMetadata? metadata = await ufs.GetObjectMetadataAsync("dir");
+        ObjectMetadata? metadata = await ufs.GetFileMetadataAsync("dir");
 
         // Verify
         Assert.IsNull(metadata);
@@ -36,10 +36,10 @@ public class GetObjectMetadataTests
 
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task GetObjectMetadata_NotExists(UniversalFileSystemTestWrapper ufs)
+    public async Task GetFileMetadata_NotExists(UniversalFileSystemTestWrapper ufs)
     {
         // test
-        ObjectMetadata? metadata = await ufs.GetObjectMetadataAsync("test.txt");
+        ObjectMetadata? metadata = await ufs.GetFileMetadataAsync("test.txt");
 
         // verify
         Assert.IsNull(metadata);

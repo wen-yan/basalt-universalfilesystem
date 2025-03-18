@@ -10,8 +10,8 @@ public class DoesFileExistTests
     public async Task DoesFileExist(UniversalFileSystemTestWrapper ufs)
     {
         // setup
-        await ufs.PutObjectAsync("test1.txt", "test content", false);
-        await ufs.PutObjectAsync("dir/test2.txt", "test2 content", false);
+        await ufs.PutFileAsync("test1.txt", "test content", false);
+        await ufs.PutFileAsync("dir/test2.txt", "test2 content", false);
 
         // verify
         Assert.IsTrue(await ufs.DoesFileExistAsync("test1.txt"));

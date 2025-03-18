@@ -32,7 +32,7 @@ class CatCommand : UniversalFileSystemCommand<CatCommandOptions>
 
     public override async ValueTask ExecuteAsync()
     {
-        await using Stream stream = await this.UniversalFileSystem.GetObjectAsync(this.Options.Path, this.CancellationToken);
+        await using Stream stream = await this.UniversalFileSystem.GetFileAsync(this.Options.Path, this.CancellationToken);
         using StreamReader reader = new(stream, leaveOpen: true);
         while (true)
         {

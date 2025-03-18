@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.TestUtils;
@@ -6,14 +5,14 @@ using BasaltHexagons.UniversalFileSystem.TestUtils;
 namespace BasaltHexagons.UniversalFileSystem.IntegrationTests.TestMethods;
 
 [TestClass]
-public class PutObjectTests
+public class PutFileTests
 {
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task PutObject_FileInRoot(UniversalFileSystemTestWrapper ufs)
+    public async Task PutFile_FileInRoot(UniversalFileSystemTestWrapper ufs)
     {
         // test
-        await ufs.PutObjectAsync("test.txt", "test content", true);
+        await ufs.PutFileAsync("test.txt", "test content", true);
 
         // verify
         UniversalFileSystemAssert.VerifyObject(ufs, "test.txt", ObjectType.File, "test content");
@@ -21,10 +20,10 @@ public class PutObjectTests
 
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task PutObject_FileInSubDirectory(UniversalFileSystemTestWrapper ufs)
+    public async Task PutFile_FileInSubDirectory(UniversalFileSystemTestWrapper ufs)
     {
         // test
-        await ufs.PutObjectAsync("dir/test.txt", "test content", true);
+        await ufs.PutFileAsync("dir/test.txt", "test content", true);
 
         // verify
         UniversalFileSystemAssert.VerifyObject(ufs, "dir/test.txt", ObjectType.File, "test content");
@@ -32,16 +31,16 @@ public class PutObjectTests
 
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task PutObject_Overwrite(UniversalFileSystemTestWrapper ufs)
+    public async Task PutFile_Overwrite(UniversalFileSystemTestWrapper ufs)
     {
         // test
-        await ufs.PutObjectAsync("test.txt", "test content 1", false);
+        await ufs.PutFileAsync("test.txt", "test content 1", false);
 
         // verify
         UniversalFileSystemAssert.VerifyObject(ufs, "test.txt", ObjectType.File, "test content 1");
 
         // test
-        await ufs.PutObjectAsync("test.txt", "test content 2", true);
+        await ufs.PutFileAsync("test.txt", "test content 2", true);
 
         // verify
         UniversalFileSystemAssert.VerifyObject(ufs, "test.txt", ObjectType.File, "test content 2");
@@ -49,16 +48,16 @@ public class PutObjectTests
 
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task PutObject_NotOverwrite(UniversalFileSystemTestWrapper ufs)
+    public async Task PutFile_NotOverwrite(UniversalFileSystemTestWrapper ufs)
     {
         // test
-        await ufs.PutObjectAsync("test.txt", "test content 1", true);
+        await ufs.PutFileAsync("test.txt", "test content 1", true);
 
         // verify
         UniversalFileSystemAssert.VerifyObject(ufs, "test.txt", ObjectType.File, "test content 1");
 
         // test
-        Assert.That.ExpectException(async () =>  await ufs.PutObjectAsync("test.txt", "test content 2", false));
+        Assert.That.ExpectException(async () =>  await ufs.PutFileAsync("test.txt", "test content 2", false));
 
         UniversalFileSystemAssert.VerifyObject(ufs, "test.txt", ObjectType.File, "test content 1");
     }

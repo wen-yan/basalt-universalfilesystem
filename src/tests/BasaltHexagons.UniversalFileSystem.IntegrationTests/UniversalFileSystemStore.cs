@@ -115,7 +115,7 @@ public abstract class UniversalFileSystemStore
         // delete all files
         List<ObjectMetadata> allFiles = ufs.ListObjectsAsync("", true).ToListAsync().Result;
         foreach (ObjectMetadata file in allFiles)
-            ufs.DeleteObjectAsync(file.Path, default).Wait();
+            ufs.DeleteFileAsync(file.Path, default).Wait();
         return ufs;
     }
 }

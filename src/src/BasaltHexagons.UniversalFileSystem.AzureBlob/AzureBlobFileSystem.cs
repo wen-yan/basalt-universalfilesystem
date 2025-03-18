@@ -30,7 +30,7 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
 
     #region IFileSystem
 
-    public async Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwrite,
+    public async Task CopyFileAsync(Uri sourcePath, Uri destPath, bool overwrite,
         CancellationToken cancellationToken)
     {
         BlobClient sourceBlobClient = this.GetBlobClient(sourcePath);
@@ -56,13 +56,13 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
         }
     }
 
-    public async Task<bool> DeleteObjectAsync(Uri path, CancellationToken cancellationToken)
+    public async Task<bool> DeleteFileAsync(Uri path, CancellationToken cancellationToken)
     {
         BlobClient blobClient = this.GetBlobClient(path);
         return await blobClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
     }
 
-    public async Task<Stream> GetObjectAsync(Uri path, CancellationToken cancellationToken)
+    public async Task<Stream> GetFileAsync(Uri path, CancellationToken cancellationToken)
     {
         BlobClient blobClient = this.GetBlobClient(path);
         Response<BlobDownloadStreamingResult> response = await blobClient.DownloadStreamingAsync(cancellationToken: cancellationToken);
@@ -72,7 +72,7 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
         return new StreamWrapper(response.Value.Content, [], [response.Value]);
     }
 
-    public async Task<ObjectMetadata?> GetObjectMetadataAsync(Uri path, CancellationToken cancellationToken)
+    public async Task<ObjectMetadata?> GetFileMetadataAsync(Uri path, CancellationToken cancellationToken)
     {
         BlobClient blobClient = this.GetBlobClient(path);
         if (!await this.DoesFileExistAsync(path, cancellationToken))
@@ -119,13 +119,13 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
         }
     }
 
-    public async Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
+    public async Task MoveFileAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
     {
-        await this.CopyObjectAsync(oldPath, newPath, overwrite, cancellationToken);
-        await this.DeleteObjectAsync(oldPath, cancellationToken);
+        await this.CopyFileAsync(oldPath, newPath, overwrite, cancellationToken);
+        await this.DeleteFileAsync(oldPath, cancellationToken);
     }
 
-    public async Task PutObjectAsync(Uri path, Stream stream, bool overwrite, CancellationToken cancellationToken)
+    public async Task PutFileAsync(Uri path, Stream stream, bool overwrite, CancellationToken cancellationToken)
     {
         if (!overwrite && await this.DoesFileExistAsync(path, cancellationToken))
         {

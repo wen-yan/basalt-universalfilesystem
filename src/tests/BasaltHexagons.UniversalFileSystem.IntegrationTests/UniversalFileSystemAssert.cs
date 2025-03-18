@@ -8,7 +8,7 @@ public static class UniversalFileSystemAssert
 {
     public static void VerifyObject(UniversalFileSystemTestWrapper ufs, string path, ObjectType objectType, string? content)
     {
-        ObjectMetadata? actualMetadata = ufs.GetObjectMetadataAsync(path).Result;
+        ObjectMetadata? actualMetadata = ufs.GetFileMetadataAsync(path).Result;
         Assert.IsNotNull(actualMetadata);
 
         VerifyObject(ufs, path, objectType, content, actualMetadata);
@@ -21,6 +21,6 @@ public static class UniversalFileSystemAssert
             : ufs.MakeObjectMetadata(path, objectType, content?.Length, null);
         Assert.AreEqual(expectedMetadata, actualMetadata, new ObjectMetadataLastModifiedTimeUtcRangeEqualityComparer());
 
-        if (objectType == ObjectType.File) Assert.AreEqual(content, ufs.GetObjectAsync(path).Result);
+        if (objectType == ObjectType.File) Assert.AreEqual(content, ufs.GetFileAsync(path).Result);
     }
 }
