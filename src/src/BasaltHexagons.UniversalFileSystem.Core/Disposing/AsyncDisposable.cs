@@ -11,12 +11,12 @@ public abstract class AsyncDisposable : Disposable, IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
-        await AsyncDisposeManagedObjects();
+        await DisposeManagedObjectsAsync();
         Dispose(disposing: false);
         GC.SuppressFinalize(this);
     }
 
     #endregion
 
-    protected virtual ValueTask AsyncDisposeManagedObjects() => ValueTask.CompletedTask;
+    protected virtual ValueTask DisposeManagedObjectsAsync() => ValueTask.CompletedTask;
 }
