@@ -18,7 +18,7 @@ services:
       interval: 30s
       timeout: 10s
       start_period: 3m
-      start_interval: 10s
+      # start_interval: 10s
       retries: 20
 
   azurite:
