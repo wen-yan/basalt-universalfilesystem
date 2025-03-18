@@ -4,7 +4,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="AWSSDK.S3" Version="3.7.412.5" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+        <PackageReference Include="AWSSDK.S3" Version="$(AWSSDK_S3_Version)" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(Microsoft_Extensions_DependencyInjection_Abstractions_Version)" />
     </ItemGroup>
 </Project>

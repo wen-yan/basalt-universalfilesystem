@@ -1,5 +1,5 @@
 <Project>
-    <Import Project=".\Version.props"/>
+    <Import Project=".\Version.props" />
     <PropertyGroup>
         <Nullable>enable</Nullable>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -13,5 +13,30 @@
 
     <PropertyGroup Condition=" '$(OutputType)' == '' Or '$(OutputType)' == 'Library' ">
         <TargetFrameworks>net8.0</TargetFrameworks>
+    </PropertyGroup>
+
+
+    <PropertyGroup>
+        <System_Linq_Async_Version>6.0.1</System_Linq_Async_Version>
+        <Microsoft_Extensions_Configuration_Abstractions_Version>8.0.0</Microsoft_Extensions_Configuration_Abstractions_Version>
+        <Microsoft_Extensions_Configuration_Yaml_Version>2.0.0-preview2</Microsoft_Extensions_Configuration_Yaml_Version>
+        <Microsoft_Extensions_DependencyInjection_Abstractions_Version>8.0.1</Microsoft_Extensions_DependencyInjection_Abstractions_Version>
+        <Microsoft_Extensions_DependencyInjection_Version>9.0.2</Microsoft_Extensions_DependencyInjection_Version>
+        <Microsoft_Extensions_Hosting_Version>9.0.2</Microsoft_Extensions_Hosting_Version>
+
+        <BasaltHexagons_CommandLine_Version>0.1.30-preview</BasaltHexagons_CommandLine_Version>
+        <Spectre_Console_Cli_Version>0.49.1</Spectre_Console_Cli_Version>
+
+        <AWSSDK_S3_Version>3.7.412.5</AWSSDK_S3_Version>
+        <Azure_Identity_Version>1.13.2</Azure_Identity_Version>
+        <Azure_Storage_Blobs_Version>12.23.0</Azure_Storage_Blobs_Version>
+    </PropertyGroup>
+
+    <!-- packages for tests -->
+    <PropertyGroup>
+        <Microsoft_NET_Test_Sdk_Version>17.8.0</Microsoft_NET_Test_Sdk_Version>
+        <MSTest_TestAdapter_Version>3.1.1</MSTest_TestAdapter_Version>
+        <MSTest_TestFramework_Version>3.1.1</MSTest_TestFramework_Version>
+        <Moq_Version>4.20.72</Moq_Version>
     </PropertyGroup>
 </Project>
