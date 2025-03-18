@@ -47,10 +47,10 @@ class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
         return this.GetImpl(path).GetObjectAsync(path, cancellationToken);
     }
 
-    public Task PutObjectAsync(Uri path, Stream stream, bool overwriteIfExists, CancellationToken cancellationToken)
+    public Task PutObjectAsync(Uri path, Stream stream, bool overwrite, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
-        return this.GetImpl(path).PutObjectAsync(path, stream, overwriteIfExists, cancellationToken);
+        return this.GetImpl(path).PutObjectAsync(path, stream, overwrite, cancellationToken);
     }
 
     public Task<bool> DeleteObjectAsync(Uri path, CancellationToken cancellationToken)
@@ -59,7 +59,7 @@ class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
         return this.GetImpl(path).DeleteObjectAsync(path, cancellationToken);
     }
 
-    public async Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwriteIfExists, CancellationToken cancellationToken)
+    public async Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
         IFileSystem impl1 = this.GetImpl(oldPath);
@@ -68,16 +68,16 @@ class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
         if (!ReferenceEquals(impl1, impl2))
         {
             await using Stream stream = await impl1.GetObjectAsync(oldPath, cancellationToken);
-            await impl2.PutObjectAsync(newPath, stream, overwriteIfExists, cancellationToken);
+            await impl2.PutObjectAsync(newPath, stream, overwrite, cancellationToken);
             await impl2.DeleteObjectAsync(oldPath, cancellationToken);
         }
         else
         {
-            await impl1.MoveObjectAsync(oldPath, newPath, overwriteIfExists, cancellationToken);
+            await impl1.MoveObjectAsync(oldPath, newPath, overwrite, cancellationToken);
         }
     }
 
-    public async Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwriteIfExists, CancellationToken cancellationToken)
+    public async Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwrite, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
         IFileSystem impl1 = this.GetImpl(sourcePath);
@@ -86,12 +86,18 @@ class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
         if (!ReferenceEquals(impl1, impl2))
         {
             await using Stream stream = await impl1.GetObjectAsync(sourcePath, cancellationToken);
-            await impl2.PutObjectAsync(destPath, stream, overwriteIfExists, cancellationToken);
+            await impl2.PutObjectAsync(destPath, stream, overwrite, cancellationToken);
         }
         else
         {
-            await impl1.CopyObjectAsync(sourcePath, destPath, overwriteIfExists, cancellationToken);
+            await impl1.CopyObjectAsync(sourcePath, destPath, overwrite, cancellationToken);
         }
+    }
+
+    public Task<bool> DoesFileExistAsync(Uri path, CancellationToken cancellationToken)
+    {
+        this.CheckIsDisposed();
+        return this.GetImpl(path).DoesFileExistAsync(path, cancellationToken);
     }
 
     #endregion

@@ -37,9 +37,8 @@ public class UniversalFileSystemTestWrapper : AsyncDisposable, IUniversalFileSys
         => this.MakeObjectMetadata(path, objectType, contentSize, DateTime.UtcNow);
 
 
-
-    public Task CopyObjectAsync(string sourcePath, string destPath, bool overwriteIfExists, CancellationToken cancellationToken = default)
-        => this.CopyObjectAsync(new Uri(sourcePath, UriKind.RelativeOrAbsolute), new Uri(destPath, UriKind.RelativeOrAbsolute), overwriteIfExists, cancellationToken);
+    public Task CopyObjectAsync(string sourcePath, string destPath, bool overwrite, CancellationToken cancellationToken = default)
+        => this.CopyObjectAsync(new Uri(sourcePath, UriKind.RelativeOrAbsolute), new Uri(destPath, UriKind.RelativeOrAbsolute), overwrite, cancellationToken);
 
     public Task<bool> DeleteObjectAsync(string path, CancellationToken cancellationToken = default)
         => this.DeleteObjectAsync(new Uri(path, UriKind.RelativeOrAbsolute), cancellationToken);
@@ -59,11 +58,11 @@ public class UniversalFileSystemTestWrapper : AsyncDisposable, IUniversalFileSys
         => this.ListObjectsAsync(new Uri(prefix, UriKind.RelativeOrAbsolute), recursive, cancellationToken);
 
 
-    public Task MoveObjectAsync(string oldPath, string newPath, bool overwriteIfExists, CancellationToken cancellationToken = default)
-        => this.MoveObjectAsync(new Uri(oldPath, UriKind.RelativeOrAbsolute), new Uri(newPath, UriKind.RelativeOrAbsolute), overwriteIfExists, cancellationToken);
+    public Task MoveObjectAsync(string oldPath, string newPath, bool overwrite, CancellationToken cancellationToken = default)
+        => this.MoveObjectAsync(new Uri(oldPath, UriKind.RelativeOrAbsolute), new Uri(newPath, UriKind.RelativeOrAbsolute), overwrite, cancellationToken);
 
 
-    public async Task PutObjectAsync(string path, string content, bool overwriteIfExists, CancellationToken cancellationToken = default)
+    public async Task PutObjectAsync(string path, string content, bool overwrite, CancellationToken cancellationToken = default)
     {
         await using MemoryStream stream = new();
         await using (TextWriter writer = new StreamWriter(stream, leaveOpen: true))
@@ -72,18 +71,18 @@ public class UniversalFileSystemTestWrapper : AsyncDisposable, IUniversalFileSys
         }
 
         stream.Seek(0, SeekOrigin.Begin);
-        await this.PutObjectAsync(new Uri(path, UriKind.RelativeOrAbsolute), stream, overwriteIfExists, cancellationToken);
+        await this.PutObjectAsync(new Uri(path, UriKind.RelativeOrAbsolute), stream, overwrite, cancellationToken);
     }
 
-    public Task<bool> ExistsAsync(string path, CancellationToken cancellationToken = default)
-        => this.ExistsAsync(new Uri(path, UriKind.Relative), cancellationToken);
+    public Task<bool> DoesFileExistAsync(string path, CancellationToken cancellationToken = default)
+        => this.DoesFileExistAsync(new Uri(path, UriKind.Relative), cancellationToken);
 
     #endregion
 
     #region IUniversalFileSystem
 
-    public Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwriteIfExists, CancellationToken cancellationToken)
-        => this.Inner.CopyObjectAsync(this.GetFullPath(sourcePath), new Uri(this.BaseUri, destPath), overwriteIfExists, cancellationToken);
+    public Task CopyObjectAsync(Uri sourcePath, Uri destPath, bool overwrite, CancellationToken cancellationToken)
+        => this.Inner.CopyObjectAsync(this.GetFullPath(sourcePath), new Uri(this.BaseUri, destPath), overwrite, cancellationToken);
 
     public Task<bool> DeleteObjectAsync(Uri path, CancellationToken cancellationToken)
         => this.Inner.DeleteObjectAsync(this.GetFullPath(path), cancellationToken);
@@ -97,11 +96,14 @@ public class UniversalFileSystemTestWrapper : AsyncDisposable, IUniversalFileSys
     public IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive, CancellationToken cancellationToken)
         => this.Inner.ListObjectsAsync(this.GetFullPath(prefix), recursive, cancellationToken);
 
-    public Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwriteIfExists, CancellationToken cancellationToken)
-        => this.Inner.MoveObjectAsync(this.GetFullPath(oldPath), new Uri(this.BaseUri, newPath), overwriteIfExists, cancellationToken);
+    public Task MoveObjectAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
+        => this.Inner.MoveObjectAsync(this.GetFullPath(oldPath), new Uri(this.BaseUri, newPath), overwrite, cancellationToken);
 
-    public Task PutObjectAsync(Uri path, Stream stream, bool overwriteIfExists, CancellationToken cancellationToken)
-        => this.Inner.PutObjectAsync(this.GetFullPath(path), stream, overwriteIfExists, cancellationToken);
+    public Task PutObjectAsync(Uri path, Stream stream, bool overwrite, CancellationToken cancellationToken)
+        => this.Inner.PutObjectAsync(this.GetFullPath(path), stream, overwrite, cancellationToken);
+
+    public Task<bool> DoesFileExistAsync(Uri path, CancellationToken cancellationToken)
+        => this.Inner.DoesFileExistAsync(this.GetFullPath(path), cancellationToken);
 
     #endregion
 

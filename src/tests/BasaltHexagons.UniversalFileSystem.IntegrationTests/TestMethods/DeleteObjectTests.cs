@@ -11,14 +11,14 @@ public class DeleteObjectTests
     {
         // setup
         await ufs.PutObjectAsync("test.txt", "test content", true);
-        Assert.IsTrue(await ufs.ExistsAsync("test.txt"));
+        Assert.IsTrue(await ufs.DoesFileExistAsync("test.txt"));
 
         // test
         bool deleted = await ufs.DeleteObjectAsync("test.txt");
 
         // verify
         Assert.IsTrue(deleted);
-        Assert.IsFalse(await ufs.ExistsAsync("test.txt"));
+        Assert.IsFalse(await ufs.DoesFileExistAsync("test.txt"));
     }
 
     [DataTestMethod]
@@ -27,14 +27,14 @@ public class DeleteObjectTests
     {
         // setup
         await ufs.PutObjectAsync("dir/test.txt", "test content", true);
-        Assert.IsTrue(await ufs.ExistsAsync("dir/test.txt"));
+        Assert.IsTrue(await ufs.DoesFileExistAsync("dir/test.txt"));
 
         // test
         bool deleted = await ufs.DeleteObjectAsync("dir/test.txt");
 
         // verify
         Assert.IsTrue(deleted);
-        Assert.IsFalse(await ufs.ExistsAsync("dir/test.txt"));
+        Assert.IsFalse(await ufs.DoesFileExistAsync("dir/test.txt"));
     }
 
     [DataTestMethod]
@@ -42,13 +42,13 @@ public class DeleteObjectTests
     public async Task DeleteObject_FileNotExist(UniversalFileSystemTestWrapper ufs)
     {
         // setup
-        Assert.IsFalse(await ufs.ExistsAsync("test.txt"));
+        Assert.IsFalse(await ufs.DoesFileExistAsync("test.txt"));
 
         // test
         bool deleted = await ufs.DeleteObjectAsync("test.txt");
 
         // verify
         Assert.IsFalse(deleted);
-        Assert.IsFalse(await ufs.ExistsAsync("test.txt"));
+        Assert.IsFalse(await ufs.DoesFileExistAsync("test.txt"));
     }
 }
