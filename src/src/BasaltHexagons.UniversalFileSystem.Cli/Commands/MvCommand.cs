@@ -4,6 +4,7 @@ using BasaltHexagons.CommandLine;
 using BasaltHexagons.CommandLine.Annotations;
 using BasaltHexagons.UniversalFileSystem.Cli.Output;
 using BasaltHexagons.UniversalFileSystem.Core;
+using BasaltHexagons.UniversalFileSystem.Core.Exceptions;
 
 namespace BasaltHexagons.UniversalFileSystem.Cli.Commands;
 
@@ -38,7 +39,7 @@ class MvCommand : UniversalFileSystemCommand<MvCommandOptions>
         ObjectMetadata? metadata = await this.UniversalFileSystem.GetFileMetadataAsync(this.Options.Source, this.CancellationToken);
         if (metadata == null)
         {
-            throw new Exception($"File or prefix not found: {this.Options.Source}");
+            throw new FileNotExistsException(this.Options.Source);
         }
         else if (metadata.ObjectType == ObjectType.File)
         {
@@ -48,11 +49,11 @@ class MvCommand : UniversalFileSystemCommand<MvCommandOptions>
         {
             await foreach (ObjectMetadata obj in this.UniversalFileSystem.ListObjectsAsync(this.Options.Source, true, this.CancellationToken))
             {
-                Uri relativeUri = this.Options.Source.MakeRelativeUri(obj.Path);
+                Uri relativeUri = this.Options.Source.MakeRelativeUri(obj.Uri);
                 bool success = Uri.TryCreate(this.Options.Destination, relativeUri, out Uri? destUri);
                 if (success && destUri != null)
                 {
-                    await this.MoveObjectAsync(obj.Path, destUri);
+                    await this.MoveObjectAsync(obj.Uri, destUri);
                 }
                 else
                 {

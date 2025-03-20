@@ -70,74 +70,74 @@ class FileFileSystem : AsyncDisposable, IFileSystem
         }
     }
 
-    public Task<ObjectMetadata?> GetFileMetadataAsync(Uri path, CancellationToken cancellationToken)
+    public Task<ObjectMetadata?> GetFileMetadataAsync(Uri uri, CancellationToken cancellationToken)
     {
-        return this.GetObjectMetadataInternalAsync(path, false, cancellationToken);
+        return this.GetObjectMetadataInternalAsync(uri, false, cancellationToken);
     }
 
-    public Task<Stream> GetFileAsync(Uri path, CancellationToken cancellationToken)
+    public Task<Stream> GetFileAsync(Uri uri, CancellationToken cancellationToken)
     {
-        return Task.FromResult((Stream)new FileStream(path.AbsolutePath, FileMode.Open, FileAccess.Read));
+        return Task.FromResult((Stream)new FileStream(uri.AbsolutePath, FileMode.Open, FileAccess.Read));
     }
 
-    public async Task PutFileAsync(Uri path, Stream stream, bool overwrite, CancellationToken cancellationToken)
+    public async Task PutFileAsync(Uri uri, Stream stream, bool overwrite, CancellationToken cancellationToken)
     {
-        string? dir = Path.GetDirectoryName(path.AbsolutePath);
+        string? dir = Path.GetDirectoryName(uri.AbsolutePath);
         if (dir != null)
             Directory.CreateDirectory(dir);
-        await using FileStream fileStream = new(path.AbsolutePath, overwrite ? FileMode.Create : FileMode.CreateNew, FileAccess.Write);
+        await using FileStream fileStream = new(uri.AbsolutePath, overwrite ? FileMode.Create : FileMode.CreateNew, FileAccess.Write);
         await stream.CopyToAsync(fileStream, cancellationToken);
     }
 
-    public async Task<bool> DeleteFileAsync(Uri path, CancellationToken cancellationToken)
+    public async Task<bool> DeleteFileAsync(Uri uri, CancellationToken cancellationToken)
     {
-        if (!await this.DoesFileExistAsync(path, cancellationToken))
+        if (!await this.DoesFileExistAsync(uri, cancellationToken))
             return false;
 
-        System.IO.File.Delete(path.AbsolutePath);
+        System.IO.File.Delete(uri.AbsolutePath);
         return true;
     }
 
     public Task MoveFileAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
     {
         if (oldPath == newPath)
-            throw new ArgumentException("Can't move object to itself.");
+            throw new ArgumentException("Can't move file to itself.");
 
         string? directory = Path.GetDirectoryName(newPath.AbsolutePath);
         if (directory == null)
-            return Task.FromException(new ArgumentException($"Can't get directory from path {newPath}"));
+            return Task.FromException(new ArgumentException($"Can't get directory from uri {newPath}"));
         Directory.CreateDirectory(directory);
 
         System.IO.File.Move(oldPath.AbsolutePath, newPath.AbsolutePath, overwrite);
         return Task.CompletedTask;
     }
 
-    public Task CopyFileAsync(Uri sourcePath, Uri destPath, bool overwrite, CancellationToken cancellationToken)
+    public Task CopyFileAsync(Uri sourceUri, Uri destUri, bool overwrite, CancellationToken cancellationToken)
     {
-        if (sourcePath == destPath)
-            throw new ArgumentException("Can't move object to itself.");
+        if (sourceUri == destUri)
+            throw new ArgumentException("Can't copy file to itself.");
 
-        string? directory = Path.GetDirectoryName(destPath.AbsolutePath);
+        string? directory = Path.GetDirectoryName(destUri.AbsolutePath);
         if (directory == null)
-            return Task.FromException(new ArgumentException($"Can't get directory from path {destPath}"));
+            return Task.FromException(new ArgumentException($"Can't get directory from uri {destUri}"));
         Directory.CreateDirectory(directory);
 
-        System.IO.File.Copy(sourcePath.AbsolutePath, destPath.AbsolutePath, overwrite);
+        System.IO.File.Copy(sourceUri.AbsolutePath, destUri.AbsolutePath, overwrite);
         return Task.CompletedTask;
     }
 
-    public Task<bool> DoesFileExistAsync(Uri path, CancellationToken cancellationToken) => Task.FromResult(System.IO.File.Exists(path.AbsolutePath));
+    public Task<bool> DoesFileExistAsync(Uri uri, CancellationToken cancellationToken) => Task.FromResult(System.IO.File.Exists(uri.AbsolutePath));
 
     #endregion
 
-    private Task<bool> DoesDirectoryExistAsync(Uri path, CancellationToken cancellationToken) => Task.FromResult(System.IO.Directory.Exists(path.AbsolutePath));
+    private Task<bool> DoesDirectoryExistAsync(Uri uri, CancellationToken cancellationToken) => Task.FromResult(System.IO.Directory.Exists(uri.AbsolutePath));
 
-    private async Task<ObjectMetadata?> GetObjectMetadataInternalAsync(Uri path, bool returnDirectory, CancellationToken cancellationToken)
+    private async Task<ObjectMetadata?> GetObjectMetadataInternalAsync(Uri uri, bool returnDirectory, CancellationToken cancellationToken)
     {
-        if (await this.DoesFileExistAsync(path, cancellationToken))
-            return new ObjectMetadata(path, ObjectType.File, new FileInfo(path.AbsolutePath).Length, System.IO.File.GetLastWriteTimeUtc(path.AbsolutePath));
-        if (returnDirectory && await this.DoesDirectoryExistAsync(path, cancellationToken))
-            return new ObjectMetadata(new Uri($"{path}/"), ObjectType.Prefix, null, null);
+        if (await this.DoesFileExistAsync(uri, cancellationToken))
+            return new ObjectMetadata(uri, ObjectType.File, new FileInfo(uri.AbsolutePath).Length, System.IO.File.GetLastWriteTimeUtc(uri.AbsolutePath));
+        if (returnDirectory && await this.DoesDirectoryExistAsync(uri, cancellationToken))
+            return new ObjectMetadata(new Uri($"{uri}/"), ObjectType.Prefix, null, null);
 
         return null;
     }

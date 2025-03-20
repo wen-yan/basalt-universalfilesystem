@@ -19,7 +19,7 @@ public class ListObjectsTests
 
         // test
         List<ObjectMetadata> objects = await ufs.ListObjectsAsync("", false)
-            .OrderBy(x => x.Path.ToString())
+            .OrderBy(x => x.Uri.ToString())
             .ToListAsync();
 
         // verify
@@ -41,7 +41,7 @@ public class ListObjectsTests
 
         // test
         List<ObjectMetadata> objects = await ufs.ListObjectsAsync("", false)
-            .OrderBy(x => x.Path.ToString())
+            .OrderBy(x => x.Uri.ToString())
             .ToListAsync();
 
         // verify
@@ -62,7 +62,7 @@ public class ListObjectsTests
 
         // test
         List<ObjectMetadata> objects = await ufs.ListObjectsAsync("dir1/", false)
-            .OrderBy(x => x.Path.ToString())
+            .OrderBy(x => x.Uri.ToString())
             .ToListAsync();
 
         // verify
@@ -84,7 +84,7 @@ public class ListObjectsTests
 
         // test
         List<ObjectMetadata> objects = await ufs.ListObjectsAsync("dir1", false)
-            .OrderBy(x => x.Path.ToString())
+            .OrderBy(x => x.Uri.ToString())
             .ToListAsync();
 
         // verify
@@ -105,7 +105,7 @@ public class ListObjectsTests
 
         // test
         List<ObjectMetadata> objects = await ufs.ListObjectsAsync("dir1/", true)
-            .OrderBy(x => x.Path.ToString())
+            .OrderBy(x => x.Uri.ToString())
             .ToListAsync();
 
         // verify
@@ -128,7 +128,7 @@ public class ListObjectsTests
 
         // test
         List<ObjectMetadata> objects = await ufs.ListObjectsAsync("dir1", true)
-            .OrderBy(x => x.Path.ToString())
+            .OrderBy(x => x.Uri.ToString())
             .ToListAsync();
 
         // verify
@@ -154,7 +154,7 @@ public class ListObjectsTests
 
         // test
         List<ObjectMetadata> objects = await ufs.ListObjectsAsync("dir1/", true)
-            .OrderBy(x => x.Path.ToString())
+            .OrderBy(x => x.Uri.ToString())
             .ToListAsync();
 
         // verify
@@ -181,7 +181,7 @@ public class ListObjectsTests
 
         // test
         List<ObjectMetadata> objects = await ufs.ListObjectsAsync("di", false)
-            .OrderBy(x => x.Path.ToString())
+            .OrderBy(x => x.Uri.ToString())
             .ToListAsync();
 
         // verify
@@ -202,7 +202,7 @@ public class ListObjectsTests
 
         // test
         List<ObjectMetadata> objects = await ufs.ListObjectsAsync("dir1/tes", false)
-            .OrderBy(x => x.Path.ToString())
+            .OrderBy(x => x.Uri.ToString())
             .ToListAsync();
 
         // verify
@@ -226,7 +226,7 @@ public class ListObjectsTests
 
         // test
         List<ObjectMetadata> objects = await ufs.ListObjectsAsync("dir1/tes", false)
-            .OrderBy(x => x.Path.ToString())
+            .OrderBy(x => x.Uri.ToString())
             .ToListAsync();
 
         // verify

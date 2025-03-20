@@ -27,28 +27,28 @@ class FileSystemWrapper : AsyncDisposable, IFileSystem
 
     #region IFileSystem
 
-    public Task CopyFileAsync(Uri sourcePath, Uri destPath, bool overwrite, CancellationToken cancellationToken)
+    public Task CopyFileAsync(Uri sourceUri, Uri destUri, bool overwrite, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
-        return this.FileSystem.CopyFileAsync(sourcePath, destPath, overwrite, cancellationToken);
+        return this.FileSystem.CopyFileAsync(sourceUri, destUri, overwrite, cancellationToken);
     }
 
-    public Task<bool> DeleteFileAsync(Uri path, CancellationToken cancellationToken)
+    public Task<bool> DeleteFileAsync(Uri uri, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
-        return this.FileSystem.DeleteFileAsync(path, cancellationToken);
+        return this.FileSystem.DeleteFileAsync(uri, cancellationToken);
     }
 
-    public Task<Stream> GetFileAsync(Uri path, CancellationToken cancellationToken)
+    public Task<Stream> GetFileAsync(Uri uri, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
-        return this.FileSystem.GetFileAsync(path, cancellationToken);
+        return this.FileSystem.GetFileAsync(uri, cancellationToken);
     }
 
-    public Task<ObjectMetadata?> GetFileMetadataAsync(Uri path, CancellationToken cancellationToken)
+    public Task<ObjectMetadata?> GetFileMetadataAsync(Uri uri, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
-        return this.FileSystem.GetFileMetadataAsync(path, cancellationToken);
+        return this.FileSystem.GetFileMetadataAsync(uri, cancellationToken);
     }
 
     public IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive, CancellationToken cancellationToken)
@@ -57,22 +57,22 @@ class FileSystemWrapper : AsyncDisposable, IFileSystem
         return this.FileSystem.ListObjectsAsync(prefix, recursive, cancellationToken);
     }
 
-    public Task MoveFileAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
+    public Task MoveFileAsync(Uri oldUri, Uri newUri, bool overwrite, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
-        return this.FileSystem.MoveFileAsync(oldPath, newPath, overwrite, cancellationToken);
+        return this.FileSystem.MoveFileAsync(oldUri, newUri, overwrite, cancellationToken);
     }
 
-    public Task PutFileAsync(Uri path, Stream stream, bool overwrite, CancellationToken cancellationToken)
+    public Task PutFileAsync(Uri uri, Stream stream, bool overwrite, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
-        return this.FileSystem.PutFileAsync(path, stream, overwrite, cancellationToken);
+        return this.FileSystem.PutFileAsync(uri, stream, overwrite, cancellationToken);
     }
 
-    public Task<bool> DoesFileExistAsync(Uri path, CancellationToken cancellationToken)
+    public Task<bool> DoesFileExistAsync(Uri uri, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
-        return this.FileSystem.DoesFileExistAsync(path, cancellationToken);
+        return this.FileSystem.DoesFileExistAsync(uri, cancellationToken);
     }
 
     #endregion

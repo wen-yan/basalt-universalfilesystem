@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.Core.Disposing;
+using BasaltHexagons.UniversalFileSystem.Core.Exceptions;
 
 namespace BasaltHexagons.UniversalFileSystem.Memory;
 
@@ -24,18 +25,18 @@ class MemoryFileSystem : AsyncDisposable, IFileSystem
         {
             HashSet<string> subDirectories = new();
 
-            foreach ((string path, File file) in _files)
+            foreach ((string uri, File file) in _files)
             {
-                if (!path.StartsWith(pre)) continue;
+                if (!uri.StartsWith(pre)) continue;
 
-                int nextSeparatorIndex = path.IndexOf('/', pre.Length);
+                int nextSeparatorIndex = uri.IndexOf('/', pre.Length);
                 if (nextSeparatorIndex == -1)
                 {
-                    yield return new ObjectMetadata(MakeUri(prefix, path), ObjectType.File, file.Content.Length, file.LastModifiedTimeUtc);
+                    yield return new ObjectMetadata(MakeUri(prefix, uri), ObjectType.File, file.Content.Length, file.LastModifiedTimeUtc);
                 }
                 else
                 {
-                    string subDirectory = path.Substring(0, nextSeparatorIndex + 1);
+                    string subDirectory = uri.Substring(0, nextSeparatorIndex + 1);
                     subDirectories.Add(subDirectory);
                 }
             }
@@ -56,72 +57,72 @@ class MemoryFileSystem : AsyncDisposable, IFileSystem
         return GetObjectsAsync(prefix.AbsolutePath);
     }
 
-    public Task<ObjectMetadata?> GetFileMetadataAsync(Uri path, CancellationToken cancellationToken)
+    public Task<ObjectMetadata?> GetFileMetadataAsync(Uri uri, CancellationToken cancellationToken)
     {
-        return _files.TryGetValue(path.AbsolutePath, out File? file)
-            ? Task.FromResult<ObjectMetadata?>(new ObjectMetadata(path, ObjectType.File, file.Content.Length, file.LastModifiedTimeUtc))
+        return _files.TryGetValue(uri.AbsolutePath, out File? file)
+            ? Task.FromResult<ObjectMetadata?>(new ObjectMetadata(uri, ObjectType.File, file.Content.Length, file.LastModifiedTimeUtc))
             : Task.FromResult<ObjectMetadata?>(null);
     }
 
-    public Task<Stream> GetFileAsync(Uri path, CancellationToken cancellationToken)
+    public Task<Stream> GetFileAsync(Uri uri, CancellationToken cancellationToken)
     {
-        return _files.TryGetValue(path.AbsolutePath, out File? file)
+        return _files.TryGetValue(uri.AbsolutePath, out File? file)
             ? Task.FromResult<Stream>(new MemoryStream(file.Content))
-            : throw new ArgumentException($"File not found: {path}", nameof(path));
+            : throw new FileNotExistsException(uri);
     }
 
-    public async Task PutFileAsync(Uri path, Stream stream, bool overwrite, CancellationToken cancellationToken)
+    public async Task PutFileAsync(Uri uri, Stream stream, bool overwrite, CancellationToken cancellationToken)
     {
-        if (!overwrite && await this.DoesFileExistAsync(path, cancellationToken))
-            throw new ArgumentException($"File already exists: {path}", nameof(path));
+        if (!overwrite && await this.DoesFileExistAsync(uri, cancellationToken))
+            throw new FileExistsException(uri);
 
         await using MemoryStream memoryStream = new();
         await stream.CopyToAsync(memoryStream, cancellationToken);
-        _files[path.AbsolutePath] = new File(memoryStream.ToArray(), DateTime.UtcNow);
+        _files[uri.AbsolutePath] = new File(memoryStream.ToArray(), DateTime.UtcNow);
     }
 
-    public Task<bool> DeleteFileAsync(Uri path, CancellationToken cancellationToken)
+    public Task<bool> DeleteFileAsync(Uri uri, CancellationToken cancellationToken)
     {
-        bool exists = _files.TryGetValue(path.AbsolutePath, out File? _);
+        bool exists = _files.TryGetValue(uri.AbsolutePath, out File? _);
         if (exists)
-            _files.Remove(path.AbsolutePath);
+            _files.Remove(uri.AbsolutePath);
         return Task.FromResult(exists);
     }
 
-    public async Task MoveFileAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
+    public async Task MoveFileAsync(Uri oldUri, Uri newUri, bool overwrite, CancellationToken cancellationToken)
     {
-        if (oldPath == newPath)
-            throw new ArgumentException("Can't move object to itself");
+        if (oldUri == newUri)
+            throw new ArgumentException("Can't move file to itself");
 
-        bool oldExists = _files.TryGetValue(oldPath.AbsolutePath, out File? file);
+        bool oldExists = _files.TryGetValue(oldUri.AbsolutePath, out File? file);
         if (!oldExists)
-            throw new ArgumentException($"File not found: {oldPath}", nameof(oldPath));
+            throw new FileNotExistsException(oldUri);
 
-        if (!overwrite && await this.DoesFileExistAsync(newPath, cancellationToken))
-            throw new ArgumentException($"Destination file already exists: {newPath}");
+        if (!overwrite && await this.DoesFileExistAsync(newUri, cancellationToken))
+            throw new FileExistsException(newUri);
 
-        _files.Remove(oldPath.AbsolutePath);
-        _files[newPath.AbsolutePath] = file!;
+        _files.Remove(oldUri.AbsolutePath);
+        _files[newUri.AbsolutePath] = file!;
     }
 
-    public async Task CopyFileAsync(Uri sourcePath, Uri destPath, bool overwrite, CancellationToken cancellationToken)
+    public async Task CopyFileAsync(Uri sourceUri, Uri destUri, bool overwrite, CancellationToken cancellationToken)
     {
-        if (sourcePath == destPath)
-            throw new ArgumentException("Can't copy object to itself");
+        if (sourceUri == destUri)
+            throw new ArgumentException("Can't copy file to itself");
 
-        bool sourceExists = _files.TryGetValue(sourcePath.AbsolutePath, out File? file);
+        bool sourceExists = _files.TryGetValue(sourceUri.AbsolutePath, out File? file);
         if (!sourceExists)
-            throw new ArgumentException($"Source file not found: {sourcePath}", nameof(sourcePath));
+            throw new FileNotExistsException(sourceUri);
 
-        if (!overwrite && await this.DoesFileExistAsync(destPath, cancellationToken))
-            throw new ArgumentException($"Destination file already exists: {destPath}");
+        if (!overwrite && await this.DoesFileExistAsync(destUri, cancellationToken))
+            throw new FileExistsException(destUri);
 
-        _files[destPath.AbsolutePath] = new File(file!.Content, DateTime.UtcNow);
+        _files[destUri.AbsolutePath] = new File(file!.Content, DateTime.UtcNow);
     }
 
-    public Task<bool> DoesFileExistAsync(Uri path, CancellationToken cancellationToken) => Task.FromResult(_files.ContainsKey(path.AbsolutePath));
+    public Task<bool> DoesFileExistAsync(Uri uri, CancellationToken cancellationToken) => Task.FromResult(_files.ContainsKey(uri.AbsolutePath));
 
     #endregion
 
-    private static Uri MakeUri(Uri seed, string path) => new(seed, path);
+    private static Uri MakeUri(Uri seed, string uri) => new(seed, uri);
 }

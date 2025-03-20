@@ -6,6 +6,7 @@ using Amazon.Runtime.CredentialManagement;
 using Amazon.S3;
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.Core.Configuration;
+using BasaltHexagons.UniversalFileSystem.Core.Exceptions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -66,7 +67,7 @@ class AwsS3FileSystemFactory : IFileSystemFactory
             ClientCredentialType.Basic => CreateBasicAWSCredentials(implementationConfiguration),
             ClientCredentialType.EnvironmentVariables => new EnvironmentVariablesAWSCredentials(),
             ClientCredentialType.Profile => CreateStoredProfileAWSCredentials(implementationConfiguration),
-            _ => throw new ConfigurationException($"Unknown client credential type [{clientCredentialType}]"),
+            _ => throw new InvalidEnumConfigurationValueException<ClientCredentialType>("Credentials:Type", clientCredentialType),
         };
 
         // config
@@ -98,7 +99,7 @@ class AwsS3FileSystemFactory : IFileSystemFactory
         CredentialProfile? credentialProfile = credentialsFile.TryGetProfile(profileName, out CredentialProfile value) ? value : null;
 
         if (credentialProfile == null)
-            throw new ConfigurationException($"Unknown profile name [{profileName}]");
+            throw new InvalidConfigurationValueException("Credentials:ProfileName", profileName);
 
         return credentialProfile.GetAWSCredentials(credentialsFile);
     }

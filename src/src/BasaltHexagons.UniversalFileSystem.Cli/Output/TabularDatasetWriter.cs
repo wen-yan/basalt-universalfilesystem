@@ -73,7 +73,7 @@ class TabularDatasetWriter : IDatasetWriter
                     TabularDatasetWriterAlignment.Left => Justify.Left,
                     TabularDatasetWriterAlignment.Right => Justify.Right,
                     TabularDatasetWriterAlignment.Center => Justify.Center,
-                    _ => throw new ArgumentOutOfRangeException()
+                    _ => throw new ArgumentOutOfRangeException()    // TODO
                 }
             };
             table.AddColumn(column);

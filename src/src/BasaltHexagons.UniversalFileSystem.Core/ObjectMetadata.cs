@@ -8,4 +8,4 @@ public enum ObjectType
     Prefix
 }
 
-public sealed record ObjectMetadata(Uri Path, ObjectType ObjectType, long? ContentSize, DateTime? LastModifiedTimeUtc);
+public sealed record ObjectMetadata(Uri Uri, ObjectType ObjectType, long? ContentSize, DateTime? LastModifiedTimeUtc);

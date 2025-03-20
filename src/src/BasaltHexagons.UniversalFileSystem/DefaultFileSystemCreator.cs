@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using BasaltHexagons.UniversalFileSystem.Core;
-
+using BasaltHexagons.UniversalFileSystem.Core.Exceptions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,10 +24,9 @@ class DefaultFileSystemCreator : IFileSystemCreator
     {
         IConfigurationSection configurationSection = this.Configuration.GetSection($"Schemes:{scheme}");
 
-        string? implementationFactoryClass = configurationSection["ImplementationFactoryClass"];
-        if (implementationFactoryClass == null)
-            throw new KeyNotFoundException(nameof(scheme));
-
+        string implementationFactoryClass = configurationSection["ImplementationFactoryClass"]
+                                             ?? throw new ConfigurationMissingException($"Schemes:{scheme}");
+        
         IFileSystemFactory factory = this.ServiceProvider.GetRequiredKeyedService<IFileSystemFactory>(implementationFactoryClass);
         IConfiguration implementationConfig = configurationSection.GetSection("Implementation");
 

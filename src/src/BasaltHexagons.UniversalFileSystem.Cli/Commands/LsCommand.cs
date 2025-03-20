@@ -33,7 +33,7 @@ partial class LsCommandBuilder : CliCommandBuilder<LsCommand, LsCommandOptions>
 
 class LsCommandOutput
 {
-    public Uri? Path { get; set; }
+    public Uri? Uri { get; set; }
     public ObjectType ObjectType { get; set; }
     public DateTime? LastModifiedTimeUtc { get; set; }
 
@@ -53,7 +53,7 @@ class LsCommand : UniversalFileSystemCommand<LsCommandOptions>
             .ListObjectsAsync(this.Options.Directory, this.Options.Recursive, this.CancellationToken)
             .Select(metadata => new LsCommandOutput
             {
-                Path = metadata.Path,
+                Uri = metadata.Uri,
                 ObjectType = metadata.ObjectType,
                 LastModifiedTimeUtc = metadata.LastModifiedTimeUtc,
                 ContentSize = metadata.ContentSize

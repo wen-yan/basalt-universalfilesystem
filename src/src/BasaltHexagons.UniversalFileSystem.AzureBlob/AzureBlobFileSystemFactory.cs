@@ -3,10 +3,9 @@ using System.Runtime.CompilerServices;
 using Azure.Identity;
 using Azure.Storage;
 using Azure.Storage.Blobs;
-
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.Core.Configuration;
-
+using BasaltHexagons.UniversalFileSystem.Core.Exceptions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -43,7 +42,7 @@ class AzureBlobFileSystemFactory : IFileSystemFactory
     {
         IConfigurationSection clientConfig = implementationConfiguration.GetSection("Client");
 
-        BlobServiceClient client =  clientConfig.Exists()
+        BlobServiceClient client = clientConfig.Exists()
             ? this.CreateBlobServiceClientFromConfiguration(clientConfig)
             : this.ServiceProvider.GetRequiredKeyedService<BlobServiceClient>(CustomClientServiceKey);
 
@@ -58,7 +57,7 @@ class AzureBlobFileSystemFactory : IFileSystemFactory
         {
             ClientCredentialType.Default => CreateDefaultCredentialClient(implementationConfiguration),
             ClientCredentialType.SharedKey => CreateSharedKeyCredentialClient(implementationConfiguration),
-            _ => throw new ConfigurationException($"Unknown client credential type [{clientCredentialType}]"),
+            _ => throw new InvalidEnumConfigurationValueException<ClientCredentialType>("Credentials:Type", clientCredentialType),
         };
         return client;
     }
