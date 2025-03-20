@@ -19,7 +19,7 @@ public class ObjectMetadataLastModifiedTimeUtcRangeEqualityComparer : IEqualityC
         if ((x == null) != (y == null)) return false;
         if (object.ReferenceEquals(x, y)) return true;
 
-        if (x!.Path != y!.Path) return false;
+        if (x!.Uri != y!.Uri) return false;
         if (x.ObjectType != y.ObjectType) return false;
 
         if ((x.ContentSize == null) != (y.ContentSize == null)) return false;

@@ -10,7 +10,7 @@ namespace BasaltHexagons.UniversalFileSystem.Cli.Commands;
 partial class RemoveCommandOptions
 {
     [CliCommandSymbol(CliCommandSymbolType.Argument)]
-    public Uri[] Paths { get; init; }
+    public Uri[] Uris { get; init; }
     [CliCommandSymbol]
     public bool NoConfirm { get; init; }
 }
@@ -21,7 +21,7 @@ partial class RemoveCommandBuilder : CliCommandBuilder<RemoveCommand, RemoveComm
     public RemoveCommandBuilder(IServiceProvider serviceProvider) : base(serviceProvider)
     {
         this.Description = "Remove files";
-        this.PathsArgument = new("paths", "Path of files to remove")
+        this.UrisArgument = new("uris", "Uri of files to remove")
         {
             Arity = ArgumentArity.OneOrMore
         };
@@ -37,7 +37,7 @@ class RemoveCommand : UniversalFileSystemCommand<RemoveCommandOptions>
 
     public override async ValueTask ExecuteAsync()
     {
-        // bool deleted = await this.UniversalFileSystem.DeleteObjectAsync(this.Options.Path, this.CancellationToken);
+        // bool deleted = await this.UniversalFileSystem.DeleteObjectAsync(this.Options.Uri, this.CancellationToken);
         bool deleted = true;
         await this.OutputWriter.WriteLineAsync(deleted ? "Deleted object" : "Failed to delete object", this.CancellationToken);
     }

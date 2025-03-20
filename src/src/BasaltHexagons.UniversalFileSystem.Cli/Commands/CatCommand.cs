@@ -11,7 +11,7 @@ namespace BasaltHexagons.UniversalFileSystem.Cli.Commands;
 partial class CatCommandOptions
 {
     [CliCommandSymbol(CliCommandSymbolType.Argument)]
-    public Uri Path { get; init; }
+    public Uri Uri { get; init; }
 }
 
 [CliCommandBuilder("cat", typeof(AppCommandBuilder))]
@@ -20,7 +20,7 @@ partial class CatCommandBuilder : CliCommandBuilder<CatCommand, CatCommandOption
     public CatCommandBuilder(IServiceProvider serviceProvider) : base(serviceProvider)
     {
         this.Description = "cat";
-        this.PathArgument = new("path", "File path");
+        this.UriArgument = new("uri", "File uri");
     }
 }
 
@@ -32,7 +32,7 @@ class CatCommand : UniversalFileSystemCommand<CatCommandOptions>
 
     public override async ValueTask ExecuteAsync()
     {
-        await using Stream stream = await this.UniversalFileSystem.GetFileAsync(this.Options.Path, this.CancellationToken);
+        await using Stream stream = await this.UniversalFileSystem.GetFileAsync(this.Options.Uri, this.CancellationToken);
         using StreamReader reader = new(stream, leaveOpen: true);
         while (true)
         {

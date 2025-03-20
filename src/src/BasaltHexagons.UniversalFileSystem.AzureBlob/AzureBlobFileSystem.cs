@@ -11,6 +11,7 @@ using Azure.Storage.Blobs.Specialized;
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.Core.Configuration;
 using BasaltHexagons.UniversalFileSystem.Core.Disposing;
+using BasaltHexagons.UniversalFileSystem.Core.Exceptions;
 using BasaltHexagons.UniversalFileSystem.Core.IO;
 using Microsoft.Extensions.Configuration;
 
@@ -30,18 +31,16 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
 
     #region IFileSystem
 
-    public async Task CopyFileAsync(Uri sourcePath, Uri destPath, bool overwrite,
+    public async Task CopyFileAsync(Uri sourceUri, Uri destUri, bool overwrite,
         CancellationToken cancellationToken)
     {
-        BlobClient sourceBlobClient = this.GetBlobClient(sourcePath);
-        BlobClient destBlobClient = this.GetBlobClient(destPath);
+        BlobClient sourceBlobClient = this.GetBlobClient(sourceUri);
+        BlobClient destBlobClient = this.GetBlobClient(destUri);
 
-        if (!overwrite && await this.DoesFileExistAsync(destPath, cancellationToken))
-        {
-            throw new ArgumentException($"Object {destPath} already exists.");
-        }
+        if (!overwrite && await this.DoesFileExistAsync(destUri, cancellationToken))
+            throw new FileExistsException(destUri);
 
-        await this.TryCreateBlobContainerIfNotExistsAsync(destPath, cancellationToken);
+        await this.TryCreateBlobContainerIfNotExistsAsync(destUri, cancellationToken);
 
         BlobLeaseClient sourceBlobLeaseClient = new(sourceBlobClient);
         try
@@ -56,30 +55,30 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
         }
     }
 
-    public async Task<bool> DeleteFileAsync(Uri path, CancellationToken cancellationToken)
+    public async Task<bool> DeleteFileAsync(Uri uri, CancellationToken cancellationToken)
     {
-        BlobClient blobClient = this.GetBlobClient(path);
+        BlobClient blobClient = this.GetBlobClient(uri);
         return await blobClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
     }
 
-    public async Task<Stream> GetFileAsync(Uri path, CancellationToken cancellationToken)
+    public async Task<Stream> GetFileAsync(Uri uri, CancellationToken cancellationToken)
     {
-        BlobClient blobClient = this.GetBlobClient(path);
+        BlobClient blobClient = this.GetBlobClient(uri);
         Response<BlobDownloadStreamingResult> response = await blobClient.DownloadStreamingAsync(cancellationToken: cancellationToken);
         if (!response.HasValue || response.Value.Content == null)
-            throw new ArgumentException($"Object {path} not found.");
+            throw new FileNotExistsException(uri);
 
         return new StreamWrapper(response.Value.Content, [], [response.Value]);
     }
 
-    public async Task<ObjectMetadata?> GetFileMetadataAsync(Uri path, CancellationToken cancellationToken)
+    public async Task<ObjectMetadata?> GetFileMetadataAsync(Uri uri, CancellationToken cancellationToken)
     {
-        BlobClient blobClient = this.GetBlobClient(path);
-        if (!await this.DoesFileExistAsync(path, cancellationToken))
+        BlobClient blobClient = this.GetBlobClient(uri);
+        if (!await this.DoesFileExistAsync(uri, cancellationToken))
             return null;
 
         BlobProperties properties = await blobClient.GetPropertiesAsync(cancellationToken: cancellationToken);
-        return new(path, ObjectType.File, properties.ContentLength, properties.LastModified.UtcDateTime);
+        return new(uri, ObjectType.File, properties.ContentLength, properties.LastModified.UtcDateTime);
     }
 
     public async IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive,
@@ -102,16 +101,16 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
             {
                 if (blobHierarchyItem.IsPrefix)
                 {
-                    Uri path = ConstructUri(prefix.Scheme, container, blobHierarchyItem.Prefix);
-                    yield return new ObjectMetadata(path, ObjectType.Prefix, null, null);
+                    Uri uri = ConstructUri(prefix.Scheme, container, blobHierarchyItem.Prefix);
+                    yield return new ObjectMetadata(uri, ObjectType.Prefix, null, null);
 
                     if (recursive)
                         keyPrefixQueue.Enqueue(blobHierarchyItem.Prefix);
                 }
                 else
                 {
-                    Uri path = ConstructUri(prefix.Scheme, container, blobHierarchyItem.Blob.Name);
-                    yield return new ObjectMetadata(path, ObjectType.File,
+                    Uri uri = ConstructUri(prefix.Scheme, container, blobHierarchyItem.Blob.Name);
+                    yield return new ObjectMetadata(uri, ObjectType.File,
                         blobHierarchyItem.Blob.Properties.ContentLength,
                         blobHierarchyItem.Blob.Properties.LastModified?.UtcDateTime);
                 }
@@ -119,27 +118,25 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
         }
     }
 
-    public async Task MoveFileAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
+    public async Task MoveFileAsync(Uri oldUri, Uri newUri, bool overwrite, CancellationToken cancellationToken)
     {
-        await this.CopyFileAsync(oldPath, newPath, overwrite, cancellationToken);
-        await this.DeleteFileAsync(oldPath, cancellationToken);
+        await this.CopyFileAsync(oldUri, newUri, overwrite, cancellationToken);
+        await this.DeleteFileAsync(oldUri, cancellationToken);
     }
 
-    public async Task PutFileAsync(Uri path, Stream stream, bool overwrite, CancellationToken cancellationToken)
+    public async Task PutFileAsync(Uri uri, Stream stream, bool overwrite, CancellationToken cancellationToken)
     {
-        if (!overwrite && await this.DoesFileExistAsync(path, cancellationToken))
-        {
-            throw new ArgumentException($"Object {path} already exists.");
-        }
+        if (!overwrite && await this.DoesFileExistAsync(uri, cancellationToken))
+            throw new FileExistsException(uri);
 
-        await this.TryCreateBlobContainerIfNotExistsAsync(path, cancellationToken);
-        BlobClient blobClient = this.GetBlobClient(path);
+        await this.TryCreateBlobContainerIfNotExistsAsync(uri, cancellationToken);
+        BlobClient blobClient = this.GetBlobClient(uri);
         await blobClient.UploadAsync(stream, overwrite, cancellationToken);
     }
 
-    public async Task<bool> DoesFileExistAsync(Uri path, CancellationToken cancellationToken)
+    public async Task<bool> DoesFileExistAsync(Uri uri, CancellationToken cancellationToken)
     {
-        BlobClient blobClient = this.GetBlobClient(path);
+        BlobClient blobClient = this.GetBlobClient(uri);
         Response<bool> response = await blobClient.ExistsAsync(cancellationToken);
         return response.HasValue && response.Value;
     }
@@ -172,14 +169,14 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
         return containerClient.GetBlobClient(uri.AbsolutePath);
     }
 
-    private async Task TryCreateBlobContainerIfNotExistsAsync(Uri path, CancellationToken cancellationToken)
+    private async Task TryCreateBlobContainerIfNotExistsAsync(Uri uri, CancellationToken cancellationToken)
     {
         if (this.Settings.GetBoolValue("CreateBlobContainerIfNotExists", () => null) ?? false)
         {
-            BlobContainerClient containerClient = this.GetContainerClient(path);
+            BlobContainerClient containerClient = this.GetContainerClient(uri);
             if (!await containerClient.ExistsAsync(cancellationToken))
             {
-                await this.Client.CreateBlobContainerAsync(path.Host, cancellationToken: cancellationToken);
+                await this.Client.CreateBlobContainerAsync(uri.Host, cancellationToken: cancellationToken);
             }
         }
     }
