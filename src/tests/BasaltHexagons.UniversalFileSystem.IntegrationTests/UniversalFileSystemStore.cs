@@ -2,6 +2,7 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Azure.Storage;
 using Azure.Storage.Blobs;
+using BasaltHexagons.UniversalFileSystem.AliyunOss;
 using BasaltHexagons.UniversalFileSystem.AwsS3;
 using BasaltHexagons.UniversalFileSystem.AzureBlob;
 using BasaltHexagons.UniversalFileSystem.File;
@@ -60,6 +61,7 @@ public abstract class UniversalFileSystemStore
         yield return CreateUriWrapper(ufs, "s3-custom-client", "s3://ufs-it-s3-custom-client");
         yield return CreateUriWrapper(ufs, "abfss", "abfss://ufs-it-abfss");
         yield return CreateUriWrapper(ufs, "abfss-custom-client", "abfss://ufs-it-abfss-custom-client");
+        // yield return CreateUriWrapper(ufs, "oss", "oss://ufs-it-oss");   # Can't find oss-emulator
     }
 
     private static IUniversalFileSystem CreateUniversalFileSystem()
@@ -83,7 +85,8 @@ public abstract class UniversalFileSystemStore
                     .AddAzureBlobFileSystem()
                     .AddAzureBlobCustomClient("AzureBlobCustomClient", _ =>
                         new BlobServiceClient(new Uri("http://localhost:10000/account2"),
-                            new StorageSharedKeyCredential("account2", "a2V5Mg==")));
+                            new StorageSharedKeyCredential("account2", "a2V5Mg==")))
+                    .AddAliyunOssFileSystem();
             })
             .Build();
         return host.Services.GetRequiredService<IUniversalFileSystem>();
