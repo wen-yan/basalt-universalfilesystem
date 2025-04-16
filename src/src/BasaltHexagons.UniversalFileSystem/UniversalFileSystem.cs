@@ -35,7 +35,7 @@ class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
         return this.GetImpl(prefix).ListObjectsAsync(prefix, recursive, cancellationToken);
     }
 
-    public Task<ObjectMetadata?> GetFileMetadataAsync(Uri uri, CancellationToken cancellationToken)
+    public Task<ObjectMetadata> GetFileMetadataAsync(Uri uri, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
         return this.GetImpl(uri).GetFileMetadataAsync(uri, cancellationToken);

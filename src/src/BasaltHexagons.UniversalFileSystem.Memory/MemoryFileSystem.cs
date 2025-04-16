@@ -57,11 +57,11 @@ class MemoryFileSystem : AsyncDisposable, IFileSystem
         return GetObjectsAsync(prefix.AbsolutePath);
     }
 
-    public Task<ObjectMetadata?> GetFileMetadataAsync(Uri uri, CancellationToken cancellationToken)
+    public Task<ObjectMetadata> GetFileMetadataAsync(Uri uri, CancellationToken cancellationToken)
     {
         return _files.TryGetValue(uri.AbsolutePath, out File? file)
-            ? Task.FromResult<ObjectMetadata?>(new ObjectMetadata(uri, ObjectType.File, file.Content.Length, file.LastModifiedTimeUtc))
-            : Task.FromResult<ObjectMetadata?>(null);
+            ? Task.FromResult<ObjectMetadata>(new ObjectMetadata(uri, ObjectType.File, file.Content.Length, file.LastModifiedTimeUtc))
+            : Task.FromException<ObjectMetadata>(new FileNotExistsException(uri));
     }
 
     public Task<Stream> GetFileAsync(Uri uri, CancellationToken cancellationToken)
@@ -110,8 +110,7 @@ class MemoryFileSystem : AsyncDisposable, IFileSystem
         if (sourceUri == destUri)
             throw new ArgumentException("Can't copy file to itself");
 
-        bool sourceExists = _files.TryGetValue(sourceUri.AbsolutePath, out File? file);
-        if (!sourceExists)
+        if (!_files.TryGetValue(sourceUri.AbsolutePath, out File? file))
             throw new FileNotExistsException(sourceUri);
 
         if (!overwrite && await this.DoesFileExistAsync(destUri, cancellationToken))

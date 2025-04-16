@@ -34,10 +34,14 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
 
     public async Task CopyFileAsync(Uri sourceUri, Uri destUri, bool overwrite, CancellationToken cancellationToken)
     {
+        if (sourceUri == destUri)
+            throw new ArgumentException("Can't copy file to itself.");
+
+        if (!await this.DoesFileExistAsync(sourceUri, cancellationToken))
+            throw new FileNotExistsException(sourceUri);
+
         if (!overwrite && await this.DoesFileExistAsync(destUri, cancellationToken))
-        {
             throw new FileExistsException(destUri);
-        }
 
         CopyObjectRequest request = new();
         (request.SourceBucket, request.SourceKey) = DeconstructUri(sourceUri);
@@ -61,6 +65,9 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
 
     public async Task<Stream> GetFileAsync(Uri uri, CancellationToken cancellationToken)
     {
+        if (!await this.DoesFileExistAsync(uri, cancellationToken))
+            throw new FileNotExistsException(uri);
+
         GetObjectRequest request = new();
         (request.BucketName, request.Key) = DeconstructUri(uri);
 
@@ -68,22 +75,24 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
         return new StreamWrapper(response.ResponseStream, [], [response]);
     }
 
-    public async Task<ObjectMetadata?> GetFileMetadataAsync(Uri uri, CancellationToken cancellationToken)
+    public async Task<ObjectMetadata> GetFileMetadataAsync(Uri uri, CancellationToken cancellationToken)
     {
         GetObjectMetadataRequest request = new();
         (request.BucketName, request.Key) = DeconstructUri(uri);
         try
         {
             GetObjectMetadataResponse response = await this.Client.GetObjectMetadataAsync(request, cancellationToken);
-            return new ObjectMetadata(uri, ObjectType.File, response.ContentLength, response.LastModified.ToUniversalTime());
+            return new ObjectMetadata(uri, ObjectType.File, response.ContentLength,
+                response.LastModified.ToUniversalTime());
         }
         catch (AmazonS3Exception ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
-            return null;
+            throw new FileNotExistsException(uri, inner: ex);
         }
     }
 
-    public async IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         (string bucketName, string keyPrefix) = DeconstructUri(prefix);
 
@@ -140,9 +149,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
     public async Task PutFileAsync(Uri uri, Stream stream, bool overwrite, CancellationToken cancellationToken)
     {
         if (!overwrite && await this.DoesFileExistAsync(uri, cancellationToken))
-        {
             throw new FileExistsException(uri);
-        }
 
         (string bucketName, string key) = DeconstructUri(uri);
         await this.TryCreateBucketIfNotExistsAsync(bucketName, cancellationToken);
@@ -156,7 +163,18 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
         PutObjectResponse response = await this.Client.PutObjectAsync(request, cancellationToken);
     }
 
-    public async Task<bool> DoesFileExistAsync(Uri uri, CancellationToken cancellationToken) => (await this.GetFileMetadataAsync(uri, cancellationToken)) != null;
+    public async Task<bool> DoesFileExistAsync(Uri uri, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await this.GetFileMetadataAsync(uri, cancellationToken);
+            return true;
+        }
+        catch (FileNotExistsException)
+        {
+            return false;
+        }
+    }
 
     #endregion IFileSystem
 
