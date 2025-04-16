@@ -1,5 +1,8 @@
+using System;
 using System.Threading.Tasks;
 using BasaltHexagons.UniversalFileSystem.Core;
+using BasaltHexagons.UniversalFileSystem.Core.Exceptions;
+using BasaltHexagons.UniversalFileSystem.TestUtils;
 
 namespace BasaltHexagons.UniversalFileSystem.IntegrationTests.TestMethods;
 
@@ -28,10 +31,7 @@ public class GetFileMetadataTests
         await ufs.PutFileAsync("dir/test.txt", "test content", true);
 
         // test
-        ObjectMetadata? metadata = await ufs.GetFileMetadataAsync("dir");
-
-        // Verify
-        Assert.IsNull(metadata);
+        await Assert.That.ExpectException<FileNotExistsException>(async () => await ufs.GetFileMetadataAsync("dir"));
     }
 
     [DataTestMethod]
@@ -39,9 +39,6 @@ public class GetFileMetadataTests
     public async Task GetFileMetadata_NotExists(UniversalFileSystemTestWrapper ufs)
     {
         // test
-        ObjectMetadata? metadata = await ufs.GetFileMetadataAsync("test.txt");
-
-        // verify
-        Assert.IsNull(metadata);
+        await Assert.That.ExpectException<FileNotExistsException>(async () => await ufs.GetFileMetadataAsync("test.txt"));
     }
 }

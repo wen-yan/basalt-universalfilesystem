@@ -45,7 +45,7 @@ class FileSystemWrapper : AsyncDisposable, IFileSystem
         return this.FileSystem.GetFileAsync(uri, cancellationToken);
     }
 
-    public Task<ObjectMetadata?> GetFileMetadataAsync(Uri uri, CancellationToken cancellationToken)
+    public Task<ObjectMetadata> GetFileMetadataAsync(Uri uri, CancellationToken cancellationToken)
     {
         this.CheckIsDisposed();
         return this.FileSystem.GetFileMetadataAsync(uri, cancellationToken);

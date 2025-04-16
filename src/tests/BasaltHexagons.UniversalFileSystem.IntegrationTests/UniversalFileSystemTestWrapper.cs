@@ -50,7 +50,7 @@ public class UniversalFileSystemTestWrapper : AsyncDisposable, IUniversalFileSys
         return await reader.ReadToEndAsync(cancellationToken);
     }
 
-    public Task<ObjectMetadata?> GetFileMetadataAsync(string uri, CancellationToken cancellationToken = default)
+    public Task<ObjectMetadata> GetFileMetadataAsync(string uri, CancellationToken cancellationToken = default)
         => this.GetFileMetadataAsync(new Uri(uri, UriKind.RelativeOrAbsolute), cancellationToken);
 
 
@@ -90,7 +90,7 @@ public class UniversalFileSystemTestWrapper : AsyncDisposable, IUniversalFileSys
     public Task<Stream> GetFileAsync(Uri uri, CancellationToken cancellationToken)
         => this.Inner.GetFileAsync(this.GetFullUri(uri), cancellationToken);
 
-    public Task<ObjectMetadata?> GetFileMetadataAsync(Uri uri, CancellationToken cancellationToken)
+    public Task<ObjectMetadata> GetFileMetadataAsync(Uri uri, CancellationToken cancellationToken)
         => this.Inner.GetFileMetadataAsync(this.GetFullUri(uri), cancellationToken);
 
     public IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive, CancellationToken cancellationToken)

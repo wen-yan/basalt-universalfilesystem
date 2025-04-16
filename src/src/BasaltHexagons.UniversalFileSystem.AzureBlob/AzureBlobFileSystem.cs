@@ -31,9 +31,14 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
 
     #region IFileSystem
 
-    public async Task CopyFileAsync(Uri sourceUri, Uri destUri, bool overwrite,
-        CancellationToken cancellationToken)
+    public async Task CopyFileAsync(Uri sourceUri, Uri destUri, bool overwrite, CancellationToken cancellationToken)
     {
+        if (sourceUri == destUri)
+            throw new ArgumentException("Can't copy file to itself.");
+
+        if (!await this.DoesFileExistAsync(sourceUri, cancellationToken))
+            throw new FileNotExistsException(sourceUri);
+
         BlobClient sourceBlobClient = this.GetBlobClient(sourceUri);
         BlobClient destBlobClient = this.GetBlobClient(destUri);
 
@@ -63,6 +68,9 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
 
     public async Task<Stream> GetFileAsync(Uri uri, CancellationToken cancellationToken)
     {
+        if (!await this.DoesFileExistAsync(uri, cancellationToken))
+            throw new FileNotExistsException(uri);
+
         BlobClient blobClient = this.GetBlobClient(uri);
         Response<BlobDownloadStreamingResult> response = await blobClient.DownloadStreamingAsync(cancellationToken: cancellationToken);
         if (!response.HasValue || response.Value.Content == null)
@@ -71,11 +79,11 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
         return new StreamWrapper(response.Value.Content, [], [response.Value]);
     }
 
-    public async Task<ObjectMetadata?> GetFileMetadataAsync(Uri uri, CancellationToken cancellationToken)
+    public async Task<ObjectMetadata> GetFileMetadataAsync(Uri uri, CancellationToken cancellationToken)
     {
         BlobClient blobClient = this.GetBlobClient(uri);
         if (!await this.DoesFileExistAsync(uri, cancellationToken))
-            return null;
+            throw new FileNotExistsException(uri);
 
         BlobProperties properties = await blobClient.GetPropertiesAsync(cancellationToken: cancellationToken);
         return new(uri, ObjectType.File, properties.ContentLength, properties.LastModified.UtcDateTime);
