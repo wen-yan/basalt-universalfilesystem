@@ -3,6 +3,7 @@
     <ItemGroup>
         <PackageReference Include="System.Linq.Async" Version="$(System_Linq_Async_Version)"/>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="$(Microsoft_Extensions_Hosting_Version)"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Yaml" Version="$(Microsoft_Extensions_Configuration_Yaml_Version)" />
     </ItemGroup>
 
     <ItemGroup>
@@ -12,6 +13,12 @@
         <ProjectReference Include="..\..\src\BasaltHexagons.UniversalFileSystem.Memory\BasaltHexagons.UniversalFileSystem.Memory.csproj" />
         <ProjectReference Include="..\..\src\BasaltHexagons.UniversalFileSystem\BasaltHexagons.UniversalFileSystem.csproj"/>
         <ProjectReference Include="..\BasaltHexagons.UniversalFileSystem.TestUtils\BasaltHexagons.UniversalFileSystem.TestUtils.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="test-settings.yaml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

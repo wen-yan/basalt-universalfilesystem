@@ -165,6 +165,11 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
 
     public async Task<bool> DoesFileExistAsync(Uri uri, CancellationToken cancellationToken)
     {
+        (string bucket, _) = DeconstructUri(uri);
+
+        bool bucketExists = await AmazonS3Util.DoesS3BucketExistV2Async(this.Client, bucket);
+        if (!bucketExists) return false;
+
         try
         {
             await this.GetFileMetadataAsync(uri, cancellationToken);

@@ -49,17 +49,11 @@ static class Program
                     // Command line
                     .AddCommandLineSupport()
 
-                    // FileSystems
+                    // UniversalFileSystem
+                    .AddUniversalFileSystem("BasaltHexagons:UniversalFileSystem")
                     .AddFileFileSystem()
                     .AddAwsS3FileSystem()
                     .AddAzureBlobFileSystem()
-
-                    // UniversalFileSystem
-                    .AddTransient<IUniversalFileSystem>(serviceProvider =>
-                    {
-                        IConfigurationSection config = serviceProvider.GetRequiredService<IConfiguration>().GetSection("BasaltHexagons:UniversalFileSystem");
-                        return UniversalFileSystemFactory.Create(serviceProvider, config);
-                    })
 
                     // Output
                     .AddTransient<IOutputWriter, ConsoleOutputWriter>()

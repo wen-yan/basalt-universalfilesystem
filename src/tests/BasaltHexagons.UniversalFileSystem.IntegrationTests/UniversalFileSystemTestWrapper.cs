@@ -5,28 +5,26 @@ using System.Threading;
 using System.Threading.Tasks;
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.Core.Disposing;
-using Microsoft.Extensions.Hosting;
 
 namespace BasaltHexagons.UniversalFileSystem.IntegrationTests;
 
-public class UniversalFileSystemTestWrapper : AsyncDisposable, IUniversalFileSystem
+public class UniversalFileSystemTestWrapper : AsyncDisposable
 {
-    public UniversalFileSystemTestWrapper(IHost host, Uri baseUri, IUniversalFileSystem inner)
+    public UniversalFileSystemTestWrapper(IUniversalFileSystem inner, Uri baseUri)
     {
-        this.Host = host;
-        this.BaseUri = baseUri;
         this.Inner = inner;
+        this.BaseUri = baseUri;
     }
 
-    private IHost Host { get; }
-    private Uri BaseUri { get; }
     private IUniversalFileSystem Inner { get; }
+    private Uri BaseUri { get; }
 
     #region Helpers
 
     public Uri GetRelativeUri(Uri uri) => this.BaseUri.MakeRelativeUri(uri);
     public string GetRelativeUri(string uri) => this.GetRelativeUri(new Uri(uri)).ToString();
     public Uri GetFullUri(Uri relativeUri) => new(this.BaseUri, relativeUri);
+    public Uri GetFullUri(string uri) => this.GetFullUri(new Uri(uri, UriKind.RelativeOrAbsolute));
 
     public ObjectMetadata MakeObjectMetadata(string uri, ObjectType objectType, long? contentSize, DateTime? lastModifiedTimeUtc)
     {
@@ -38,28 +36,28 @@ public class UniversalFileSystemTestWrapper : AsyncDisposable, IUniversalFileSys
 
 
     public Task CopyFileAsync(string sourceUri, string destUri, bool overwrite, CancellationToken cancellationToken = default)
-        => this.CopyFileAsync(new Uri(sourceUri, UriKind.RelativeOrAbsolute), new Uri(destUri, UriKind.RelativeOrAbsolute), overwrite, cancellationToken);
+        => this.Inner.CopyFileAsync(this.GetFullUri(sourceUri), this.GetFullUri(destUri), overwrite, cancellationToken);
 
     public Task<bool> DeleteFileAsync(string uri, CancellationToken cancellationToken = default)
-        => this.DeleteFileAsync(new Uri(uri, UriKind.RelativeOrAbsolute), cancellationToken);
+        => this.Inner.DeleteFileAsync(this.GetFullUri(uri), cancellationToken);
 
     public async Task<string> GetFileAsync(string uri, CancellationToken cancellationToken = default)
     {
-        await using Stream stream = await this.GetFileAsync(new Uri(uri, UriKind.RelativeOrAbsolute), cancellationToken);
+        await using Stream stream = await this.Inner.GetFileAsync(this.GetFullUri(uri), cancellationToken);
         using TextReader reader = new StreamReader(stream);
         return await reader.ReadToEndAsync(cancellationToken);
     }
 
     public Task<ObjectMetadata> GetFileMetadataAsync(string uri, CancellationToken cancellationToken = default)
-        => this.GetFileMetadataAsync(new Uri(uri, UriKind.RelativeOrAbsolute), cancellationToken);
+        => this.Inner.GetFileMetadataAsync(this.GetFullUri(uri), cancellationToken);
 
 
     public IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(string prefix, bool recursive, CancellationToken cancellationToken = default)
-        => this.ListObjectsAsync(new Uri(prefix, UriKind.RelativeOrAbsolute), recursive, cancellationToken);
+        => this.Inner.ListObjectsAsync(this.GetFullUri(prefix), recursive, cancellationToken);
 
 
     public Task MoveFileAsync(string oldPath, string newPath, bool overwrite, CancellationToken cancellationToken = default)
-        => this.MoveFileAsync(new Uri(oldPath, UriKind.RelativeOrAbsolute), new Uri(newPath, UriKind.RelativeOrAbsolute), overwrite, cancellationToken);
+        => this.Inner.MoveFileAsync(this.GetFullUri(oldPath), this.GetFullUri(newPath), overwrite, cancellationToken);
 
 
     public async Task PutFileAsync(string uri, string content, bool overwrite, CancellationToken cancellationToken = default)
@@ -71,38 +69,10 @@ public class UniversalFileSystemTestWrapper : AsyncDisposable, IUniversalFileSys
         }
 
         stream.Seek(0, SeekOrigin.Begin);
-        await this.PutFileAsync(new Uri(uri, UriKind.RelativeOrAbsolute), stream, overwrite, cancellationToken);
+        await this.Inner.PutFileAsync(this.GetFullUri(uri), stream, overwrite, cancellationToken);
     }
 
     public Task<bool> DoesFileExistAsync(string uri, CancellationToken cancellationToken = default)
-        => this.DoesFileExistAsync(new Uri(uri, UriKind.Relative), cancellationToken);
-
-    #endregion
-
-    #region IUniversalFileSystem
-
-    public Task CopyFileAsync(Uri sourceUri, Uri destUri, bool overwrite, CancellationToken cancellationToken)
-        => this.Inner.CopyFileAsync(this.GetFullUri(sourceUri), new Uri(this.BaseUri, destUri), overwrite, cancellationToken);
-
-    public Task<bool> DeleteFileAsync(Uri uri, CancellationToken cancellationToken)
-        => this.Inner.DeleteFileAsync(this.GetFullUri(uri), cancellationToken);
-
-    public Task<Stream> GetFileAsync(Uri uri, CancellationToken cancellationToken)
-        => this.Inner.GetFileAsync(this.GetFullUri(uri), cancellationToken);
-
-    public Task<ObjectMetadata> GetFileMetadataAsync(Uri uri, CancellationToken cancellationToken)
-        => this.Inner.GetFileMetadataAsync(this.GetFullUri(uri), cancellationToken);
-
-    public IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive, CancellationToken cancellationToken)
-        => this.Inner.ListObjectsAsync(this.GetFullUri(prefix), recursive, cancellationToken);
-
-    public Task MoveFileAsync(Uri oldPath, Uri newPath, bool overwrite, CancellationToken cancellationToken)
-        => this.Inner.MoveFileAsync(this.GetFullUri(oldPath), new Uri(this.BaseUri, newPath), overwrite, cancellationToken);
-
-    public Task PutFileAsync(Uri uri, Stream stream, bool overwrite, CancellationToken cancellationToken)
-        => this.Inner.PutFileAsync(this.GetFullUri(uri), stream, overwrite, cancellationToken);
-
-    public Task<bool> DoesFileExistAsync(Uri uri, CancellationToken cancellationToken)
         => this.Inner.DoesFileExistAsync(this.GetFullUri(uri), cancellationToken);
 
     #endregion
@@ -110,7 +80,6 @@ public class UniversalFileSystemTestWrapper : AsyncDisposable, IUniversalFileSys
     protected override async ValueTask DisposeManagedObjectsAsync()
     {
         await this.Inner.DisposeAsync();
-        this.Host.Dispose();
         await base.DisposeManagedObjectsAsync();
     }
 

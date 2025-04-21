@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using BasaltHexagons.UniversalFileSystem.AwsS3;
 using BasaltHexagons.UniversalFileSystem.AzureBlob;
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.File;
 using BasaltHexagons.UniversalFileSystem.Memory;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Yaml;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -15,23 +16,23 @@ namespace BasaltHexagons.UniversalFileSystem.IntegrationTests;
 
 public abstract class UniversalFileSystemStore
 {
-    public static IEnumerable<object[]> GetAllUniversalFileSystems()
+    public static IEnumerable<object[]> GetSingleUniversalFileSystem() => GetUniversalFileSystemWrappers()
+        .Select(x => new object[] { x });
+
+    private static IEnumerable<UniversalFileSystemTestWrapper> GetUniversalFileSystemWrappers(IUniversalFileSystem? ufs = null)
     {
-        yield return [CreateMemoryUniversalFileSystem()];
-        yield return [CreateFileUniversalFileSystem()];
-        yield return [CreateAwsS3UniversalFileSystem()];
-        yield return [CreateAzureBlobUniversalFileSystem()];
+        ufs ??= CreateUniversalFileSystem();
+
+        yield return CreateMemoryUniversalFileSystem(ufs);
+        yield return CreateFileUniversalFileSystem(ufs);
+        yield return CreateAwsS3UniversalFileSystem(ufs);
+        yield return CreateAzureBlobUniversalFileSystem(ufs);
+        yield return CreateAzureBlob2UniversalFileSystem(ufs);
     }
 
-    private static UniversalFileSystemTestWrapper CreateMemoryUniversalFileSystem()
-    {
-        return CreateUniversalFileSystem(
-            builder => { builder.AddInMemoryCollection(new Dictionary<string, string?> { ["Schemes:memory:ImplementationFactoryClass"] = "BasaltHexagons.UniversalFileSystem.Memory.MemoryFileSystemFactory" }); },
-            services => services.AddMemoryFileSystem(),
-            $"memory://");
-    }
+    private static UniversalFileSystemTestWrapper CreateMemoryUniversalFileSystem(IUniversalFileSystem ufs) => CreateUniversalFileSystemTestWrapper(ufs, "memory://");
 
-    private static UniversalFileSystemTestWrapper CreateFileUniversalFileSystem()
+    private static UniversalFileSystemTestWrapper CreateFileUniversalFileSystem(IUniversalFileSystem ufs)
     {
         string root = $"{Environment.CurrentDirectory}/ufs-integration-test-file";
 
@@ -50,72 +51,44 @@ public abstract class UniversalFileSystemStore
             }
         }
 
-        return CreateUniversalFileSystem(
-            builder => { builder.AddInMemoryCollection(new Dictionary<string, string?> { ["Schemes:file:ImplementationFactoryClass"] = "BasaltHexagons.UniversalFileSystem.File.FileFileSystemFactory" }); },
-            services => services.AddFileFileSystem(),
-            $"file://{root}/");
+        return CreateUniversalFileSystemTestWrapper(ufs, $"file://{root}/");
     }
 
-    private static UniversalFileSystemTestWrapper CreateAwsS3UniversalFileSystem()
-    {
-        return CreateUniversalFileSystem(
-            builder =>
-            {
-                builder.AddInMemoryCollection(new Dictionary<string, string?>
-                {
-                    ["Schemes:s3:ImplementationFactoryClass"] = "BasaltHexagons.UniversalFileSystem.AwsS3.AwsS3FileSystemFactory",
-                    ["Schemes:s3:Implementation:Client:Credentials:Type"] = "Basic",
-                    ["Schemes:s3:Implementation:Client:Credentials:AccessKey"] = "test",
-                    ["Schemes:s3:Implementation:Client:Credentials:SecretKey"] = "test",
-                    ["Schemes:s3:Implementation:Client:Options:ServiceURL"] = "http://localhost:4566",
-                    ["Schemes:s3:Implementation:Client:Options:ForcePathStyle"] = "true",
-                    ["Schemes:s3:Implementation:Settings:CreateBucketIfNotExists"] = "true",
-                });
-            },
-            services => services.AddAwsS3FileSystem(),
-            $"s3://ufs-integration-test-s3");
-    }
+    private static UniversalFileSystemTestWrapper CreateAwsS3UniversalFileSystem(IUniversalFileSystem ufs)
+        => CreateUniversalFileSystemTestWrapper(ufs, "s3://ufs-integration-test-s3");
+
+    private static UniversalFileSystemTestWrapper CreateAzureBlobUniversalFileSystem(IUniversalFileSystem ufs)
+        => CreateUniversalFileSystemTestWrapper(ufs, "abfss://ufs-integration-test-abfss");
     
-    private static UniversalFileSystemTestWrapper CreateAzureBlobUniversalFileSystem()
-    {
-        return CreateUniversalFileSystem(
-            builder =>
-            {
-                builder.AddInMemoryCollection(new Dictionary<string, string?>
-                {
-                    ["Schemes:abfss:ImplementationFactoryClass"] = "BasaltHexagons.UniversalFileSystem.AzureBlob.AzureBlobFileSystemFactory",
-                    ["Schemes:abfss:Implementation:Client:ServiceUri"] = "http://localhost:10000/devstoreaccount1",
-                    ["Schemes:abfss:Implementation:Client:Credentials:Type"] = "SharedKey",
-                    ["Schemes:abfss:Implementation:Client:Credentials:AccountName"] = "devstoreaccount1",
-                    ["Schemes:abfss:Implementation:Client:Credentials:AccountKey"] = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==",
-                    ["Schemes:abfss:Implementation:Settings:CreateBlobContainerIfNotExists"] = "true",
-                });
-            },
-            services => services.AddAzureBlobFileSystem(),
-            $"abfss://ufs-integration-test-abfss");
-    }
+    private static UniversalFileSystemTestWrapper CreateAzureBlob2UniversalFileSystem(IUniversalFileSystem ufs)
+        => CreateUniversalFileSystemTestWrapper(ufs, "abfss2://ufs-integration-test-abfss");
 
-    private static UniversalFileSystemTestWrapper CreateUniversalFileSystem(Action<IConfigurationBuilder> configurationBuilder, Func<IServiceCollection, IServiceCollection> servicesBuilder, string baseUri)
+    private static UniversalFileSystemTestWrapper CreateUniversalFileSystemTestWrapper(IUniversalFileSystem ufs, string baseUri)
     {
-        IHost host = Host.CreateDefaultBuilder()
-            .ConfigureAppConfiguration((context, builder) => configurationBuilder(builder))
-            .ConfigureServices((context, services) =>
-            {
-                servicesBuilder(services)
-                    .AddTransient<IUniversalFileSystem>(serviceProvider =>
-                    {
-                        IConfiguration config = serviceProvider.GetRequiredService<IConfiguration>();
-                        return UniversalFileSystemFactory.Create(serviceProvider, config);
-                    });
-            })
-            .Build();
-
-        UniversalFileSystemTestWrapper ufs = new(host, new Uri(baseUri), host.Services.GetRequiredService<IUniversalFileSystem>());
+        UniversalFileSystemTestWrapper wrapper = new(ufs, new Uri(baseUri));
 
         // delete all files
-        List<ObjectMetadata> allFiles = ufs.ListObjectsAsync("", true).ToListAsync().Result;
+        List<ObjectMetadata> allFiles = wrapper.ListObjectsAsync("", true).ToListAsync().Result;
         foreach (ObjectMetadata file in allFiles)
-            ufs.DeleteFileAsync(file.Uri, default).Wait();
-        return ufs;
+            ufs.DeleteFileAsync(file.Uri, CancellationToken.None).Wait();
+
+        return wrapper;
+    }
+
+    private static IUniversalFileSystem CreateUniversalFileSystem()
+    {
+        IHost host = Host.CreateDefaultBuilder()
+            .ConfigureAppConfiguration((context, builder) => { builder.AddYamlFile("test-settings.yaml", false, false); })
+            .ConfigureServices((context, services) =>
+            {
+                services
+                    .AddUniversalFileSystem("UniversalFileSystemStore")
+                    .AddMemoryFileSystem()
+                    .AddFileFileSystem()
+                    .AddAwsS3FileSystem()
+                    .AddAzureBlobFileSystem();
+            })
+            .Build();
+        return host.Services.GetRequiredService<IUniversalFileSystem>();
     }
 }

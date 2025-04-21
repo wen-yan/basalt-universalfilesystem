@@ -8,6 +8,6 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddMemoryFileSystem(this IServiceCollection services)
     {
         return services
-            .AddKeyedTransient<IFileSystemFactory, MemoryFileSystemFactory>(typeof(MemoryFileSystemFactory).FullName);
+            .AddKeyedSingleton<IFileSystemFactory, MemoryFileSystemFactory>(typeof(MemoryFileSystemFactory).FullName);
     }
 }

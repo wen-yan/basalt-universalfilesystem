@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -15,7 +16,7 @@ record File(byte[] Content, DateTime LastModifiedTimeUtc);
 [AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class MemoryFileSystem : AsyncDisposable, IFileSystem
 {
-    private Dictionary<string, File> _files = new();
+    private ConcurrentDictionary<string, File> _files = new();
 
     #region IFileSystem
 
@@ -83,10 +84,7 @@ class MemoryFileSystem : AsyncDisposable, IFileSystem
 
     public Task<bool> DeleteFileAsync(Uri uri, CancellationToken cancellationToken)
     {
-        bool exists = _files.TryGetValue(uri.AbsolutePath, out File? _);
-        if (exists)
-            _files.Remove(uri.AbsolutePath);
-        return Task.FromResult(exists);
+        return Task.FromResult(_files.Remove(uri.AbsolutePath, out File? _));
     }
 
     public async Task MoveFileAsync(Uri oldUri, Uri newUri, bool overwrite, CancellationToken cancellationToken)
@@ -101,7 +99,7 @@ class MemoryFileSystem : AsyncDisposable, IFileSystem
         if (!overwrite && await this.DoesFileExistAsync(newUri, cancellationToken))
             throw new FileExistsException(newUri);
 
-        _files.Remove(oldUri.AbsolutePath);
+        _files.Remove(oldUri.AbsolutePath, out _);
         _files[newUri.AbsolutePath] = file!;
     }
 

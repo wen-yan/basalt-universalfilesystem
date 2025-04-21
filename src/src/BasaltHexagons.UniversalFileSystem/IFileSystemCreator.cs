@@ -1,8 +1,9 @@
+using System;
 using BasaltHexagons.UniversalFileSystem.Core;
 
 namespace BasaltHexagons.UniversalFileSystem;
 
 interface IFileSystemCreator
 {
-    IFileSystem Create(string scheme);
+    IFileSystem Create(Uri uri);
 }

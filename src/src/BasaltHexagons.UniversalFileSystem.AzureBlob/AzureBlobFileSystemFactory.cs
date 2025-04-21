@@ -17,20 +17,9 @@ enum ClientCredentialType
     SharedKey, // StorageSharedKeyCredential
 }
 
-/// <summary>
-/// Implementation:
-///     Client:                  # if not exists, get it from depedency injection
-///         ServiceUri: 
-///         Credentials
-///             Type: Default/SharedKey
-///             AccountName:     # Type = SharedKey
-///             AccountKey:      # Type = SharedKey
-/// </summary>
 [AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class AzureBlobFileSystemFactory : IFileSystemFactory
 {
-    public const string CustomClientServiceKey = "BasaltHexagons.UniversalFileSystem.AzureBlob.AzureBlobFileSystemFactory.CustomBlobServiceClient";
-
     public AzureBlobFileSystemFactory(IServiceProvider serviceProvider)
     {
         this.ServiceProvider = serviceProvider;
@@ -38,18 +27,21 @@ class AzureBlobFileSystemFactory : IFileSystemFactory
 
     private IServiceProvider ServiceProvider { get; }
 
-    public IFileSystem Create(IConfiguration implementationConfiguration)
+    public IFileSystem Create(IConfigurationSection configuration)
     {
-        IConfigurationSection clientConfig = implementationConfiguration.GetSection("Client");
+        string name = configuration.Key;
+        IConfigurationSection clientConfig = configuration.GetSection("Client");
 
         BlobServiceClient client = clientConfig.Exists()
-            ? this.CreateBlobServiceClientFromConfiguration(clientConfig)
-            : this.ServiceProvider.GetRequiredKeyedService<BlobServiceClient>(CustomClientServiceKey);
+            ? CreateBlobServiceClientFromConfiguration(clientConfig)
+            : this.ServiceProvider.GetRequiredKeyedService<BlobServiceClient>(GetCustomClientServiceKey(name));
 
-        return new AzureBlobFileSystem(client, implementationConfiguration.GetSection("Settings"));
+        return new AzureBlobFileSystem(client, configuration.GetSection("Settings"));
     }
 
-    private BlobServiceClient CreateBlobServiceClientFromConfiguration(IConfiguration implementationConfiguration)
+    internal static string GetCustomClientServiceKey(string name) => $"{typeof(AzureBlobFileSystemFactory).FullName!}.CustomBlobServiceClient.{name}";
+
+    private static BlobServiceClient CreateBlobServiceClientFromConfiguration(IConfiguration implementationConfiguration)
     {
         ClientCredentialType clientCredentialType = implementationConfiguration.GetEnumValue<ClientCredentialType>("Credentials:Type");
 
@@ -63,19 +55,17 @@ class AzureBlobFileSystemFactory : IFileSystemFactory
     }
 
     // Create client
-    private BlobServiceClient CreateDefaultCredentialClient(IConfiguration implementationConfiguration)
+    private static BlobServiceClient CreateDefaultCredentialClient(IConfiguration implementationConfiguration)
     {
-        string serviceUri = GetServiceUri(implementationConfiguration);
+        string serviceUri = implementationConfiguration.GetValue<string>("ServiceUri");
         return new BlobServiceClient(new Uri(serviceUri), new DefaultAzureCredential());
     }
 
-    private BlobServiceClient CreateSharedKeyCredentialClient(IConfiguration implementationConfiguration)
+    private static BlobServiceClient CreateSharedKeyCredentialClient(IConfiguration implementationConfiguration)
     {
-        string serviceUri = GetServiceUri(implementationConfiguration);
+        string serviceUri = implementationConfiguration.GetValue<string>("ServiceUri");
         string accountName = implementationConfiguration.GetValue<string>("Credentials:AccountName");
         string accountKey = implementationConfiguration.GetValue<string>("Credentials:AccountKey");
         return new BlobServiceClient(new Uri(serviceUri), new StorageSharedKeyCredential(accountName, accountKey));
     }
-
-    private string GetServiceUri(IConfiguration implementationConfiguration) => implementationConfiguration.GetValue<string>("ServiceUri");
 }

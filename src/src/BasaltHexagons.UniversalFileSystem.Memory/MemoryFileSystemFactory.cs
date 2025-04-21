@@ -7,7 +7,7 @@ namespace BasaltHexagons.UniversalFileSystem.Memory;
 [AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class MemoryFileSystemFactory : IFileSystemFactory
 {
-    public IFileSystem Create(IConfiguration implementationConfiguration)
+    public IFileSystem Create(IConfigurationSection configuration)
     {
         return new MemoryFileSystem();
     }
