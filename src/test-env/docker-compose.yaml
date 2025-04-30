@@ -39,3 +39,5 @@ services:
     #   interval: 30s
     #   timeout: 10s
     #   retries: 3
+    environment:
+      - AZURITE_ACCOUNTS=account1:a2V5MQ==;account2:a2V5Mg==

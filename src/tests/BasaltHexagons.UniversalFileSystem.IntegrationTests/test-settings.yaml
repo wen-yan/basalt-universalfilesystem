@@ -1,0 +1,49 @@
+UniversalFileSystemStore:
+  FileSystems:
+    Memory:
+      UriRegexPattern: ^memory:///.*$
+      FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.Memory.MemoryFileSystemFactory
+    
+    File:
+      UriRegexPattern: ^file:///.*$
+      FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.File.FileFileSystemFactory
+    
+    S3:
+      UriRegexPattern: ^s3://.*$
+      FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.AwsS3.AwsS3FileSystemFactory
+      Client:
+        Credentials:
+          Type: Basic
+          AccessKey: test
+          SecretKey: test
+        Options:
+          ServiceURL: http://localhost:4566
+          ForcePathStyle: true
+      Settings:
+        CreateBucketIfNotExists: true
+    
+    AzureBlob:
+      UriRegexPattern: ^abfss://.*$
+      FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.AzureBlob.AzureBlobFileSystemFactory
+      Client:
+        ServiceUri: http://localhost:10000/account1
+        Credentials:
+          Type: SharedKey
+          # AccountName: devstoreaccount1
+          # AccountKey: Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
+          AccountName: account1
+          AccountKey: a2V5MQ==
+      Settings:
+        CreateBlobContainerIfNotExists: true
+    
+    AzureBlob2:
+      UriRegexPattern: ^abfss2://.*$
+      FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.AzureBlob.AzureBlobFileSystemFactory
+      Client:
+        ServiceUri: http://localhost:10000/account2
+        Credentials:
+          Type: SharedKey
+          AccountName: account2
+          AccountKey: a2V5Mg==
+      Settings:
+        CreateBlobContainerIfNotExists: true

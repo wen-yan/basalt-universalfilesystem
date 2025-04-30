@@ -30,20 +30,16 @@ class FileFileSystem : AsyncDisposable, IFileSystem
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                ObjectMetadata? metadata =
-                    await this.GetObjectMetadataInternalAsync(new Uri(entry), false, cancellationToken);
-                if (metadata != null)
-                    yield return metadata;
+                ObjectMetadata metadata = await this.GetObjectMetadataInternalAsync(new Uri(entry), false, cancellationToken);
+                yield return metadata;
             }
 
             foreach (string entry in Directory.EnumerateDirectories(directory, $"{startsWith}*", enumerationOptions))
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                ObjectMetadata? metadata =
-                    await this.GetObjectMetadataInternalAsync(new Uri(entry), true, cancellationToken);
-                if (metadata != null)
-                    yield return metadata;
+                ObjectMetadata metadata = await this.GetObjectMetadataInternalAsync(new Uri(entry), true, cancellationToken);
+                yield return metadata;
 
                 if (!recursive) continue;
 

@@ -6,7 +6,7 @@ namespace BasaltHexagons.UniversalFileSystem.IntegrationTests.TestMethods;
 public class DeleteFileTests
 {
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task DeleteFile_FileInRoot(UniversalFileSystemTestWrapper ufs)
     {
         // setup
@@ -22,7 +22,7 @@ public class DeleteFileTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task DeleteFile_FileInSubDirectory(UniversalFileSystemTestWrapper ufs)
     {
         // setup
@@ -38,7 +38,7 @@ public class DeleteFileTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task DeleteFile_FileNotExist(UniversalFileSystemTestWrapper ufs)
     {
         // setup

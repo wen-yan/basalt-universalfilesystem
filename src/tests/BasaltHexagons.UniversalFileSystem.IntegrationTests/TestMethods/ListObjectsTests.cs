@@ -10,7 +10,7 @@ namespace BasaltHexagons.UniversalFileSystem.IntegrationTests.TestMethods;
 public class ListObjectsTests
 {
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task ListObjects_InRoot(UniversalFileSystemTestWrapper ufs)
     {
         // setup
@@ -32,7 +32,7 @@ public class ListObjectsTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task ListObjects_InSubFolder(UniversalFileSystemTestWrapper ufs)
     {
         // setup
@@ -53,7 +53,7 @@ public class ListObjectsTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task ListObjects_InSubFolderBothFileAndPrefix(UniversalFileSystemTestWrapper ufs)
     {
         // setup
@@ -75,7 +75,7 @@ public class ListObjectsTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task ListObjects_PrefixWithoutSlash(UniversalFileSystemTestWrapper ufs)
     {
         // setup
@@ -96,7 +96,7 @@ public class ListObjectsTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task ListObjects_Recursive(UniversalFileSystemTestWrapper ufs)
     {
         // setup
@@ -119,7 +119,7 @@ public class ListObjectsTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task ListObjects_RecursiveWithoutSlash(UniversalFileSystemTestWrapper ufs)
     {
         // setup
@@ -143,7 +143,7 @@ public class ListObjectsTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task ListObjects_RecursiveMoreLevels(UniversalFileSystemTestWrapper ufs)
     {
         // setup
@@ -172,7 +172,7 @@ public class ListObjectsTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task ListObjects_HalfPrefix(UniversalFileSystemTestWrapper ufs)
     {
         // setup
@@ -193,7 +193,7 @@ public class ListObjectsTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task ListObjects_HalfFilename(UniversalFileSystemTestWrapper ufs)
     {
         // setup
@@ -215,7 +215,7 @@ public class ListObjectsTests
     }
     
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task ListObjects_PartialFilename(UniversalFileSystemTestWrapper ufs)
     {
         // setup

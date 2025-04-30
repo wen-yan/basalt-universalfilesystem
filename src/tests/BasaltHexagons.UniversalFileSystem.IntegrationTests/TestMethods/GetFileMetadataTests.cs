@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.Core.Exceptions;
@@ -10,7 +9,7 @@ namespace BasaltHexagons.UniversalFileSystem.IntegrationTests.TestMethods;
 public class GetFileMetadataTests
 {
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task GetFileMetadata_File(UniversalFileSystemTestWrapper ufs)
     {
         // setup
@@ -24,7 +23,7 @@ public class GetFileMetadataTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task GetFileMetadata_Prefix(UniversalFileSystemTestWrapper ufs)
     {
         // setup
@@ -35,7 +34,7 @@ public class GetFileMetadataTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task GetFileMetadata_NotExists(UniversalFileSystemTestWrapper ufs)
     {
         // test

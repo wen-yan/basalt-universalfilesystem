@@ -9,6 +9,6 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddAzureBlobFileSystem(this IServiceCollection services)
     {
         return services
-            .AddKeyedTransient<IFileSystemFactory, AzureBlobFileSystemFactory>(typeof(AzureBlobFileSystemFactory).FullName);
+            .AddKeyedSingleton<IFileSystemFactory, AzureBlobFileSystemFactory>(typeof(AzureBlobFileSystemFactory).FullName);
     }
 }

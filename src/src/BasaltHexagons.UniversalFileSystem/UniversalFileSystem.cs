@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -13,8 +12,6 @@ namespace BasaltHexagons.UniversalFileSystem;
 [AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
 {
-    private readonly ConcurrentDictionary<string /*scheme*/, IFileSystem> _impls = new();
-
     public UniversalFileSystem(IFileSystemCreator implCreator)
     {
         this.ImplCreator = implCreator;
@@ -22,9 +19,7 @@ class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
 
     private IFileSystemCreator ImplCreator { get; }
 
-    private IFileSystem GetImpl(string scheme) => _impls.GetOrAdd(scheme, _ => ImplCreator.Create(scheme));
-
-    private IFileSystem GetImpl(Uri uri) => this.GetImpl(uri.Scheme);
+    private IFileSystem GetImpl(Uri uri) => this.ImplCreator.Create(uri);
 
 
     #region IUniversalFileSystem
@@ -65,7 +60,7 @@ class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
         IFileSystem impl1 = this.GetImpl(oldUri);
         IFileSystem impl2 = this.GetImpl(newUri);
 
-        if (!ReferenceEquals(impl1, impl2))
+        if (!IsSameFileSystem(impl1, impl2))
         {
             await using Stream stream = await impl1.GetFileAsync(oldUri, cancellationToken);
             await impl2.PutFileAsync(newUri, stream, overwrite, cancellationToken);
@@ -83,7 +78,7 @@ class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
         IFileSystem impl1 = this.GetImpl(sourceUri);
         IFileSystem impl2 = this.GetImpl(destUri);
 
-        if (!ReferenceEquals(impl1, impl2))
+        if (!IsSameFileSystem(impl1, impl2))
         {
             await using Stream stream = await impl1.GetFileAsync(sourceUri, cancellationToken);
             await impl2.PutFileAsync(destUri, stream, overwrite, cancellationToken);
@@ -102,15 +97,5 @@ class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
 
     #endregion
 
-    #region AsyncDisposable
-
-    protected override async ValueTask DisposeManagedObjectsAsync()
-    {
-        foreach (IFileSystem fileSystem in _impls.Values)
-            await fileSystem.DisposeAsync();
-        _impls.Clear();
-        await base.DisposeManagedObjectsAsync();
-    }
-
-    #endregion
+    private static bool IsSameFileSystem(IFileSystem impl1, IFileSystem impl2) => object.ReferenceEquals(impl1, impl2);
 }

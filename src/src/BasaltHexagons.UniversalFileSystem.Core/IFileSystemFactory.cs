@@ -4,5 +4,5 @@ namespace BasaltHexagons.UniversalFileSystem.Core;
 
 public interface IFileSystemFactory
 {
-    IFileSystem Create(IConfiguration implementationConfiguration);
+    IFileSystem Create(IConfigurationSection configuration);
 }

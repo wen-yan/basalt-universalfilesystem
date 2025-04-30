@@ -37,8 +37,6 @@ enum ClientCredentialType
 [AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class AwsS3FileSystemFactory : IFileSystemFactory
 {
-    public const string CustomClientServiceKey = "BasaltHexagons.UniversalFileSystem.AwsS3.AwsS3FileSystemFactory.CustomAmazonS3Client";
-
     public AwsS3FileSystemFactory(IServiceProvider serviceProvider)
     {
         this.ServiceProvider = serviceProvider;
@@ -46,18 +44,21 @@ class AwsS3FileSystemFactory : IFileSystemFactory
 
     private IServiceProvider ServiceProvider { get; }
 
-    public IFileSystem Create(IConfiguration implementationConfiguration)
+    public IFileSystem Create(IConfigurationSection configuration)
     {
-        IConfigurationSection clientConfig = implementationConfiguration.GetSection("Client");
+        string name = configuration.Key;
+        IConfigurationSection clientConfig = configuration.GetSection("Client");
 
         IAmazonS3 client = clientConfig.Exists()
-            ? this.CreateAmazonS3ClientFromConfiguration(clientConfig)
-            : this.ServiceProvider.GetRequiredKeyedService<IAmazonS3>(CustomClientServiceKey);
+            ? CreateAmazonS3ClientFromConfiguration(clientConfig)
+            : this.ServiceProvider.GetRequiredKeyedService<IAmazonS3>(GetCustomClientServiceKey(name));
 
-        return new AwsS3FileSystem(client, implementationConfiguration.GetSection("Settings"));
+        return new AwsS3FileSystem(client, configuration.GetSection("Settings"));
     }
+    
+    internal static string GetCustomClientServiceKey(string name) => $"{typeof(AwsS3FileSystemFactory).FullName!}.CustomBlobServiceClient.{name}";
 
-    private IAmazonS3 CreateAmazonS3ClientFromConfiguration(IConfiguration implementationConfiguration)
+    private static IAmazonS3 CreateAmazonS3ClientFromConfiguration(IConfiguration implementationConfiguration)
     {
         // credentials
         ClientCredentialType clientCredentialType = implementationConfiguration.GetEnumValue<ClientCredentialType>("Credentials:Type");
@@ -84,14 +85,14 @@ class AwsS3FileSystemFactory : IFileSystemFactory
     }
 
     // Create client
-    private AWSCredentials CreateBasicAWSCredentials(IConfiguration implementationConfiguration)
+    private static AWSCredentials CreateBasicAWSCredentials(IConfiguration implementationConfiguration)
     {
         string accessKey = implementationConfiguration.GetValue<string>("Credentials:AccessKey");
         string secretKey = implementationConfiguration.GetValue<string>("Credentials:SecretKey");
         return new BasicAWSCredentials(accessKey, secretKey);
     }
 
-    private AWSCredentials CreateStoredProfileAWSCredentials(IConfiguration implementationConfiguration)
+    private static AWSCredentials CreateStoredProfileAWSCredentials(IConfiguration implementationConfiguration)
     {
         string profileName = implementationConfiguration.GetValue<string>("Credentials:ProfileName");
 

@@ -10,7 +10,7 @@ namespace BasaltHexagons.UniversalFileSystem.IntegrationTests.TestMethods;
 public class MoveFileTests
 {
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task MoveFile_ToSameDirectory(UniversalFileSystemTestWrapper ufs)
     {
         // setup
@@ -25,7 +25,7 @@ public class MoveFileTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task MoveFile_ToDifferentDirectory(UniversalFileSystemTestWrapper ufs)
     {
         // setup
@@ -40,7 +40,7 @@ public class MoveFileTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task MoveFile_Overwrite(UniversalFileSystemTestWrapper ufs)
     {
         // setup
@@ -56,7 +56,7 @@ public class MoveFileTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task MoveFile_NotOverwrite(UniversalFileSystemTestWrapper ufs)
     {
         // setup
@@ -72,7 +72,7 @@ public class MoveFileTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task MoveFile_MoveToItself(UniversalFileSystemTestWrapper ufs)
     {
         // setup
@@ -86,7 +86,7 @@ public class MoveFileTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetAllUniversalFileSystems), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task MoveFile_SourceNotExist(UniversalFileSystemTestWrapper ufs)
     {
         // test
