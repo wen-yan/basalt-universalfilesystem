@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using BasaltHexagons.UniversalFileSystem.Core.Exceptions;
 using BasaltHexagons.UniversalFileSystem.TestUtils;
 
@@ -9,13 +8,13 @@ public class GetFileTests
 {
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task GetFile_FileInRoot(UniversalFileSystemTestWrapper ufs)
+    public async Task GetFile_FileInRoot(IUniversalFileSystem ufs, UriWrapper u)
     {
         // setup
-        await ufs.PutFileAsync("test.txt", "test content", true);
+        await ufs.PutFileAsync(u.GetFullUri("test.txt"), "test content", true);
 
         // test
-        string content = await ufs.GetFileAsync("test.txt");
+        string content = await ufs.GetFileStringAsync(u.GetFullUri("test.txt"));
 
         // verify
         Assert.AreEqual("test content", content);
@@ -23,13 +22,13 @@ public class GetFileTests
 
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task GetFile_FileInSubDirectory(UniversalFileSystemTestWrapper ufs)
+    public async Task GetFile_FileInSubDirectory(IUniversalFileSystem ufs, UriWrapper u)
     {
         // setup
-        await ufs.PutFileAsync("dir/test.txt", "test content", true);
+        await ufs.PutFileAsync(u.GetFullUri("dir/test.txt"), "test content", true);
 
         // test
-        string content = await ufs.GetFileAsync("dir/test.txt");
+        string content = await ufs.GetFileStringAsync(u.GetFullUri("dir/test.txt"));
 
         // verify
         Assert.AreEqual("test content", content);
@@ -37,21 +36,21 @@ public class GetFileTests
 
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task GetFile_FileNotExists(UniversalFileSystemTestWrapper ufs)
+    public async Task GetFile_FileNotExists(IUniversalFileSystem ufs, UriWrapper u)
     {
         // test
-        await Assert.That.ExpectException<FileNotExistsException>(async () => await ufs.GetFileAsync("test.txt"));
+        await Assert.That.ExpectException<FileNotExistsException>(async () => await ufs.GetFileAsync(u.GetFullUri("test.txt")));
         await Task.CompletedTask;
     }
 
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task GetFile_SameNameAsDirectory(UniversalFileSystemTestWrapper ufs)
+    public async Task GetFile_SameNameAsDirectory(IUniversalFileSystem ufs, UriWrapper u)
     {
         // setup
-        await ufs.PutFileAsync("dir/test.txt", "test content", true);
+        await ufs.PutFileAsync(u.GetFullUri("dir/test.txt"), "test content", true);
 
         // test
-        await Assert.That.ExpectException<FileNotExistsException>(async () => await ufs.GetFileAsync("dir"));
+        await Assert.That.ExpectException<FileNotExistsException>(async () => await ufs.GetFileAsync(u.GetFullUri("dir")));
     }
 }

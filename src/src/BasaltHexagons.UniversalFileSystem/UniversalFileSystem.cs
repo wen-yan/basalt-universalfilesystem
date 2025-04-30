@@ -62,9 +62,12 @@ class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
 
         if (!IsSameFileSystem(impl1, impl2))
         {
-            await using Stream stream = await impl1.GetFileAsync(oldUri, cancellationToken);
-            await impl2.PutFileAsync(newUri, stream, overwrite, cancellationToken);
-            await impl2.DeleteFileAsync(oldUri, cancellationToken);
+            await using (Stream stream = await impl1.GetFileAsync(oldUri, cancellationToken))
+            {
+                await impl2.PutFileAsync(newUri, stream, overwrite, cancellationToken);
+            }
+
+            await impl1.DeleteFileAsync(oldUri, cancellationToken);
         }
         else
         {

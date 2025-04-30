@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.Core.Exceptions;
 using BasaltHexagons.UniversalFileSystem.TestUtils;
@@ -10,86 +8,86 @@ namespace BasaltHexagons.UniversalFileSystem.IntegrationTests.TestMethods;
 public class MoveFileTests
 {
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task MoveFile_ToSameDirectory(UniversalFileSystemTestWrapper ufs)
+    [DynamicData(nameof(UniversalFileSystemStore.GetTwoUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    public async Task MoveFile_ToSameDirectory(IUniversalFileSystem ufs, UriWrapper u1, UriWrapper u2)
     {
         // setup
-        await ufs.PutFileAsync("test.txt", "test content", false);
+        await ufs.PutFileAsync(u1.GetFullUri("test.txt"), "test content", false);
 
         // test
-        await ufs.MoveFileAsync("test.txt", "test2.txt", false);
+        await ufs.MoveFileAsync(u1.GetFullUri("test.txt"), u2.GetFullUri("test2.txt"), false);
 
         // verify
-        Assert.IsFalse(await ufs.DoesFileExistAsync("test.txt"));
-        UniversalFileSystemAssert.VerifyObject(ufs, "test2.txt", ObjectType.File, "test content");
+        Assert.IsFalse(await ufs.DoesFileExistAsync(u1.GetFullUri("test.txt")));
+        ufs.VerifyObject(u2.GetFullUri("test2.txt"), ObjectType.File, "test content");
+    }
+
+    [DataTestMethod]
+    [DynamicData(nameof(UniversalFileSystemStore.GetTwoUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    public async Task MoveFile_ToDifferentDirectory(IUniversalFileSystem ufs, UriWrapper u1, UriWrapper u2)
+    {
+        // setup
+        await ufs.PutFileAsync(u1.GetFullUri("test.txt"), "test content", false);
+
+        // test
+        await ufs.MoveFileAsync(u1.GetFullUri("test.txt"), u2.GetFullUri("dir/test.txt"), false);
+
+        // verify
+        Assert.IsFalse(await ufs.DoesFileExistAsync(u1.GetFullUri("test.txt")));
+        ufs.VerifyObject(u2.GetFullUri("dir/test.txt"), ObjectType.File, "test content");
+    }
+
+    [DataTestMethod]
+    [DynamicData(nameof(UniversalFileSystemStore.GetTwoUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    public async Task MoveFile_Overwrite(IUniversalFileSystem ufs, UriWrapper u1, UriWrapper u2)
+    {
+        // setup
+        await ufs.PutFileAsync(u1.GetFullUri("test.txt"), "test content", false);
+        await ufs.PutFileAsync(u2.GetFullUri("test2.txt"), "test content2", false);
+
+        // test
+        await ufs.MoveFileAsync(u1.GetFullUri("test.txt"), u2.GetFullUri("test2.txt"), true);
+
+        // verify
+        Assert.IsFalse(await ufs.DoesFileExistAsync(u1.GetFullUri("test.txt")));
+        ufs.VerifyObject(u2.GetFullUri("test2.txt"), ObjectType.File, "test content");
+    }
+
+    [DataTestMethod]
+    [DynamicData(nameof(UniversalFileSystemStore.GetTwoUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    public async Task MoveFile_NotOverwrite(IUniversalFileSystem ufs, UriWrapper u1, UriWrapper u2)
+    {
+        // setup
+        await ufs.PutFileAsync(u1.GetFullUri("test.txt"), "test content", false);
+        await ufs.PutFileAsync(u2.GetFullUri("test2.txt"), "test content2", false);
+
+        // test
+        await Assert.That.ExpectException<FileExistsException>(async () => await ufs.MoveFileAsync(u1.GetFullUri("test.txt"), u2.GetFullUri("test2.txt"), false));
+
+        // verify
+        ufs.VerifyObject(u1.GetFullUri("test.txt"), ObjectType.File, "test content");
+        ufs.VerifyObject(u2.GetFullUri("test2.txt"), ObjectType.File, "test content2");
     }
 
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task MoveFile_ToDifferentDirectory(UniversalFileSystemTestWrapper ufs)
+    public async Task MoveFile_MoveToItself(IUniversalFileSystem ufs, UriWrapper u)
     {
         // setup
-        await ufs.PutFileAsync("test.txt", "test content", false);
+        await ufs.PutFileAsync(u.GetFullUri("test.txt"), "test content", false);
 
         // test
-        await ufs.MoveFileAsync("test.txt", "dir/test.txt", false);
+        await Assert.That.ExpectException<ArgumentException>(async () => await ufs.MoveFileAsync(u.GetFullUri("test.txt"), u.GetFullUri("test.txt"), true));
 
         // verify
-        Assert.IsFalse(await ufs.DoesFileExistAsync("test.txt"));
-        UniversalFileSystemAssert.VerifyObject(ufs, "dir/test.txt", ObjectType.File, "test content");
+        ufs.VerifyObject(u.GetFullUri("test.txt"), ObjectType.File, "test content");
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task MoveFile_Overwrite(UniversalFileSystemTestWrapper ufs)
-    {
-        // setup
-        await ufs.PutFileAsync("test.txt", "test content", false);
-        await ufs.PutFileAsync("test2.txt", "test content2", false);
-
-        // test
-        await ufs.MoveFileAsync("test.txt", "test2.txt", true);
-
-        // verify
-        Assert.IsFalse(await ufs.DoesFileExistAsync("test.txt"));
-        UniversalFileSystemAssert.VerifyObject(ufs, "test2.txt", ObjectType.File, "test content");
-    }
-
-    [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task MoveFile_NotOverwrite(UniversalFileSystemTestWrapper ufs)
-    {
-        // setup
-        await ufs.PutFileAsync("test.txt", "test content", false);
-        await ufs.PutFileAsync("test2.txt", "test content2", false);
-
-        // test
-        await Assert.That.ExpectException<FileExistsException>(async () => await ufs.MoveFileAsync("test.txt", "test2.txt", false));
-
-        // verify
-        UniversalFileSystemAssert.VerifyObject(ufs, "test.txt", ObjectType.File, "test content");
-        UniversalFileSystemAssert.VerifyObject(ufs, "test2.txt", ObjectType.File, "test content2");
-    }
-
-    [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task MoveFile_MoveToItself(UniversalFileSystemTestWrapper ufs)
-    {
-        // setup
-        await ufs.PutFileAsync("test.txt", "test content", false);
-
-        // test
-        await Assert.That.ExpectException<ArgumentException>(async () => await ufs.MoveFileAsync("test.txt", "test.txt", true));
-
-        // verify
-        UniversalFileSystemAssert.VerifyObject(ufs, "test.txt", ObjectType.File, "test content");
-    }
-
-    [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task MoveFile_SourceNotExist(UniversalFileSystemTestWrapper ufs)
+    [DynamicData(nameof(UniversalFileSystemStore.GetTwoUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    public async Task MoveFile_SourceNotExist(IUniversalFileSystem ufs, UriWrapper u1, UriWrapper u2)
     {
         // test
-        await Assert.That.ExpectException<FileNotExistsException>(async () => await ufs.MoveFileAsync("test.txt", "test2.txt", true));
+        await Assert.That.ExpectException<FileNotExistsException>(async () => await ufs.MoveFileAsync(u1.GetFullUri("test.txt"), u2.GetFullUri("test2.txt"), true));
     }
 }
