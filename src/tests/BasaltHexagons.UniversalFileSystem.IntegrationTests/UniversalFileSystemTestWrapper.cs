@@ -1,34 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using BasaltHexagons.UniversalFileSystem.Core;
+﻿using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.Core.Disposing;
 
 namespace BasaltHexagons.UniversalFileSystem.IntegrationTests;
 
 public class UniversalFileSystemTestWrapper : AsyncDisposable
 {
-    public UniversalFileSystemTestWrapper(IUniversalFileSystem inner, Uri baseUri)
+    public UniversalFileSystemTestWrapper(IUniversalFileSystem inner, UriWrapper uriWrapper)
     {
         this.Inner = inner;
-        this.BaseUri = baseUri;
+        this.UriWrapper = uriWrapper;
     }
 
     private IUniversalFileSystem Inner { get; }
-    private Uri BaseUri { get; }
+    private UriWrapper UriWrapper { get; }
 
     #region Helpers
 
-    public Uri GetRelativeUri(Uri uri) => this.BaseUri.MakeRelativeUri(uri);
-    public string GetRelativeUri(string uri) => this.GetRelativeUri(new Uri(uri)).ToString();
-    public Uri GetFullUri(Uri relativeUri) => new(this.BaseUri, relativeUri);
-    public Uri GetFullUri(string uri) => this.GetFullUri(new Uri(uri, UriKind.RelativeOrAbsolute));
+    public Uri GetFullUri(string uri) => this.UriWrapper.Apply(uri);
 
     public ObjectMetadata MakeObjectMetadata(string uri, ObjectType objectType, long? contentSize, DateTime? lastModifiedTimeUtc)
     {
-        return new(this.GetFullUri(new Uri(uri, UriKind.Relative)), objectType, contentSize, lastModifiedTimeUtc);
+        return new(this.GetFullUri(uri), objectType, contentSize, lastModifiedTimeUtc);
     }
 
     public ObjectMetadata MakeObjectMetadata(string uri, ObjectType objectType, long? contentSize)
@@ -84,5 +76,5 @@ public class UniversalFileSystemTestWrapper : AsyncDisposable
     }
 
     // make test case easy to read
-    public override string ToString() => this.BaseUri.Scheme;
+    // public override string ToString() => this.BaseUri.Scheme;
 }

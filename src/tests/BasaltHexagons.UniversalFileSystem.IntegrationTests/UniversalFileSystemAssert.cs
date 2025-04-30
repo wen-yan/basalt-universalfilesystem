@@ -8,7 +8,7 @@ public static class UniversalFileSystemAssert
 {
     public static void VerifyObject(UniversalFileSystemTestWrapper ufs, string uri, ObjectType objectType, string? content)
     {
-        ObjectMetadata? actualMetadata = ufs.GetFileMetadataAsync(uri).Result;
+        ObjectMetadata actualMetadata = ufs.GetFileMetadataAsync(uri).Result;
         Assert.IsNotNull(actualMetadata);
 
         VerifyObject(ufs, uri, objectType, content, actualMetadata);

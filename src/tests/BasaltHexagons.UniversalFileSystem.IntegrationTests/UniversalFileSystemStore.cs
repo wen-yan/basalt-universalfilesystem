@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
 using BasaltHexagons.UniversalFileSystem.AwsS3;
 using BasaltHexagons.UniversalFileSystem.AzureBlob;
 using BasaltHexagons.UniversalFileSystem.Core;
@@ -23,56 +18,45 @@ public abstract class UniversalFileSystemStore
     {
         ufs ??= CreateUniversalFileSystem();
 
-        yield return CreateMemoryUniversalFileSystem(ufs);
-        yield return CreateFileUniversalFileSystem(ufs);
-        yield return CreateAwsS3UniversalFileSystem(ufs);
-        yield return CreateAzureBlobUniversalFileSystem(ufs);
-        yield return CreateAzureBlob2UniversalFileSystem(ufs);
+        List<UriWrapper> uriWrappers = CreateUriWrappers(ufs).ToList();
+        return uriWrappers.Select(x => new UniversalFileSystemTestWrapper(ufs, x));
     }
 
-    private static UniversalFileSystemTestWrapper CreateMemoryUniversalFileSystem(IUniversalFileSystem ufs) => CreateUniversalFileSystemTestWrapper(ufs, "memory://");
-
-    private static UniversalFileSystemTestWrapper CreateFileUniversalFileSystem(IUniversalFileSystem ufs)
+    private static IEnumerable<UriWrapper> CreateUriWrappers(IUniversalFileSystem ufs)
     {
-        string root = $"{Environment.CurrentDirectory}/ufs-integration-test-file";
-
-        // Delete all files
-        if (Directory.Exists(root))
+        static UriWrapper CreateUriWrapper(IUniversalFileSystem ufs, string baseUri)
         {
-            foreach (string file in Directory.GetFiles(root))
-            {
-                System.IO.File.Delete(file);
-            }
-
-            // Delete all subdirectories and their contents
-            foreach (string subDirectory in Directory.GetDirectories(root))
-            {
-                Directory.Delete(subDirectory, true); // true for recursive deletion
-            }
+            UriWrapper uriWrapper = new(baseUri);
+            // delete all files
+            List<ObjectMetadata> allFiles = ufs.ListObjectsAsync(uriWrapper.Apply(""), true, CancellationToken.None).ToListAsync().Result;
+            foreach (ObjectMetadata file in allFiles)
+                ufs.DeleteFileAsync(file.Uri, CancellationToken.None).Wait();
+            return uriWrapper;
         }
 
-        return CreateUniversalFileSystemTestWrapper(ufs, $"file://{root}/");
-    }
+        static UriWrapper CreateFileUriWrapper(IUniversalFileSystem ufs)
+        {
+            string root = $"{Environment.CurrentDirectory}/ufs-integration-test-file";
 
-    private static UniversalFileSystemTestWrapper CreateAwsS3UniversalFileSystem(IUniversalFileSystem ufs)
-        => CreateUniversalFileSystemTestWrapper(ufs, "s3://ufs-integration-test-s3");
+            // Delete all files
+            if (Directory.Exists(root))
+            {
+                foreach (string file in Directory.GetFiles(root))
+                    System.IO.File.Delete(file);
 
-    private static UniversalFileSystemTestWrapper CreateAzureBlobUniversalFileSystem(IUniversalFileSystem ufs)
-        => CreateUniversalFileSystemTestWrapper(ufs, "abfss://ufs-integration-test-abfss");
-    
-    private static UniversalFileSystemTestWrapper CreateAzureBlob2UniversalFileSystem(IUniversalFileSystem ufs)
-        => CreateUniversalFileSystemTestWrapper(ufs, "abfss2://ufs-integration-test-abfss");
+                // Delete all subdirectories and their contents
+                foreach (string subDirectory in Directory.GetDirectories(root))
+                    Directory.Delete(subDirectory, true); // true for recursive deletion
+            }
 
-    private static UniversalFileSystemTestWrapper CreateUniversalFileSystemTestWrapper(IUniversalFileSystem ufs, string baseUri)
-    {
-        UniversalFileSystemTestWrapper wrapper = new(ufs, new Uri(baseUri));
+            return CreateUriWrapper(ufs, $"file://{root}/");
+        }
 
-        // delete all files
-        List<ObjectMetadata> allFiles = wrapper.ListObjectsAsync("", true).ToListAsync().Result;
-        foreach (ObjectMetadata file in allFiles)
-            ufs.DeleteFileAsync(file.Uri, CancellationToken.None).Wait();
-
-        return wrapper;
+        yield return CreateUriWrapper(ufs, "memory://");
+        yield return CreateFileUriWrapper(ufs);
+        yield return CreateUriWrapper(ufs, "s3://ufs-integration-test-s3");
+        yield return CreateUriWrapper(ufs, "abfss://ufs-integration-test-abfss");
+        yield return CreateUriWrapper(ufs, "abfss2://ufs-integration-test-abfss2");
     }
 
     private static IUniversalFileSystem CreateUniversalFileSystem()
