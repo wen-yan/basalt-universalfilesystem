@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using BasaltHexagons.UniversalFileSystem.Core;
+using BasaltHexagons.UniversalFileSystem.Core.Exceptions;
 using BasaltHexagons.UniversalFileSystem.TestUtils;
 
 namespace BasaltHexagons.UniversalFileSystem.IntegrationTests.TestMethods;
@@ -62,7 +63,7 @@ public class MoveFileTests
         await ufs.PutFileAsync("test2.txt", "test content2", false);
 
         // test
-        Assert.That.ExpectException(async () => await ufs.MoveFileAsync("test.txt", "test2.txt", false));
+        Assert.That.ExpectException<FileExistsException>(async () => await ufs.MoveFileAsync("test.txt", "test2.txt", false));
 
         // verify
         UniversalFileSystemAssert.VerifyObject(ufs, "test.txt", ObjectType.File, "test content");
@@ -77,7 +78,7 @@ public class MoveFileTests
         await ufs.PutFileAsync("test.txt", "test content", false);
 
         // test
-        Assert.That.ExpectException(async () => await ufs.MoveFileAsync("test.txt", "test.txt", true));
+        Assert.That.ExpectException<FileExistsException>(async () => await ufs.MoveFileAsync("test.txt", "test.txt", true));
 
         // verify
         UniversalFileSystemAssert.VerifyObject(ufs, "test.txt", ObjectType.File, "test content");

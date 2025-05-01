@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.Core.Disposing;
+using BasaltHexagons.UniversalFileSystem.Core.Exceptions;
 
 namespace BasaltHexagons.UniversalFileSystem.File;
 
@@ -112,18 +113,22 @@ class FileFileSystem : AsyncDisposable, IFileSystem
         return Task.CompletedTask;
     }
 
-    public Task CopyFileAsync(Uri sourceUri, Uri destUri, bool overwrite, CancellationToken cancellationToken)
+    public async Task CopyFileAsync(Uri sourceUri, Uri destUri, bool overwrite, CancellationToken cancellationToken)
     {
         if (sourceUri == destUri)
             throw new ArgumentException("Can't copy file to itself.");
+        
+        if (!overwrite && await this.DoesFileExistAsync(destUri, cancellationToken))
+        {
+            throw new FileExistsException(destUri);
+        }
 
         string? directory = Path.GetDirectoryName(destUri.AbsolutePath);
         if (directory == null)
-            return Task.FromException(new ArgumentException($"Can't get directory from uri {destUri}"));
+            throw new ArgumentException($"Can't get directory from uri {destUri}");
         Directory.CreateDirectory(directory);
 
         System.IO.File.Copy(sourceUri.AbsolutePath, destUri.AbsolutePath, overwrite);
-        return Task.CompletedTask;
     }
 
     public Task<bool> DoesFileExistAsync(Uri uri, CancellationToken cancellationToken) => Task.FromResult(System.IO.File.Exists(uri.AbsolutePath));
