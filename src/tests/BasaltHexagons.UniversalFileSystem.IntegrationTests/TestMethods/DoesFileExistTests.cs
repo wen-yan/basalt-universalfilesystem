@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 namespace BasaltHexagons.UniversalFileSystem.IntegrationTests.TestMethods;
 
 [TestClass]
@@ -7,17 +5,17 @@ public class DoesFileExistTests
 {
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task DoesFileExist(UniversalFileSystemTestWrapper ufs)
+    public async Task DoesFileExist(IUniversalFileSystem ufs, UriWrapper u)
     {
         // setup
-        await ufs.PutFileAsync("test1.txt", "test content", false);
-        await ufs.PutFileAsync("dir/test2.txt", "test2 content", false);
+        await ufs.PutFileAsync(u.GetFullUri("test1.txt"), "test content", false);
+        await ufs.PutFileAsync(u.GetFullUri("dir/test2.txt"), "test2 content", false);
 
         // verify
-        Assert.IsTrue(await ufs.DoesFileExistAsync("test1.txt"));
-        Assert.IsTrue(await ufs.DoesFileExistAsync("dir/test2.txt"));
-        Assert.IsFalse(await ufs.DoesFileExistAsync("test2.txt"));
-        Assert.IsFalse(await ufs.DoesFileExistAsync("dir/"));
-        Assert.IsFalse(await ufs.DoesFileExistAsync("dir"));
+        Assert.IsTrue(await ufs.DoesFileExistAsync(u.GetFullUri("test1.txt")));
+        Assert.IsTrue(await ufs.DoesFileExistAsync(u.GetFullUri("dir/test2.txt")));
+        Assert.IsFalse(await ufs.DoesFileExistAsync(u.GetFullUri("test2.txt")));
+        Assert.IsFalse(await ufs.DoesFileExistAsync(u.GetFullUri("dir/")));
+        Assert.IsFalse(await ufs.DoesFileExistAsync(u.GetFullUri("dir")));
     }
 }

@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 
 namespace BasaltHexagons.UniversalFileSystem.IntegrationTests.TestMethods;
 
@@ -7,48 +6,48 @@ public class DeleteFileTests
 {
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task DeleteFile_FileInRoot(UniversalFileSystemTestWrapper ufs)
+    public async Task DeleteFile_FileInRoot(IUniversalFileSystem ufs, UriWrapper u)
     {
         // setup
-        await ufs.PutFileAsync("test.txt", "test content", true);
-        Assert.IsTrue(await ufs.DoesFileExistAsync("test.txt"));
+        await ufs.PutFileAsync(u.GetFullUri("test.txt"), "test content", true);
+        Assert.IsTrue(await ufs.DoesFileExistAsync(u.GetFullUri("test.txt")));
 
         // test
-        bool deleted = await ufs.DeleteFileAsync("test.txt");
+        bool deleted = await ufs.DeleteFileAsync(u.GetFullUri("test.txt"));
 
         // verify
         Assert.IsTrue(deleted);
-        Assert.IsFalse(await ufs.DoesFileExistAsync("test.txt"));
+        Assert.IsFalse(await ufs.DoesFileExistAsync(u.GetFullUri("test.txt")));
     }
 
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task DeleteFile_FileInSubDirectory(UniversalFileSystemTestWrapper ufs)
+    public async Task DeleteFile_FileInSubDirectory(IUniversalFileSystem ufs, UriWrapper u)
     {
         // setup
-        await ufs.PutFileAsync("dir/test.txt", "test content", true);
-        Assert.IsTrue(await ufs.DoesFileExistAsync("dir/test.txt"));
+        await ufs.PutFileAsync(u.GetFullUri("dir/test.txt"), "test content", true);
+        Assert.IsTrue(await ufs.DoesFileExistAsync(u.GetFullUri("dir/test.txt")));
 
         // test
-        bool deleted = await ufs.DeleteFileAsync("dir/test.txt");
+        bool deleted = await ufs.DeleteFileAsync(u.GetFullUri("dir/test.txt"));
 
         // verify
         Assert.IsTrue(deleted);
-        Assert.IsFalse(await ufs.DoesFileExistAsync("dir/test.txt"));
+        Assert.IsFalse(await ufs.DoesFileExistAsync(u.GetFullUri("dir/test.txt")));
     }
 
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
-    public async Task DeleteFile_FileNotExist(UniversalFileSystemTestWrapper ufs)
+    public async Task DeleteFile_FileNotExist(IUniversalFileSystem ufs, UriWrapper u)
     {
         // setup
-        Assert.IsFalse(await ufs.DoesFileExistAsync("test.txt"));
+        Assert.IsFalse(await ufs.DoesFileExistAsync(u.GetFullUri("test.txt")));
 
         // test
-        bool deleted = await ufs.DeleteFileAsync("test.txt");
+        bool deleted = await ufs.DeleteFileAsync(u.GetFullUri("test.txt"));
 
         // verify
         Assert.IsFalse(deleted);
-        Assert.IsFalse(await ufs.DoesFileExistAsync("test.txt"));
+        Assert.IsFalse(await ufs.DoesFileExistAsync(u.GetFullUri("test.txt")));
     }
 }

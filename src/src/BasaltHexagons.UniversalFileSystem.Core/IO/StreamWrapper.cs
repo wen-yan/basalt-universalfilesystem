@@ -9,12 +9,14 @@ public class StreamWrapper : Stream
     private Stream _innerStream;
     private IAsyncDisposable[] _asyncDisposables;
     private IDisposable[] _disposables;
+    private long? _contentLength;
 
-    public StreamWrapper(Stream innerStream, IAsyncDisposable[] asyncDisposables, IDisposable[] disposables)
+    public StreamWrapper(Stream innerStream, IAsyncDisposable[] asyncDisposables, IDisposable[] disposables, long? contentLength = null)
     {
         _innerStream = innerStream;
         _asyncDisposables = asyncDisposables;
         _disposables = disposables;
+        _contentLength = contentLength;
     }
 
     public override void Flush()
@@ -34,6 +36,8 @@ public class StreamWrapper : Stream
 
     public override void SetLength(long value)
     {
+        if (_contentLength.HasValue)
+            throw new NotSupportedException();
         _innerStream.SetLength(value);
     }
 
@@ -48,7 +52,7 @@ public class StreamWrapper : Stream
 
     public override bool CanWrite => _innerStream.CanWrite;
 
-    public override long Length => _innerStream.Length;
+    public override long Length => _contentLength ?? _innerStream.Length;
 
     public override long Position
     {
