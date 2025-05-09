@@ -20,19 +20,20 @@ enum ClientCredentialType
 }
 
 /// <summary>
-/// Implementation:
-///     Client:
-///         Credentials
-///             Type: Anonymous/Basic/EnvironmentVariables/Profile
-///             AccessKey:     # Type = Basic
-///             SecretKey:     # Type = Basic
-///             ProfileName:   # Type = Profile
-///         Options
-///             RegionEndpoint:
-///             ServiceURL:
-///             ForcePathStyle: true/false
-///     Settings:
-///         CreateBucketIfNotExists: false
+/// UriRegexPattern: ^s3://.*$
+/// FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.AwsS3.AwsS3FileSystemFactory
+/// Client:     # use custom client if missing
+///     Credentials
+///         Type: Anonymous/Basic/EnvironmentVariables/Profile
+///         AccessKey:     # Type = Basic
+///         SecretKey:     # Type = Basic
+///         ProfileName:   # Type = Profile
+///     Options
+///         RegionEndpoint:
+///         ServiceURL:
+///         ForcePathStyle: true/false
+/// Settings:
+///     CreateBucketIfNotExists: false
 /// </summary>
 [AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class AwsS3FileSystemFactory : IFileSystemFactory
