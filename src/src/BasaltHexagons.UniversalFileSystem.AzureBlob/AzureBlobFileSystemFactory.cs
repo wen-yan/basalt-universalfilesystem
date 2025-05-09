@@ -17,6 +17,18 @@ enum ClientCredentialType
     SharedKey, // StorageSharedKeyCredential
 }
 
+/// <summary>
+/// UriRegexPattern: ^abfss://.*$
+/// FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.AzureBlob.AzureBlobFileSystemFactory
+/// Client:     # use custom client if missing
+///     ServiceUri: http://localhost:10000/account1
+///     Credentials
+///         Type: Default/SharedKey
+///         AccountName: devstoreaccount1
+///         AccountKey: Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
+/// Settings:
+///     CreateBlobContainerIfNotExists: false
+/// </summary>
 [AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class AzureBlobFileSystemFactory : IFileSystemFactory
 {

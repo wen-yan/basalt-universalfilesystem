@@ -1,3 +1,7 @@
+using Amazon.Runtime;
+using Amazon.S3;
+using Azure.Storage;
+using Azure.Storage.Blobs;
 using BasaltHexagons.UniversalFileSystem.AwsS3;
 using BasaltHexagons.UniversalFileSystem.AzureBlob;
 using BasaltHexagons.UniversalFileSystem.File;
@@ -40,33 +44,22 @@ public abstract class UniversalFileSystemStore
             .Cast<object[]>();
     }
 
-    // private static IEnumerable<UniversalFileSystemTestWrapper> GetUniversalFileSystemWrappers(IUniversalFileSystem? ufs = null)
-    // {
-    //     ufs ??= CreateUniversalFileSystem();
-    //
-    //     List<UriWrapper> uriWrappers = CreateUriWrappers(ufs).ToList();
-    //     return uriWrappers.Select(x =>
-    //     {
-    //         ufs.InitializeAsync(x).Wait();
-    //         return new UniversalFileSystemTestWrapper(ufs, x);
-    //     });
-    // }
-
     private static IEnumerable<UriWrapper> CreateUriWrappers(IUniversalFileSystem ufs)
     {
-        static UriWrapper CreateUriWrapper(IUniversalFileSystem ufs, string baseUri) => new(baseUri);
+        static UriWrapper CreateUriWrapper(IUniversalFileSystem ufs, string name, string baseUri) => new(name, baseUri);
 
-        static UriWrapper CreateFileUriWrapper(IUniversalFileSystem ufs)
+        static UriWrapper CreateFileUriWrapper(IUniversalFileSystem ufs, string name)
         {
             string root = $"{Environment.CurrentDirectory}/ufs-integration-test-file";
-            return CreateUriWrapper(ufs, $"file://{root}/");
+            return CreateUriWrapper(ufs, name, $"file://{root}/");
         }
 
-        yield return CreateUriWrapper(ufs, "memory://");
-        yield return CreateFileUriWrapper(ufs);
-        yield return CreateUriWrapper(ufs, "s3://ufs-integration-test-s3");
-        yield return CreateUriWrapper(ufs, "abfss://ufs-integration-test-abfss");
-        yield return CreateUriWrapper(ufs, "abfss2://ufs-integration-test-abfss2");
+        yield return CreateUriWrapper(ufs, "memory", "memory://");
+        yield return CreateFileUriWrapper(ufs, "file");
+        yield return CreateUriWrapper(ufs, "s3", "s3://ufs-it-s3");
+        yield return CreateUriWrapper(ufs, "s3-custom-client", "s3://ufs-it-s3-custom-client");
+        yield return CreateUriWrapper(ufs, "abfss", "abfss://ufs-it-abfss");
+        yield return CreateUriWrapper(ufs, "abfss-custom-client", "abfss://ufs-it-abfss-custom-client");
     }
 
     private static IUniversalFileSystem CreateUniversalFileSystem()
@@ -80,7 +73,17 @@ public abstract class UniversalFileSystemStore
                     .AddMemoryFileSystem()
                     .AddFileFileSystem()
                     .AddAwsS3FileSystem()
-                    .AddAzureBlobFileSystem();
+                    .AddAwsS3CustomClient("S3CustomClient", _ =>
+                        new AmazonS3Client(new BasicAWSCredentials("test", "test"),
+                            new AmazonS3Config()
+                            {
+                                ServiceURL = "http://localhost:4566",
+                                ForcePathStyle = true,
+                            }))
+                    .AddAzureBlobFileSystem()
+                    .AddAzureBlobCustomClient("AzureBlobCustomClient", _ =>
+                        new BlobServiceClient(new Uri("http://localhost:10000/account2"),
+                            new StorageSharedKeyCredential("account2", "a2V5Mg==")));
             })
             .Build();
         return host.Services.GetRequiredService<IUniversalFileSystem>();

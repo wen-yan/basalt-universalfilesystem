@@ -72,7 +72,9 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
         (request.BucketName, request.Key) = DeconstructUri(uri);
 
         GetObjectResponse response = await this.Client.GetObjectAsync(request, cancellationToken);
-        return new StreamWrapper(response.ResponseStream, [], [response]);
+        return new LinkedDisposingStream(
+            new PositionSupportedStream(response.ResponseStream, 0, null),
+            [], [response]);
     }
 
     public async Task<ObjectMetadata> GetFileMetadataAsync(Uri uri, CancellationToken cancellationToken)

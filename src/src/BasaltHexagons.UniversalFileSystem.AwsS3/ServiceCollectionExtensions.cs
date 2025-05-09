@@ -13,11 +13,10 @@ public static class ServiceCollectionExtensions
             .AddKeyedSingleton<IFileSystemFactory, AwsS3FileSystemFactory>(typeof(AwsS3FileSystemFactory).FullName);
     }
 
-    // TODO
-    // public static IServiceCollection AddAmazonS3Client(this IServiceCollection services, Func<IServiceProvider, IAmazonS3> implementationFactory)
-    // {
-    //     return services
-    //         .AddKeyedTransient<IAmazonS3>(AwsS3FileSystemFactory.CustomClientServiceKey,
-    //             (serviceProvider, serviceKey) => implementationFactory(serviceProvider));
-    // }
+    public static IServiceCollection AddAwsS3CustomClient(this IServiceCollection services, string name, Func<IServiceProvider, IAmazonS3> implementationFactory)
+    {
+        string key = AwsS3FileSystemFactory.GetCustomClientServiceKey(name);
+        return services
+            .AddKeyedTransient<IAmazonS3>(key, (serviceProvider, serviceKey) => implementationFactory(serviceProvider));
+    }
 }

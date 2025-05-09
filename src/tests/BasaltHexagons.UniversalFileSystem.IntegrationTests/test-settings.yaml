@@ -9,7 +9,7 @@ UniversalFileSystemStore:
       FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.File.FileFileSystemFactory
     
     S3:
-      UriRegexPattern: ^s3://.*$
+      UriRegexPattern: ^s3://ufs-it-s3/.*$
       FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.AwsS3.AwsS3FileSystemFactory
       Client:
         Credentials:
@@ -21,9 +21,15 @@ UniversalFileSystemStore:
           ForcePathStyle: true
       Settings:
         CreateBucketIfNotExists: true
+        
+    S3CustomClient:
+      UriRegexPattern: ^s3://ufs-it-s3-custom-client/.*$
+      FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.AwsS3.AwsS3FileSystemFactory
+      Settings:
+        CreateBucketIfNotExists: true
     
     AzureBlob:
-      UriRegexPattern: ^abfss://.*$
+      UriRegexPattern: ^abfss://ufs-it-abfss/.*$
       FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.AzureBlob.AzureBlobFileSystemFactory
       Client:
         ServiceUri: http://localhost:10000/account1
@@ -36,14 +42,15 @@ UniversalFileSystemStore:
       Settings:
         CreateBlobContainerIfNotExists: true
     
-    AzureBlob2:
-      UriRegexPattern: ^abfss2://.*$
+    AzureBlobCustomClient:
+      UriRegexPattern: ^abfss://ufs-it-abfss-custom-client/.*$
       FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.AzureBlob.AzureBlobFileSystemFactory
-      Client:
-        ServiceUri: http://localhost:10000/account2
-        Credentials:
-          Type: SharedKey
-          AccountName: account2
-          AccountKey: a2V5Mg==
+      # for custom client testing
+      # Client:
+      #   ServiceUri: http://localhost:10000/account2
+      #   Credentials:
+      #     Type: SharedKey
+      #     AccountName: account2
+      #     AccountKey: a2V5Mg==
       Settings:
         CreateBlobContainerIfNotExists: true

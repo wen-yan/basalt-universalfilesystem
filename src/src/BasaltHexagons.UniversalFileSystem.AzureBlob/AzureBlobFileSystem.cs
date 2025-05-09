@@ -76,7 +76,9 @@ public class AzureBlobFileSystem : AsyncDisposable, IFileSystem
         if (!response.HasValue || response.Value.Content == null)
             throw new FileNotExistsException(uri);
 
-        return new StreamWrapper(response.Value.Content, [], [response.Value], response.Value.Details.ContentLength);
+        return new LinkedDisposingStream(
+            new PositionSupportedStream(response.Value.Content, 0, response.Value.Details.ContentLength),
+            [], [response.Value]);
     }
 
     public async Task<ObjectMetadata> GetFileMetadataAsync(Uri uri, CancellationToken cancellationToken)
