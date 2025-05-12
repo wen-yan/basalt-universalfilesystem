@@ -54,3 +54,15 @@ UniversalFileSystemStore:
       #     AccountKey: a2V5Mg==
       Settings:
         CreateBlobContainerIfNotExists: true
+
+    Oss:
+      UriRegexPattern: ^oss://ufs-it-oss/.*$
+      FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.AliyunOss.AliyunOssFileSystemFactory
+      Client:
+        Endpoint: http://127.0.0.1:8280   # can't use `localhost`, otherwise aliyun sdk will use `<bucket-name>.localhost:8280` as address
+        Credentials:
+          Type: Default
+          AccessKey: AccessKeyId
+          SecretKey: AccessKeySecret
+      Settings:
+        CreateBucketIfNotExists: true

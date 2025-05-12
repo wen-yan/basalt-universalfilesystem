@@ -32,8 +32,6 @@ services:
       # AccountKey: Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
       # ServiceUri: http://localhost:10000/devstoreaccount1
       - 10000:10000 # blob
-      - 10001:10001 # queue
-      - 10002:10002 # table
     # healthcheck:
     #   test: curl -f http://localhost:10000/devstoreaccount1 || exit 1
     #   interval: 30s
@@ -41,3 +39,11 @@ services:
     #   retries: 3
     environment:
       - AZURITE_ACCOUNTS=account1:a2V5MQ==;account2:a2V5Mg==
+
+  oss-emulator:
+    build:
+      context: ./oss-emulator
+    container_name: oss-emulator
+    hostname: oss-emulator
+    ports:
+      - 8280:8280

@@ -57,26 +57,26 @@ class AwsS3FileSystemFactory : IFileSystemFactory
         return new AwsS3FileSystem(client, configuration.GetSection("Settings"));
     }
     
-    internal static string GetCustomClientServiceKey(string name) => $"{typeof(AwsS3FileSystemFactory).FullName!}.CustomBlobServiceClient.{name}";
+    internal static string GetCustomClientServiceKey(string name) => $"{typeof(AwsS3FileSystemFactory).FullName!}.CustomS3Client.{name}";
 
-    private static IAmazonS3 CreateAmazonS3ClientFromConfiguration(IConfiguration implementationConfiguration)
+    private static IAmazonS3 CreateAmazonS3ClientFromConfiguration(IConfiguration clientConfiguration)
     {
         // credentials
-        ClientCredentialType clientCredentialType = implementationConfiguration.GetEnumValue<ClientCredentialType>("Credentials:Type");
+        ClientCredentialType clientCredentialType = clientConfiguration.GetEnumValue<ClientCredentialType>("Credentials:Type");
 
         AWSCredentials credentials = clientCredentialType switch
         {
-            ClientCredentialType.Basic => CreateBasicAWSCredentials(implementationConfiguration),
+            ClientCredentialType.Basic => CreateBasicAWSCredentials(clientConfiguration),
             ClientCredentialType.EnvironmentVariables => new EnvironmentVariablesAWSCredentials(),
-            ClientCredentialType.Profile => CreateStoredProfileAWSCredentials(implementationConfiguration),
+            ClientCredentialType.Profile => CreateStoredProfileAWSCredentials(clientConfiguration),
             _ => throw new InvalidEnumConfigurationValueException<ClientCredentialType>("Credentials:Type", clientCredentialType),
         };
 
         // config
         AmazonS3Config config = new();
-        string? regionEndpoint = implementationConfiguration.GetValue<string>("Options:RegionEndpoint", () => null);
-        string? serviceUrl = implementationConfiguration.GetValue<string>("Options:ServiceURL", () => null);
-        bool? forcePathStyle = implementationConfiguration.GetBoolValue("Options:ForcePathStyle", () => null);
+        string? regionEndpoint = clientConfiguration.GetValue<string>("Options:RegionEndpoint", () => null);
+        string? serviceUrl = clientConfiguration.GetValue<string>("Options:ServiceURL", () => null);
+        bool? forcePathStyle = clientConfiguration.GetBoolValue("Options:ForcePathStyle", () => null);
 
         if (regionEndpoint != null) config.RegionEndpoint = RegionEndpoint.GetBySystemName(regionEndpoint);
         if (serviceUrl != null) config.ServiceURL = serviceUrl;
