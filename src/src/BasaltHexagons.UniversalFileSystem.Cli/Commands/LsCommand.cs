@@ -41,7 +41,7 @@ class LsCommandOutput
     public long? ContentSize { get; set; }
 }
 
-class LsCommand : UniversalFileSystemCommand<LsCommandOptions>
+class LsCommand : FileSystemCommand<LsCommandOptions>
 {
     public LsCommand(IServiceProvider serviceProvider) : base(serviceProvider)
     {

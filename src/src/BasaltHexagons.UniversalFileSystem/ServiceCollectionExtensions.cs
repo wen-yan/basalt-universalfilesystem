@@ -5,7 +5,7 @@ namespace BasaltHexagons.UniversalFileSystem;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddUniversalFileSystem(this IServiceCollection services, string configurationRoot = "UniversalFileSystem")
+    public static IServiceCollection AddUniversalFileSystem(this IServiceCollection services, string configurationRoot)
     {
         return services
             .AddSingleton<IFileSystemCreator>(serviceProvider =>

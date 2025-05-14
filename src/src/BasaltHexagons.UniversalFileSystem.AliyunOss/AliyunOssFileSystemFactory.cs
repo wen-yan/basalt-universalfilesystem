@@ -11,22 +11,24 @@ namespace BasaltHexagons.UniversalFileSystem.AliyunOss;
 
 enum ClientCredentialType
 {
-    Default,
+    Basic,
 }
 
-/// <summary>
-/// UriRegexPattern: ^oss://.*$
-/// FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.AliyunOss.AliyunOssFileSystemFactory
-/// Client:     # use custom client if missing
-///     Endpoint:
-///     Credentials:
-///         Type: Default
-///         AccessKey:     # Type = Default
-///         SecretKey:     # Type = Default
-///         SecurityToken: # Type = Default
-/// Settings:
-///     CreateBucketIfNotExists: false
-/// </summary>
+[FileSystemFactoryConfigurationTemplate(
+    """
+    Oss:
+      UriRegexPattern: ^oss://.*$       # Use regex to match different buckets and/or paths
+      FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.AliyunOss.AliyunOssFileSystemFactory
+      Client:                           # Use custom client if missing
+        Endpoint:                       # For example, oss-cn-shanghai.aliyuncs.com
+        Credentials:
+          Type:                         # Basic
+          AccessKey:                    # Required when Type = Basic
+          SecretKey:                    # Required when Type = Basic
+          SecurityToken:                # Type = Basic
+      Settings:
+        CreateBucketIfNotExists: false  # Optional, boolean, default is false
+    """)]
 [AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class AliyunOssFileSystemFactory : IFileSystemFactory
 {
@@ -48,7 +50,7 @@ class AliyunOssFileSystemFactory : IFileSystemFactory
 
         return new AliyunOssFileSystem(client, configuration.GetSection("Settings"));
     }
-    
+
     internal static string GetCustomClientServiceKey(string name) => $"{typeof(AliyunOssFileSystemFactory).FullName!}.CustomOssClient.{name}";
 
     private IOss CreateOssClientFromConfiguration(IConfiguration clientConfiguration)
@@ -57,7 +59,7 @@ class AliyunOssFileSystemFactory : IFileSystemFactory
 
         IOss client = clientCredentialType switch
         {
-            ClientCredentialType.Default => this.CreateDefaultCredentialClient(clientConfiguration),
+            ClientCredentialType.Basic => this.CreateDefaultCredentialClient(clientConfiguration),
             _ => throw new InvalidEnumConfigurationValueException<ClientCredentialType>("Credentials:Type", clientCredentialType),
         };
         return client;

@@ -10,7 +10,8 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddAliyunOssFileSystem(this IServiceCollection services)
     {
         return services
-            .AddKeyedTransient<IFileSystemFactory, AliyunOssFileSystemFactory>(typeof(AliyunOssFileSystemFactory).FullName);
+            .AddKeyedTransient<IFileSystemFactory, AliyunOssFileSystemFactory>(typeof(AliyunOssFileSystemFactory).FullName)
+            .AddSingleton<IFileSystemFactory>(serviceProvider => serviceProvider.GetRequiredKeyedService<IFileSystemFactory>(typeof(AliyunOssFileSystemFactory).FullName));
     }
 
     public static IServiceCollection AddAliyunOssServiceClient(this IServiceCollection services, string name, Func<IServiceProvider, IOss> implementationFactory)

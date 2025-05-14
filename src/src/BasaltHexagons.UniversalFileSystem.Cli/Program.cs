@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using BasaltHexagons.CommandLine;
+using BasaltHexagons.UniversalFileSystem.AliyunOss;
 using BasaltHexagons.UniversalFileSystem.AwsS3;
 using BasaltHexagons.UniversalFileSystem.AzureBlob;
 using BasaltHexagons.UniversalFileSystem.Cli.Output;
@@ -30,7 +31,7 @@ static class Program
 #if DEBUG
                     .AddYamlFile("appsettings-test.yaml", false, false)
 #else
-                    .AddYamlFile($"{Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".ufs", "config.yaml")}", false, false)
+                    .AddYamlFile($"{GetConfigurationFilePath()}", false, false)
 #endif
                     ;
             })
@@ -50,10 +51,11 @@ static class Program
                     .AddCommandLineSupport()
 
                     // UniversalFileSystem
-                    .AddUniversalFileSystem("BasaltHexagons:UniversalFileSystem")
+                    .AddUniversalFileSystem("UniversalFileSystem-Cli:UniversalFileSystem")
                     .AddFileFileSystem()
                     .AddAwsS3FileSystem()
                     .AddAzureBlobFileSystem()
+                    .AddAliyunOssFileSystem()
 
                     // Output
                     .AddTransient<IOutputWriter, ConsoleOutputWriter>()
@@ -67,4 +69,7 @@ static class Program
         int exitCode = await rootCommand.InvokeAsync(args);
         return exitCode;
     }
+
+    public static string GetConfigurationFilePath(string fileName = "config.yaml")
+        => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".ufs", fileName);
 }

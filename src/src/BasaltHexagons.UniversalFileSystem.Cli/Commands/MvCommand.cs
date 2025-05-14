@@ -28,7 +28,7 @@ partial class MvCommandBuilder : CliCommandBuilder<MvCommand, MvCommandOptions>
     }
 }
 
-class MvCommand : UniversalFileSystemCommand<MvCommandOptions>
+class MvCommand : FileSystemCommand<MvCommandOptions>
 {
     public MvCommand(IServiceProvider serviceProvider) : base(serviceProvider)
     {

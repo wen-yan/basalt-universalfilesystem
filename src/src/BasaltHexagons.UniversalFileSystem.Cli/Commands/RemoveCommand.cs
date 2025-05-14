@@ -29,7 +29,7 @@ partial class RemoveCommandBuilder : CliCommandBuilder<RemoveCommand, RemoveComm
     }
 }
 
-class RemoveCommand : UniversalFileSystemCommand<RemoveCommandOptions>
+class RemoveCommand : FileSystemCommand<RemoveCommandOptions>
 {
     public RemoveCommand(IServiceProvider serviceProvider) : base(serviceProvider)
     {

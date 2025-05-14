@@ -14,6 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\BasaltHexagons.UniversalFileSystem.AliyunOss\BasaltHexagons.UniversalFileSystem.AliyunOss.csproj" />
         <ProjectReference Include="..\BasaltHexagons.UniversalFileSystem.AzureBlob\BasaltHexagons.UniversalFileSystem.AzureBlob.csproj" />
         <ProjectReference Include="..\BasaltHexagons.UniversalFileSystem.File\BasaltHexagons.UniversalFileSystem.File.csproj" />
         <ProjectReference Include="..\BasaltHexagons.UniversalFileSystem.AwsS3\BasaltHexagons.UniversalFileSystem.AwsS3.csproj" />
@@ -24,6 +25,11 @@
         <None Update="appsettings-test.yaml">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Commands\Configure\ConfigurationTemplate.yaml" />
+      <EmbeddedResource Include="Commands\Configuration\ConfigurationTemplate.yaml" />
     </ItemGroup>
 
 </Project>

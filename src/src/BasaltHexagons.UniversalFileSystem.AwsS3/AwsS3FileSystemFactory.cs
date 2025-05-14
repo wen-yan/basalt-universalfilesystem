@@ -14,27 +14,28 @@ namespace BasaltHexagons.UniversalFileSystem.AwsS3;
 
 enum ClientCredentialType
 {
-    Basic, // BasicAWSCredentials
-    EnvironmentVariables, // EnvironmentVariablesAWSCredentials
-    Profile, // StoredProfileAWSCredentials
+    Basic,                  // BasicAWSCredentials, tested using integration test
+    EnvironmentVariables,   // EnvironmentVariablesAWSCredentials
+    Profile,                // StoredProfileAWSCredentials
 }
 
-/// <summary>
-/// UriRegexPattern: ^s3://.*$
-/// FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.AwsS3.AwsS3FileSystemFactory
-/// Client:     # use custom client if missing
-///     Credentials
-///         Type: Anonymous/Basic/EnvironmentVariables/Profile
-///         AccessKey:     # Type = Basic
-///         SecretKey:     # Type = Basic
-///         ProfileName:   # Type = Profile
-///     Options
-///         RegionEndpoint:
-///         ServiceURL:
-///         ForcePathStyle: true/false
-/// Settings:
-///     CreateBucketIfNotExists: false
-/// </summary>
+[FileSystemFactoryConfigurationTemplate(
+    """
+    S3:
+      UriRegexPattern: ^s3://.*$        # Use regex to match different buckets and/or paths
+      FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.AwsS3.AwsS3FileSystemFactory
+      Client:                           # Use custom client if missing
+        Credentials:
+          Type:                         # Basic
+          AccessKey:                    # Required when Type = Basic
+          SecretKey:                    # Required when Type = Basic
+        Options:
+          RegionEndpoint:               # Optional
+          ServiceURL:                   # Optional, for example http://localhost:4566 for LocalStack
+          ForcePathStyle:               # Optional, boolean
+      Settings:
+        CreateBucketIfNotExists: false  # Optional, boolean, default is false
+    """)]
 [AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class AwsS3FileSystemFactory : IFileSystemFactory
 {
