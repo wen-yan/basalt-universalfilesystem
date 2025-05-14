@@ -4,6 +4,12 @@ using Microsoft.Extensions.Configuration;
 
 namespace BasaltHexagons.UniversalFileSystem.Memory;
 
+[FileSystemFactoryConfigurationTemplate(
+    """
+    Memory:
+      UriRegexPattern: ^memory:///.*$
+      FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.Memory.MemoryFileSystemFactory
+    """)]
 [AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class MemoryFileSystemFactory : IFileSystemFactory
 {

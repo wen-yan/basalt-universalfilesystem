@@ -4,6 +4,10 @@
             "commandName": "Project",
             "commandLineArgs": "--help"
         },
+        "config-init": {
+            "commandName": "Project",
+            "commandLineArgs": "config init"
+        },
         "ls": {
             "commandName": "Project",
             "commandLineArgs": "ls -r file://W:/GitHub/wen-yan/basalthexagons-universalfilesystem/code/src/BasaltHexagons.UniversalFileSystem.Cli"

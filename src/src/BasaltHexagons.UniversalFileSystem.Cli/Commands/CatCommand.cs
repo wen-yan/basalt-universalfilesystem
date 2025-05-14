@@ -1,5 +1,4 @@
 using System;
-using System.CommandLine;
 using System.IO;
 using System.Threading.Tasks;
 using BasaltHexagons.CommandLine;
@@ -24,7 +23,7 @@ partial class CatCommandBuilder : CliCommandBuilder<CatCommand, CatCommandOption
     }
 }
 
-class CatCommand : UniversalFileSystemCommand<CatCommandOptions>
+class CatCommand : FileSystemCommand<CatCommandOptions>
 {
     public CatCommand(IServiceProvider serviceProvider) : base(serviceProvider)
     {

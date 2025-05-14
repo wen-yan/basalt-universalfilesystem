@@ -13,22 +13,24 @@ namespace BasaltHexagons.UniversalFileSystem.AzureBlob;
 
 enum ClientCredentialType
 {
-    Default, // DefaultAzureCredential
-    SharedKey, // StorageSharedKeyCredential
+    DefaultAzure,       // DefaultAzureCredential
+    StorageSharedKey,   // StorageSharedKeyCredential
 }
 
-/// <summary>
-/// UriRegexPattern: ^abfss://.*$
-/// FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.AzureBlob.AzureBlobFileSystemFactory
-/// Client:     # use custom client if missing
-///     ServiceUri: http://localhost:10000/account1
-///     Credentials
-///         Type: Default/SharedKey
-///         AccountName: devstoreaccount1
-///         AccountKey: Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
-/// Settings:
-///     CreateBlobContainerIfNotExists: false
-/// </summary>
+[FileSystemFactoryConfigurationTemplate(
+    """
+    AzureBlob:
+      UriRegexPattern: ^abfss://.*$     # Use regex to match different buckets and/or paths
+      FileSystemFactoryClass: BasaltHexagons.UniversalFileSystem.AzureBlob.AzureBlobFileSystemFactory
+      Client:                           # Use custom client if missing
+        ServiceUri:                     # For example, http://localhost:10000/account1
+        Credentials:
+          Type:                         # DefaultAzure/StorageSharedKey
+          AccountName:                  # Required when Type = StorageSharedKey
+          AccountKey:                   # Required when Type = StorageSharedKey
+      Settings:
+        CreateBlobContainerIfNotExists: false   # Optional, boolean, default is false
+    """)]
 [AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class AzureBlobFileSystemFactory : IFileSystemFactory
 {
@@ -59,8 +61,8 @@ class AzureBlobFileSystemFactory : IFileSystemFactory
 
         BlobServiceClient client = clientCredentialType switch
         {
-            ClientCredentialType.Default => CreateDefaultCredentialClient(implementationConfiguration),
-            ClientCredentialType.SharedKey => CreateSharedKeyCredentialClient(implementationConfiguration),
+            ClientCredentialType.DefaultAzure => CreateDefaultCredentialClient(implementationConfiguration),
+            ClientCredentialType.StorageSharedKey => CreateSharedKeyCredentialClient(implementationConfiguration),
             _ => throw new InvalidEnumConfigurationValueException<ClientCredentialType>("Credentials:Type", clientCredentialType),
         };
         return client;

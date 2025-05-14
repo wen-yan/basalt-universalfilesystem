@@ -34,7 +34,7 @@ UniversalFileSystemStore:
       Client:
         ServiceUri: http://localhost:10000/account1
         Credentials:
-          Type: SharedKey
+          Type: StorageSharedKey
           # AccountName: devstoreaccount1
           # AccountKey: Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
           AccountName: account1
@@ -49,7 +49,7 @@ UniversalFileSystemStore:
       # Client:
       #   ServiceUri: http://localhost:10000/account2
       #   Credentials:
-      #     Type: SharedKey
+      #     Type: StorageSharedKey
       #     AccountName: account2
       #     AccountKey: a2V5Mg==
       Settings:
