@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Basalt.UniversalFileSystem.Cli\Basalt.UniversalFileSystem.Cli.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Basalt.UniversalFileSystem.IntegrationTests\it-settings.yaml">
+      <Link>it-settings.yaml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Basalt.CommandLine" Version="$(BasaltHexagons_CommandLine_Version)" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Yaml" Version="$(Microsoft_Extensions_Configuration_Yaml_Version)" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(Microsoft_Extensions_DependencyInjection_Version)" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="$(Microsoft_Extensions_Hosting_Version)" />
+        <PackageReference Include="Spectre.Console.Cli" Version="$(Spectre_Console_Cli_Version)" />
+        <PackageReference Include="System.Linq.Async" Version="$(System_Linq_Async_Version)" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Basalt.UniversalFileSystem.AliyunOss\Basalt.UniversalFileSystem.AliyunOss.csproj" />
+        <ProjectReference Include="..\Basalt.UniversalFileSystem.AzureBlob\Basalt.UniversalFileSystem.AzureBlob.csproj" />
+        <ProjectReference Include="..\Basalt.UniversalFileSystem.Bootstrap\Basalt.UniversalFileSystem.Bootstrap.csproj" />
+        <ProjectReference Include="..\Basalt.UniversalFileSystem.File\Basalt.UniversalFileSystem.File.csproj" />
+        <ProjectReference Include="..\Basalt.UniversalFileSystem.AwsS3\Basalt.UniversalFileSystem.AwsS3.csproj" />
+        <ProjectReference Include="..\Basalt.UniversalFileSystem\Basalt.UniversalFileSystem.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="appsettings-test.yaml">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Commands\Configure\ConfigurationTemplate.yaml" />
+      <EmbeddedResource Include="Commands\Configuration\ConfigurationTemplate.yaml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="DependencyInjection\" />
+    </ItemGroup>
+
+</Project>

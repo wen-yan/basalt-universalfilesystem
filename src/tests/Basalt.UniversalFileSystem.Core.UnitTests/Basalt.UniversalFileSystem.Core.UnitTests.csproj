@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Basalt.UniversalFileSystem.Core\Basalt.UniversalFileSystem.Core.csproj"/>
+    </ItemGroup>
+
+</Project>
