@@ -6,7 +6,7 @@ using BasaltHexagons.UniversalFileSystem.Cli.Output;
 using BasaltHexagons.UniversalFileSystem.Core;
 using BasaltHexagons.UniversalFileSystem.Core.Exceptions;
 
-namespace BasaltHexagons.UniversalFileSystem.Cli.Commands;
+namespace BasaltHexagons.UniversalFileSystem.Cli.Commands.FileSystem;
 
 partial class MvCommandOptions
 {

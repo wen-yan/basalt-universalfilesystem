@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.CommandLine;
 using System.Linq;
 using System.Threading.Tasks;
 using BasaltHexagons.CommandLine;
@@ -8,12 +7,11 @@ using BasaltHexagons.CommandLine.Annotations;
 using BasaltHexagons.UniversalFileSystem.Cli.Output;
 using BasaltHexagons.UniversalFileSystem.Core;
 
-namespace BasaltHexagons.UniversalFileSystem.Cli.Commands;
+namespace BasaltHexagons.UniversalFileSystem.Cli.Commands.FileSystem;
 
 partial class LsCommandOptions
 {
-    [CliCommandSymbol]
-    public bool Recursive { get; init; }
+    [CliCommandSymbol] public bool Recursive { get; init; }
 
     [CliCommandSymbol(CliCommandSymbolType.Argument)]
     public Uri Directory { get; init; }
@@ -33,12 +31,13 @@ partial class LsCommandBuilder : CliCommandBuilder<LsCommand, LsCommandOptions>
 
 class LsCommandOutput
 {
-    public Uri? Uri { get; set; }
     public ObjectType ObjectType { get; set; }
     public DateTime? LastModifiedTimeUtc { get; set; }
 
     [TabularDatasetWriter(Alignment = TabularDatasetWriterAlignment.Right)]
     public long? ContentSize { get; set; }
+
+    public Uri? Uri { get; set; }
 }
 
 class LsCommand : FileSystemCommand<LsCommandOptions>

@@ -16,6 +16,7 @@
     <ItemGroup>
         <ProjectReference Include="..\BasaltHexagons.UniversalFileSystem.AliyunOss\BasaltHexagons.UniversalFileSystem.AliyunOss.csproj" />
         <ProjectReference Include="..\BasaltHexagons.UniversalFileSystem.AzureBlob\BasaltHexagons.UniversalFileSystem.AzureBlob.csproj" />
+        <ProjectReference Include="..\BasaltHexagons.UniversalFileSystem.Bootstrap\BasaltHexagons.UniversalFileSystem.Bootstrap.csproj" />
         <ProjectReference Include="..\BasaltHexagons.UniversalFileSystem.File\BasaltHexagons.UniversalFileSystem.File.csproj" />
         <ProjectReference Include="..\BasaltHexagons.UniversalFileSystem.AwsS3\BasaltHexagons.UniversalFileSystem.AwsS3.csproj" />
         <ProjectReference Include="..\BasaltHexagons.UniversalFileSystem\BasaltHexagons.UniversalFileSystem.csproj" />
@@ -30,6 +31,10 @@
     <ItemGroup>
       <None Remove="Commands\Configure\ConfigurationTemplate.yaml" />
       <EmbeddedResource Include="Commands\Configuration\ConfigurationTemplate.yaml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="DependencyInjection\" />
     </ItemGroup>
 
 </Project>

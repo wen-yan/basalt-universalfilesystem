@@ -5,7 +5,7 @@ using BasaltHexagons.CommandLine;
 using BasaltHexagons.CommandLine.Annotations;
 using BasaltHexagons.UniversalFileSystem.Cli.Output;
 
-namespace BasaltHexagons.UniversalFileSystem.Cli.Commands;
+namespace BasaltHexagons.UniversalFileSystem.Cli.Commands.FileSystem;
 
 partial class RemoveCommandOptions
 {
