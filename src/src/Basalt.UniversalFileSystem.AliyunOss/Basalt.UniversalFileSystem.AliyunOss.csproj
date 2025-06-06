@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <ProjectReference Include="..\Basalt.UniversalFileSystem.Core\Basalt.UniversalFileSystem.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aliyun.OSS.SDK.NetCore" Version="$(Aliyun_OSS_SDK_NetCore_Version)" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(Microsoft_Extensions_DependencyInjection_Abstractions_Version)" />
+    </ItemGroup>
+</Project>

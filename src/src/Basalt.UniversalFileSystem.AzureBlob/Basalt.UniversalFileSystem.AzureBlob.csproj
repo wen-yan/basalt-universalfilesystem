@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <ProjectReference Include="..\Basalt.UniversalFileSystem.Core\Basalt.UniversalFileSystem.Core.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Azure.Identity" Version="$(Azure_Identity_Version)" />
+        <PackageReference Include="Azure.Storage.Blobs" Version="$(Azure_Storage_Blobs_Version)" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(Microsoft_Extensions_DependencyInjection_Abstractions_Version)" />
+    </ItemGroup>
+</Project>
