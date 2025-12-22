@@ -7,7 +7,7 @@ using Basalt.CommandLine;
 using Basalt.UniversalFileSystem.AliyunOss;
 using Basalt.UniversalFileSystem.AwsS3;
 using Basalt.UniversalFileSystem.AzureBlob;
-using Basalt.UniversalFileSystem.Bootstrap;
+using Basalt.UniversalFileSystem.Cli.Bootstrap;
 using Basalt.UniversalFileSystem.Cli.Output;
 using Basalt.UniversalFileSystem.File;
 using Microsoft.Extensions.Configuration;
@@ -30,8 +30,11 @@ static class Program
     }
 
     public static string GetConfigurationFilePath(string fileName = "config.yaml")
-        => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".ufs", fileName);
-
+    {
+        string configPath = Environment.GetEnvironmentVariable("UFS_CONFIG_PATH")
+               ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".ufs", fileName);
+        return configPath;
+    }
 
     [Profiles("Production")]
     [AppConfigurationConfigurator]
@@ -40,10 +43,8 @@ static class Program
         builder
 #if DEBUG
             .SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new ApplicationException())
-            .AddYamlFile("appsettings-test.yaml", false, false)
-#else
-            .AddYamlFile(GetConfigurationFilePath(), false, false)
 #endif
+            .AddYamlFile(GetConfigurationFilePath(), false, false)
             ;
     }
 

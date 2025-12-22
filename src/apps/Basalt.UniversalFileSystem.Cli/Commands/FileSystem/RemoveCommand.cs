@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Basalt.CommandLine;
 using Basalt.CommandLine.Annotations;
 using Basalt.UniversalFileSystem.Cli.Output;
+using Basalt.UniversalFileSystem.Cli.Utils;
 
 namespace Basalt.UniversalFileSystem.Cli.Commands.FileSystem;
 
@@ -24,7 +25,8 @@ partial class RemoveCommandBuilder : CliCommandBuilder<RemoveCommand, RemoveComm
         this.UrisArgument = new("uris")
         {
             Description = "Uri of files to remove",
-            Arity = ArgumentArity.OneOrMore
+            Arity = ArgumentArity.OneOrMore,
+            CustomParser = CommandLineTokenParsers.UrisParser,
         };
         this.NoConfirmOption = new("--no-confirm")
         {

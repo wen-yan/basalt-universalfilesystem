@@ -1,6 +1,6 @@
 using System;
 
-namespace Basalt.UniversalFileSystem.Bootstrap;
+namespace Basalt.UniversalFileSystem.Cli.Bootstrap;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
 public class ProfilesAttribute : Attribute

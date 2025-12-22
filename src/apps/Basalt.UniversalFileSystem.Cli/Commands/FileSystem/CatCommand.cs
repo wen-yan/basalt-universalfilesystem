@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Basalt.CommandLine;
 using Basalt.CommandLine.Annotations;
 using Basalt.UniversalFileSystem.Cli.Output;
+using Basalt.UniversalFileSystem.Cli.Utils;
 
 namespace Basalt.UniversalFileSystem.Cli.Commands.FileSystem;
 
@@ -19,7 +20,11 @@ partial class CatCommandBuilder : CliCommandBuilder<CatCommand, CatCommandOption
     public CatCommandBuilder(IServiceProvider serviceProvider) : base(serviceProvider)
     {
         this.Description = "cat";
-        this.UriArgument = new("uri") { Description = "File uri" };
+        this.UriArgument = new("uri")
+        {
+            Description = "File uri",
+            CustomParser = CommandLineTokenParsers.UriParser,
+        };
     }
 }
 

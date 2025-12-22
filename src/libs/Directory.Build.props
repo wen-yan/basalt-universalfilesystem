@@ -1,0 +1,8 @@
+<Project>
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
+
+    <!-- nuget package -->
+    <ItemGroup>
+        <None Include="../../build/nuget-readme-libs.md" Pack="true" PackagePath="\readme.md" />
+    </ItemGroup>
+</Project>

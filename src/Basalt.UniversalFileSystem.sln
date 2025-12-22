@@ -3,19 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7955D5E3-0739-4EA7-AA7E-A015D1300D1A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{7955D5E3-0739-4EA7-AA7E-A015D1300D1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem", "src\Basalt.UniversalFileSystem\Basalt.UniversalFileSystem.csproj", "{68C2F58E-AED8-48AA-B7AA-B65775246BAB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem", "libs\Basalt.UniversalFileSystem\Basalt.UniversalFileSystem.csproj", "{68C2F58E-AED8-48AA-B7AA-B65775246BAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.Core", "src\Basalt.UniversalFileSystem.Core\Basalt.UniversalFileSystem.Core.csproj", "{99BD94CE-3D2C-41B9-863C-8908A4EB8C47}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.Core", "libs\Basalt.UniversalFileSystem.Core\Basalt.UniversalFileSystem.Core.csproj", "{99BD94CE-3D2C-41B9-863C-8908A4EB8C47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.File", "src\Basalt.UniversalFileSystem.File\Basalt.UniversalFileSystem.File.csproj", "{925710A5-39AD-4A44-A714-2EDD51A005B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.File", "libs\Basalt.UniversalFileSystem.File\Basalt.UniversalFileSystem.File.csproj", "{925710A5-39AD-4A44-A714-2EDD51A005B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.Cli", "src\Basalt.UniversalFileSystem.Cli\Basalt.UniversalFileSystem.Cli.csproj", "{1C960235-B580-4EE8-87E2-8A21054DD2BD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.AwsS3", "libs\Basalt.UniversalFileSystem.AwsS3\Basalt.UniversalFileSystem.AwsS3.csproj", "{EFE05FDF-CF85-4713-944A-E60879E48186}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.AwsS3", "src\Basalt.UniversalFileSystem.AwsS3\Basalt.UniversalFileSystem.AwsS3.csproj", "{EFE05FDF-CF85-4713-944A-E60879E48186}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.AzureBlob", "src\Basalt.UniversalFileSystem.AzureBlob\Basalt.UniversalFileSystem.AzureBlob.csproj", "{95295199-EDDA-43FB-B3D2-463DA5BAC7C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.AzureBlob", "libs\Basalt.UniversalFileSystem.AzureBlob\Basalt.UniversalFileSystem.AzureBlob.csproj", "{95295199-EDDA-43FB-B3D2-463DA5BAC7C3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{13929D5B-7301-4101-8FD1-3246FDEDD279}"
 EndProject
@@ -23,17 +21,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.TestUtils", "tests\Basalt.UniversalFileSystem.TestUtils\Basalt.UniversalFileSystem.TestUtils.csproj", "{47513295-AEF4-4AD1-B870-BEEACA70623A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.Memory", "src\Basalt.UniversalFileSystem.Memory\Basalt.UniversalFileSystem.Memory.csproj", "{FF063A6B-0C76-4CCA-A2FD-F4F29B997A4B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.Memory", "libs\Basalt.UniversalFileSystem.Memory\Basalt.UniversalFileSystem.Memory.csproj", "{FF063A6B-0C76-4CCA-A2FD-F4F29B997A4B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.Core.UnitTests", "tests\Basalt.UniversalFileSystem.Core.UnitTests\Basalt.UniversalFileSystem.Core.UnitTests.csproj", "{AD8F81F2-149E-4A03-94F9-F27142D866AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.AliyunOss", "src\Basalt.UniversalFileSystem.AliyunOss\Basalt.UniversalFileSystem.AliyunOss.csproj", "{B8C20140-385D-4745-B6CE-238F3D69685F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.AliyunOss", "libs\Basalt.UniversalFileSystem.AliyunOss\Basalt.UniversalFileSystem.AliyunOss.csproj", "{B8C20140-385D-4745-B6CE-238F3D69685F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.Cli.IntegrationTests", "tests\Basalt.UniversalFileSystem.Cli.IntegrationTests\Basalt.UniversalFileSystem.Cli.IntegrationTests.csproj", "{46878B0D-03AF-4812-BE4F-3A60E900D0FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.Bootstrap", "src\Basalt.UniversalFileSystem.Bootstrap\Basalt.UniversalFileSystem.Bootstrap.csproj", "{C4338606-17C9-43F9-8894-00EABB49F4B4}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.IntegrationTestUtils", "tests\Basalt.UniversalFileSystem.IntegrationTestUtils\Basalt.UniversalFileSystem.IntegrationTestUtils.csproj", "{6887D22F-B6A4-424C-B550-E85B4A16E517}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apps", "apps", "{EA784EC4-5B28-4E73-91EA-4AF1845A29C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.Cli", "apps\Basalt.UniversalFileSystem.Cli\Basalt.UniversalFileSystem.Cli.csproj", "{7B33EC38-CE2E-4141-A56A-AB1248726DC0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,10 +53,6 @@ Global
 		{925710A5-39AD-4A44-A714-2EDD51A005B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{925710A5-39AD-4A44-A714-2EDD51A005B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{925710A5-39AD-4A44-A714-2EDD51A005B6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1C960235-B580-4EE8-87E2-8A21054DD2BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1C960235-B580-4EE8-87E2-8A21054DD2BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1C960235-B580-4EE8-87E2-8A21054DD2BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1C960235-B580-4EE8-87E2-8A21054DD2BD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EFE05FDF-CF85-4713-944A-E60879E48186}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EFE05FDF-CF85-4713-944A-E60879E48186}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFE05FDF-CF85-4713-944A-E60879E48186}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -89,14 +85,14 @@ Global
 		{46878B0D-03AF-4812-BE4F-3A60E900D0FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46878B0D-03AF-4812-BE4F-3A60E900D0FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46878B0D-03AF-4812-BE4F-3A60E900D0FE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C4338606-17C9-43F9-8894-00EABB49F4B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C4338606-17C9-43F9-8894-00EABB49F4B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C4338606-17C9-43F9-8894-00EABB49F4B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C4338606-17C9-43F9-8894-00EABB49F4B4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6887D22F-B6A4-424C-B550-E85B4A16E517}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6887D22F-B6A4-424C-B550-E85B4A16E517}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6887D22F-B6A4-424C-B550-E85B4A16E517}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6887D22F-B6A4-424C-B550-E85B4A16E517}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B33EC38-CE2E-4141-A56A-AB1248726DC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B33EC38-CE2E-4141-A56A-AB1248726DC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B33EC38-CE2E-4141-A56A-AB1248726DC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B33EC38-CE2E-4141-A56A-AB1248726DC0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -105,7 +101,6 @@ Global
 		{68C2F58E-AED8-48AA-B7AA-B65775246BAB} = {7955D5E3-0739-4EA7-AA7E-A015D1300D1A}
 		{99BD94CE-3D2C-41B9-863C-8908A4EB8C47} = {7955D5E3-0739-4EA7-AA7E-A015D1300D1A}
 		{925710A5-39AD-4A44-A714-2EDD51A005B6} = {7955D5E3-0739-4EA7-AA7E-A015D1300D1A}
-		{1C960235-B580-4EE8-87E2-8A21054DD2BD} = {7955D5E3-0739-4EA7-AA7E-A015D1300D1A}
 		{EFE05FDF-CF85-4713-944A-E60879E48186} = {7955D5E3-0739-4EA7-AA7E-A015D1300D1A}
 		{95295199-EDDA-43FB-B3D2-463DA5BAC7C3} = {7955D5E3-0739-4EA7-AA7E-A015D1300D1A}
 		{13DC0317-36BB-456F-9F1F-06F08461BFFC} = {13929D5B-7301-4101-8FD1-3246FDEDD279}
@@ -114,7 +109,7 @@ Global
 		{AD8F81F2-149E-4A03-94F9-F27142D866AA} = {13929D5B-7301-4101-8FD1-3246FDEDD279}
 		{B8C20140-385D-4745-B6CE-238F3D69685F} = {7955D5E3-0739-4EA7-AA7E-A015D1300D1A}
 		{46878B0D-03AF-4812-BE4F-3A60E900D0FE} = {13929D5B-7301-4101-8FD1-3246FDEDD279}
-		{C4338606-17C9-43F9-8894-00EABB49F4B4} = {7955D5E3-0739-4EA7-AA7E-A015D1300D1A}
 		{6887D22F-B6A4-424C-B550-E85B4A16E517} = {13929D5B-7301-4101-8FD1-3246FDEDD279}
+		{7B33EC38-CE2E-4141-A56A-AB1248726DC0} = {EA784EC4-5B28-4E73-91EA-4AF1845A29C7}
 	EndGlobalSection
 EndGlobal

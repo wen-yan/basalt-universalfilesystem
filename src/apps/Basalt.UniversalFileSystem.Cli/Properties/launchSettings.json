@@ -14,11 +14,11 @@
         },
         "ls": {
             "commandName": "Project",
-            "commandLineArgs": "ls -r file://W:/GitHub/wen-yan/basalt-universalfilesystem/src/src/Basalt.UniversalFileSystem.Cli"
+            "commandLineArgs": "ls -r file://W:/GitHub/wen-yan/basalt-universalfilesystem/src/app/Basalt.UniversalFileSystem.Cli"
         },
         "cat": {
             "commandName": "Project",
-            "commandLineArgs": "cat file:///W:/GitHub/wen-yan/Basalt.UniversalFileSystem/code/src/Basalt.UniversalFileSystem.Cli/Program.cs"
+            "commandLineArgs": "cat file:///W:/GitHub/wen-yan/Basalt.UniversalFileSystem/code/app/Basalt.UniversalFileSystem.Cli/Program.cs"
         },
         "mv": {
             "commandName": "Project",

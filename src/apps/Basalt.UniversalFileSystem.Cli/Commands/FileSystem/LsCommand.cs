@@ -5,16 +5,17 @@ using System.Threading.Tasks;
 using Basalt.CommandLine;
 using Basalt.CommandLine.Annotations;
 using Basalt.UniversalFileSystem.Cli.Output;
+using Basalt.UniversalFileSystem.Cli.Utils;
 using Basalt.UniversalFileSystem.Core;
 
 namespace Basalt.UniversalFileSystem.Cli.Commands.FileSystem;
 
 partial class LsCommandOptions
 {
-    [CliCommandSymbol] public bool Recursive { get; init; }
+    [CliCommandSymbol] public bool Recursive { get; }
 
     [CliCommandSymbol(CliCommandSymbolType.Argument)]
-    public Uri Directory { get; init; }
+    public Uri Directory { get; }
 }
 
 [CliCommandBuilder("ls", typeof(AppCommandBuilder))]
@@ -32,6 +33,7 @@ partial class LsCommandBuilder : CliCommandBuilder<LsCommand, LsCommandOptions>
         this.DirectoryArgument = new("directory")
         {
             Description = "Directory",
+            CustomParser = CommandLineTokenParsers.UriParser,
         };
     }
 }

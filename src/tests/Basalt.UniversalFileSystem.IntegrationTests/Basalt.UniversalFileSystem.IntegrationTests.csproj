@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Basalt.UniversalFileSystem\Basalt.UniversalFileSystem.csproj" />
+        <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem\Basalt.UniversalFileSystem.csproj" />
         <ProjectReference Include="..\Basalt.UniversalFileSystem.IntegrationTestUtils\Basalt.UniversalFileSystem.IntegrationTestUtils.csproj" />
         <ProjectReference Include="..\Basalt.UniversalFileSystem.TestUtils\Basalt.UniversalFileSystem.TestUtils.csproj"/>
     </ItemGroup>

@@ -6,13 +6,12 @@
         <PackageReference Include="Microsoft.Extensions.Configuration.Yaml" Version="$(Microsoft_Extensions_Configuration_Yaml_Version)" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Basalt.UniversalFileSystem.AliyunOss\Basalt.UniversalFileSystem.AliyunOss.csproj" />
-        <ProjectReference Include="..\..\src\Basalt.UniversalFileSystem.AwsS3\Basalt.UniversalFileSystem.AwsS3.csproj"/>
-        <ProjectReference Include="..\..\src\Basalt.UniversalFileSystem.AzureBlob\Basalt.UniversalFileSystem.AzureBlob.csproj"/>
-        <ProjectReference Include="..\..\src\Basalt.UniversalFileSystem.Bootstrap\Basalt.UniversalFileSystem.Bootstrap.csproj" />
-        <ProjectReference Include="..\..\src\Basalt.UniversalFileSystem.File\Basalt.UniversalFileSystem.File.csproj"/>
-        <ProjectReference Include="..\..\src\Basalt.UniversalFileSystem.Memory\Basalt.UniversalFileSystem.Memory.csproj" />
-        <ProjectReference Include="..\..\src\Basalt.UniversalFileSystem\Basalt.UniversalFileSystem.csproj"/>
+        <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.AliyunOss\Basalt.UniversalFileSystem.AliyunOss.csproj" />
+        <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.AwsS3\Basalt.UniversalFileSystem.AwsS3.csproj"/>
+        <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.AzureBlob\Basalt.UniversalFileSystem.AzureBlob.csproj"/>
+        <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.File\Basalt.UniversalFileSystem.File.csproj"/>
+        <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.Memory\Basalt.UniversalFileSystem.Memory.csproj" />
+        <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem\Basalt.UniversalFileSystem.csproj"/>
         <ProjectReference Include="..\Basalt.UniversalFileSystem.TestUtils\Basalt.UniversalFileSystem.TestUtils.csproj"/>
     </ItemGroup>
 

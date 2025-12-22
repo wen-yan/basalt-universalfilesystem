@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Basalt.UniversalFileSystem.Bootstrap;
+namespace Basalt.UniversalFileSystem.Cli.Bootstrap;
 
 public class AppHostBuilder
 {

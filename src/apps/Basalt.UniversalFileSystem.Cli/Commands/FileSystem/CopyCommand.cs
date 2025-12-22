@@ -3,6 +3,7 @@ using System.CommandLine;
 using System.Threading.Tasks;
 using Basalt.CommandLine;
 using Basalt.CommandLine.Annotations;
+using Basalt.UniversalFileSystem.Cli.Utils;
 
 namespace Basalt.UniversalFileSystem.Cli.Commands.FileSystem;
 
@@ -34,11 +35,13 @@ partial class CopyCommandBuilder : CliCommandBuilder<CopyCommand, CopyCommandOpt
         {
             Description = "Source file uri.",
             Arity = ArgumentArity.ExactlyOne,
+            CustomParser = CommandLineTokenParsers.UriParser,
         };
         this.DestinationArgument = new("Destination")
         {
             Description = "Destination uri.",
             Arity = ArgumentArity.ExactlyOne,
+            CustomParser = CommandLineTokenParsers.UriParser,
         };
     }
 }
