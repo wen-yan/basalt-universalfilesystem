@@ -24,8 +24,15 @@ partial class LsCommandBuilder : CliCommandBuilder<LsCommand, LsCommandOptions>
     {
         this.Description = "ls";
 
-        this.RecursiveOption = new(["--recursive", "-r"], () => false, "Include subdirectories, default is false");
-        this.DirectoryArgument = new("directory", "Directory");
+        this.RecursiveOption = new("--recursive", "-r")
+        {
+            Description = "Include subdirectories, default is false",
+            DefaultValueFactory = _ => false,
+        };
+        this.DirectoryArgument = new("directory")
+        {
+            Description = "Directory",
+        };
     }
 }
 

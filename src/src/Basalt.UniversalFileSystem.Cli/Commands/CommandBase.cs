@@ -14,7 +14,7 @@ abstract class CommandBase<TOptions> : Command<TOptions>
         this.OutputWriter = this.ServiceProvider.GetRequiredService<IOutputWriter>();
     }
 
-    protected CancellationToken CancellationToken => this.CommandContext.InvocationContext?.GetCancellationToken() ?? CancellationToken.None;
+    protected CancellationToken CancellationToken => this.CommandContext.CancellationToken;
     protected IServiceProvider ServiceProvider { get; }
     protected IOutputWriter OutputWriter { get; }
 }

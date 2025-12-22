@@ -21,11 +21,16 @@ partial class RemoveCommandBuilder : CliCommandBuilder<RemoveCommand, RemoveComm
     public RemoveCommandBuilder(IServiceProvider serviceProvider) : base(serviceProvider)
     {
         this.Description = "Remove files";
-        this.UrisArgument = new("uris", "Uri of files to remove")
+        this.UrisArgument = new("uris")
         {
+            Description = "Uri of files to remove",
             Arity = ArgumentArity.OneOrMore
         };
-        this.NoConfirmOption = new("--no-confirm", () => false, "Don't prompt to confirm.");
+        this.NoConfirmOption = new("--no-confirm")
+        {
+            Description = "Don't prompt to confirm.",
+            DefaultValueFactory = _ => false,
+        };
     }
 }
 

@@ -25,7 +25,7 @@ static class Program
         using IHost host = new AppHostBuilder().Build(args);
         RootCommand rootCommand = host.Services.GetRequiredService<RootCommand>();
 
-        int exitCode = await rootCommand.InvokeAsync(args);
+        int exitCode = await rootCommand.Parse(args).InvokeAsync();
         return exitCode;
     }
 
