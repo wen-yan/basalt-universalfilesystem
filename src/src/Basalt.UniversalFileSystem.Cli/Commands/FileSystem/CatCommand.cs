@@ -19,7 +19,7 @@ partial class CatCommandBuilder : CliCommandBuilder<CatCommand, CatCommandOption
     public CatCommandBuilder(IServiceProvider serviceProvider) : base(serviceProvider)
     {
         this.Description = "cat";
-        this.UriArgument = new("uri", "File uri");
+        this.UriArgument = new("uri") { Description = "File uri" };
     }
 }
 

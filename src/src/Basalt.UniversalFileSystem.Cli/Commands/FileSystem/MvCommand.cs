@@ -22,9 +22,19 @@ partial class MvCommandBuilder : CliCommandBuilder<MvCommand, MvCommandOptions>
     {
         this.Description = "mv";
 
-        this.SourceOption = new(["--source", "-s"], "Source file or prefix");
-        this.DestinationOption = new(["--dest", "-d"], "Destination");
-        this.OverwriteOption = new(["--overwrite"], () => false, "Overwrite destination if existing");
+        this.SourceOption = new("--source", "-s")
+        {
+            Description = "Source file or prefix",
+        };
+        this.DestinationOption = new("--dest", "-d")
+        {
+            Description = "Destination",
+        };
+        this.OverwriteOption = new("--overwrite")
+        {
+            Description = "Overwrite destination if existing",
+            DefaultValueFactory = _ => false,
+        };
     }
 }
 

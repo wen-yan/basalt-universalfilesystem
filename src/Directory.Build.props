@@ -24,7 +24,7 @@
         <Microsoft_Extensions_DependencyInjection_Version>9.0.2</Microsoft_Extensions_DependencyInjection_Version>
         <Microsoft_Extensions_Hosting_Version>9.0.2</Microsoft_Extensions_Hosting_Version>
 
-        <BasaltHexagons_CommandLine_Version>0.1.32-preview</BasaltHexagons_CommandLine_Version>
+        <Basalt_CommandLine_Version>1.0.35</Basalt_CommandLine_Version>
         <Spectre_Console_Cli_Version>0.49.1</Spectre_Console_Cli_Version>
 
         <AWSSDK_S3_Version>3.7.412.5</AWSSDK_S3_Version>

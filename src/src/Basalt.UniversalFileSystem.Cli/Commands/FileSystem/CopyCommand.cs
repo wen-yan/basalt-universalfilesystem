@@ -24,16 +24,20 @@ partial class CopyCommandBuilder : CliCommandBuilder<CopyCommand, CopyCommandOpt
     {
         Description = "Copy files.";
 
-        this.OverwriteOption = new(["--overwrite"], () => false, "Overwrite existing files if exist.")
+        this.OverwriteOption = new("--overwrite")
         {
-            IsRequired = false,
+            Description = "Overwrite existing files if exist.",
+            DefaultValueFactory = _ => false,
+            Required = false,
         };
-        this.SourceArgument = new("Source file", "Source file uri.")
+        this.SourceArgument = new("Source file")
         {
+            Description = "Source file uri.",
             Arity = ArgumentArity.ExactlyOne,
         };
-        this.DestinationArgument = new("Destination", "Destination uri.")
+        this.DestinationArgument = new("Destination")
         {
+            Description = "Destination uri.",
             Arity = ArgumentArity.ExactlyOne,
         };
     }
