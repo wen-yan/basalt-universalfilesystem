@@ -25,7 +25,7 @@ static class Program
         using IHost host = new AppHostBuilder().Build(args);
         RootCommand rootCommand = host.Services.GetRequiredService<RootCommand>();
 
-        int exitCode = await rootCommand.Parse(args).InvokeAsync();
+        int exitCode = await rootCommand.Parse(args).InvokeAsync().ConfigureAwait(false);
         return exitCode;
     }
 
@@ -44,7 +44,7 @@ static class Program
 #if DEBUG
             .SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new ApplicationException())
 #endif
-            .AddYamlFile(GetConfigurationFilePath(), false, false)
+            .AddYamlFile(GetConfigurationFilePath(), true, false)
             ;
     }
 

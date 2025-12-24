@@ -9,12 +9,6 @@ using Basalt.UniversalFileSystem.Core.Disposing;
 
 namespace Basalt.UniversalFileSystem;
 
-/// <summary>
-/// Wrapper of IFileSystem
-/// - Check if object is disposed
-/// - Handle exceptions
-/// </summary>
-[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class FileSystemWrapper : AsyncDisposable, IFileSystem
 {
     public FileSystemWrapper(IFileSystem fileSystem)

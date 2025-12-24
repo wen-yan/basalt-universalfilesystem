@@ -31,7 +31,6 @@ enum ClientCredentialType
       Settings:
         CreateBlobContainerIfNotExists: false   # Optional, boolean, default is false
     """)]
-[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class AzureBlobFileSystemFactory : IFileSystemFactory
 {
     public AzureBlobFileSystemFactory(IServiceProvider serviceProvider)
