@@ -26,12 +26,13 @@ enum ClientCredentialType
       FileSystemFactoryClass: Basalt.UniversalFileSystem.AwsS3.AwsS3FileSystemFactory
       Client:                           # Use custom client if missing
         Credentials:
-          Type:                         # Basic
-          AccessKey:                    # Required when Type = Basic
-          SecretKey:                    # Required when Type = Basic
+          Type:                         # Basic        | EnvironmentVariables | Profile
+          AccessKey:                    # Required     | Not Required         | Not Required
+          SecretKey:                    # Required     | Not Required         | Not Required
+          Profile:                      # Not Required | Not Required         | Optional, default: `default`
         Options:
-          RegionEndpoint:               # Optional
-          ServiceURL:                   # Optional, for example http://localhost:4566 for LocalStack
+          RegionEndpoint:               # Required or ServiceURL
+          ServiceURL:                   # Required or RegionEndpoint, for example http://localhost:4566 for LocalStack
           ForcePathStyle:               # Optional, boolean
       Settings:
         CreateBucketIfNotExists: false  # Optional, boolean, default is false
@@ -96,13 +97,13 @@ class AwsS3FileSystemFactory : IFileSystemFactory
 
     private static AWSCredentials CreateStoredProfileAWSCredentials(IConfiguration implementationConfiguration)
     {
-        string profileName = implementationConfiguration.GetValue<string>("Credentials:ProfileName");
+        string profile = implementationConfiguration.GetValue<string>("Credentials:Profile", () => SharedCredentialsFile.DefaultProfileName)!;
 
         SharedCredentialsFile credentialsFile = new SharedCredentialsFile();
-        CredentialProfile? credentialProfile = credentialsFile.TryGetProfile(profileName, out CredentialProfile value) ? value : null;
+        CredentialProfile? credentialProfile = credentialsFile.TryGetProfile(profile, out CredentialProfile value) ? value : null;
 
         if (credentialProfile == null)
-            throw new InvalidConfigurationValueException("Credentials:ProfileName", profileName);
+            throw new InvalidConfigurationValueException("Credentials:Profile", profile);
 
         return credentialProfile.GetAWSCredentials(credentialsFile);
     }
