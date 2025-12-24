@@ -1,9 +1,18 @@
-TODO
-This package includes helper classes for access files from different file systems.building command line application using System.CommandLine package, including
-- CLI command builder base classes
-- Code generators for generating CLI command builder classes
-- Base classes and interfaces for command
-- Extension methods for adding dependency injection
+This package is part of `Basalt.UniversalFileSystem` which is a uniform, cross‑cloud filesystem abstraction for .NET.
+
+Access local files, Amazon S3, Azure Blob Storage, and Aliyun OSS through a single, consistent API — without vendor‑specific SDK complexity. `Basalt.UniversalFileSystem` is designed for developers who want a simple, reliable, and provider‑agnostic way to work with files across multiple storage backends.
+
+`Basalt.UniversalFileSystem` includes these packages.
+
+| Package name                         | Description                                                                      |
+|--------------------------------------|----------------------------------------------------------------------------------|
+| Basalt.UniversalFileSystem           | The interface to use UniversalFileSystem                                         |
+| Basalt.UniversalFileSystem.Core      | Provider abstract interfaces and classes for implements of different filesystems |
+| Basalt.UniversalFileSystem.File      | Local filesystem                                                                 |
+| Basalt.UniversalFileSystem.AwsS3     | AWS S3                                                                           |
+| Basalt.UniversalFileSystem.AzureBlob | Azure blob                                                                       |
+| Basalt.UniversalFileSystem.AliyunOss | Aliyun OSS                                                                       |
+| Basalt.UniversalFileSystem.Memory    | Memory filesystem. Can be used for testing                                       |
 
 
-More information can be found from https://github.com/wen-yan/basalt-commandline
+More information can be found from https://github.com/wen-yan/basalt-universalfilesystem

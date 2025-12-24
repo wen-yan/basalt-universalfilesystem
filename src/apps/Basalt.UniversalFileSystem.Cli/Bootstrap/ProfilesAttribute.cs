@@ -3,7 +3,7 @@ using System;
 namespace Basalt.UniversalFileSystem.Cli.Bootstrap;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-public class ProfilesAttribute : Attribute
+internal class ProfilesAttribute : Attribute
 {
     public ProfilesAttribute(params string[] profiles)
     {

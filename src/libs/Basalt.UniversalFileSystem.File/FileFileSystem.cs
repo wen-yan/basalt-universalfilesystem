@@ -10,7 +10,6 @@ using Basalt.UniversalFileSystem.Core.Exceptions;
 
 namespace Basalt.UniversalFileSystem.File;
 
-[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class FileFileSystem : AsyncDisposable, IFileSystem
 {
     #region IFileSystem
@@ -29,7 +28,7 @@ class FileFileSystem : AsyncDisposable, IFileSystem
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                ObjectMetadata metadata = await this.GetObjectMetadataInternalAsync(new Uri(entry), false, cancellationToken);
+                ObjectMetadata metadata = await this.GetObjectMetadataInternalAsync(new Uri(entry), false, cancellationToken).ConfigureAwait(false);
                 yield return metadata;
             }
 
@@ -37,7 +36,7 @@ class FileFileSystem : AsyncDisposable, IFileSystem
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                ObjectMetadata metadata = await this.GetObjectMetadataInternalAsync(new Uri(entry), true, cancellationToken);
+                ObjectMetadata metadata = await this.GetObjectMetadataInternalAsync(new Uri(entry), true, cancellationToken).ConfigureAwait(false);
                 yield return metadata;
 
                 if (!recursive) continue;
@@ -60,7 +59,7 @@ class FileFileSystem : AsyncDisposable, IFileSystem
             Path = directory,
         }.Uri;
 
-        if (!await this.DoesDirectoryExistAsync(directoryUri, cancellationToken))
+        if (!await this.DoesDirectoryExistAsync(directoryUri, cancellationToken).ConfigureAwait(false))
             yield break;
 
         await foreach (ObjectMetadata objectMetadata in EnumerateDirectoryAsync(directory, startsWith))
@@ -76,26 +75,26 @@ class FileFileSystem : AsyncDisposable, IFileSystem
 
     public async Task<Stream> GetFileAsync(Uri uri, CancellationToken cancellationToken)
     {
-        if (!await this.DoesFileExistAsync(uri, cancellationToken))
+        if (!await this.DoesFileExistAsync(uri, cancellationToken).ConfigureAwait(false))
             throw new FileNotExistsException(uri);
         return new FileStream(uri.AbsolutePath, FileMode.Open, FileAccess.Read);
     }
 
     public async Task PutFileAsync(Uri uri, Stream stream, bool overwrite, CancellationToken cancellationToken)
     {
-        if (!overwrite && await this.DoesFileExistAsync(uri, cancellationToken))
+        if (!overwrite && await this.DoesFileExistAsync(uri, cancellationToken).ConfigureAwait(false))
             throw new FileExistsException(uri);
 
         string? dir = Path.GetDirectoryName(uri.AbsolutePath);
         if (dir != null)
             Directory.CreateDirectory(dir);
         await using FileStream fileStream = new(uri.AbsolutePath, overwrite ? FileMode.Create : FileMode.CreateNew, FileAccess.Write);
-        await stream.CopyToAsync(fileStream, cancellationToken);
+        await stream.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<bool> DeleteFileAsync(Uri uri, CancellationToken cancellationToken)
     {
-        if (!await this.DoesFileExistAsync(uri, cancellationToken))
+        if (!await this.DoesFileExistAsync(uri, cancellationToken).ConfigureAwait(false))
             return false;
 
         System.IO.File.Delete(uri.AbsolutePath);
@@ -107,10 +106,10 @@ class FileFileSystem : AsyncDisposable, IFileSystem
         if (oldPath == newPath)
             throw new ArgumentException("Can't move file to itself.");
 
-        if (!await this.DoesFileExistAsync(oldPath, cancellationToken))
+        if (!await this.DoesFileExistAsync(oldPath, cancellationToken).ConfigureAwait(false))
             throw new FileNotExistsException(oldPath);
 
-        if (!overwrite && await this.DoesFileExistAsync(newPath, cancellationToken))
+        if (!overwrite && await this.DoesFileExistAsync(newPath, cancellationToken).ConfigureAwait(false))
             throw new FileExistsException(newPath);
 
         string? directory = Path.GetDirectoryName(newPath.AbsolutePath);
@@ -126,10 +125,10 @@ class FileFileSystem : AsyncDisposable, IFileSystem
         if (sourceUri == destUri)
             throw new ArgumentException("Can't copy file to itself.");
 
-        if (!await this.DoesFileExistAsync(sourceUri, cancellationToken))
+        if (!await this.DoesFileExistAsync(sourceUri, cancellationToken).ConfigureAwait(false))
             throw new FileNotExistsException(sourceUri);
 
-        if (!overwrite && await this.DoesFileExistAsync(destUri, cancellationToken))
+        if (!overwrite && await this.DoesFileExistAsync(destUri, cancellationToken).ConfigureAwait(false))
             throw new FileExistsException(destUri);
 
         string? directory = Path.GetDirectoryName(destUri.AbsolutePath);
@@ -150,10 +149,10 @@ class FileFileSystem : AsyncDisposable, IFileSystem
 
     private async Task<ObjectMetadata> GetObjectMetadataInternalAsync(Uri uri, bool returnDirectory, CancellationToken cancellationToken)
     {
-        if (await this.DoesFileExistAsync(uri, cancellationToken))
+        if (await this.DoesFileExistAsync(uri, cancellationToken).ConfigureAwait(false))
             return new ObjectMetadata(uri, ObjectType.File, new FileInfo(uri.AbsolutePath).Length, System.IO.File.GetLastWriteTimeUtc(uri.AbsolutePath));
 
-        if (returnDirectory && await this.DoesDirectoryExistAsync(uri, cancellationToken))
+        if (returnDirectory && await this.DoesDirectoryExistAsync(uri, cancellationToken).ConfigureAwait(false))
             return new ObjectMetadata(new Uri($"{uri}/"), ObjectType.Prefix, null, null);
 
         throw new FileNotExistsException(uri);

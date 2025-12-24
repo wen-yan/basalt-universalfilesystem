@@ -33,7 +33,6 @@ enum ClientCredentialType
       Settings:
         CreateBucketIfNotExists: false  # Optional, boolean, default: false
     """)]
-[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class AliyunOssFileSystemFactory : IFileSystemFactory
 {
     public AliyunOssFileSystemFactory(IServiceProvider serviceProvider)

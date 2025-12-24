@@ -36,14 +36,14 @@ class CatCommand : FileSystemCommand<CatCommandOptions>
 
     public override async ValueTask ExecuteAsync()
     {
-        await using Stream stream = await this.UniversalFileSystem.GetFileAsync(this.Options.Uri, this.CancellationToken);
+        await using Stream stream = await this.UniversalFileSystem.GetFileAsync(this.Options.Uri, this.CancellationToken).ConfigureAwait(false);
         using StreamReader reader = new(stream, leaveOpen: true);
         while (true)
         {
-            string? line = await reader.ReadLineAsync(this.CancellationToken);
+            string? line = await reader.ReadLineAsync(this.CancellationToken).ConfigureAwait(false);
             if (line == null) break;
 
-            await this.OutputWriter.WriteLineAsync(line, this.CancellationToken);
+            await this.OutputWriter.WriteLineAsync(line, this.CancellationToken).ConfigureAwait(false);
         }
     }
 }

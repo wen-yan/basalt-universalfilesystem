@@ -17,7 +17,6 @@ using Microsoft.Extensions.Configuration;
 
 namespace Basalt.UniversalFileSystem.AwsS3;
 
-[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class AwsS3FileSystem : AsyncDisposable, IFileSystem
 {
     public AwsS3FileSystem(IAmazonS3 client, IConfiguration settings)
@@ -37,41 +36,41 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
         if (sourceUri == destUri)
             throw new ArgumentException("Can't copy file to itself.");
 
-        if (!await this.DoesFileExistAsync(sourceUri, cancellationToken))
+        if (!await this.DoesFileExistAsync(sourceUri, cancellationToken).ConfigureAwait(false))
             throw new FileNotExistsException(sourceUri);
 
-        if (!overwrite && await this.DoesFileExistAsync(destUri, cancellationToken))
+        if (!overwrite && await this.DoesFileExistAsync(destUri, cancellationToken).ConfigureAwait(false))
             throw new FileExistsException(destUri);
 
         CopyObjectRequest request = new();
         (request.SourceBucket, request.SourceKey) = DeconstructUri(sourceUri);
         (request.DestinationBucket, request.DestinationKey) = DeconstructUri(destUri);
 
-        await this.TryCreateBucketIfNotExistsAsync(request.DestinationBucket, cancellationToken);
-        await this.Client.CopyObjectAsync(request, cancellationToken);
+        await this.TryCreateBucketIfNotExistsAsync(request.DestinationBucket, cancellationToken).ConfigureAwait(false);
+        await this.Client.CopyObjectAsync(request, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<bool> DeleteFileAsync(Uri uri, CancellationToken cancellationToken)
     {
-        if (!await this.DoesFileExistAsync(uri, cancellationToken))
+        if (!await this.DoesFileExistAsync(uri, cancellationToken).ConfigureAwait(false))
             return false;
 
         DeleteObjectRequest request = new();
         (request.BucketName, request.Key) = DeconstructUri(uri);
 
-        DeleteObjectResponse response = await this.Client.DeleteObjectAsync(request, cancellationToken);
+        DeleteObjectResponse response = await this.Client.DeleteObjectAsync(request, cancellationToken).ConfigureAwait(false);
         return true;
     }
 
     public async Task<Stream> GetFileAsync(Uri uri, CancellationToken cancellationToken)
     {
-        if (!await this.DoesFileExistAsync(uri, cancellationToken))
+        if (!await this.DoesFileExistAsync(uri, cancellationToken).ConfigureAwait(false))
             throw new FileNotExistsException(uri);
 
         GetObjectRequest request = new();
         (request.BucketName, request.Key) = DeconstructUri(uri);
 
-        GetObjectResponse response = await this.Client.GetObjectAsync(request, cancellationToken);
+        GetObjectResponse response = await this.Client.GetObjectAsync(request, cancellationToken).ConfigureAwait(false);
         return new LinkedDisposingStream(
             new PositionSupportedStream(response.ResponseStream, 0, null),
             [], [response]);
@@ -83,7 +82,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
         (request.BucketName, request.Key) = DeconstructUri(uri);
         try
         {
-            GetObjectMetadataResponse response = await this.Client.GetObjectMetadataAsync(request, cancellationToken);
+            GetObjectMetadataResponse response = await this.Client.GetObjectMetadataAsync(request, cancellationToken).ConfigureAwait(false);
             return new ObjectMetadata(uri, ObjectType.File, response.ContentLength,
                 response.LastModified.ToUniversalTime());
         }
@@ -98,7 +97,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
     {
         (string bucketName, string keyPrefix) = DeconstructUri(prefix);
 
-        if (!await AmazonS3Util.DoesS3BucketExistV2Async(this.Client, bucketName))
+        if (!await AmazonS3Util.DoesS3BucketExistV2Async(this.Client, bucketName).ConfigureAwait(false))
             yield break;
 
         Queue<string> keyPrefixQueue = new();
@@ -115,7 +114,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
 
             while (true)
             {
-                ListObjectsV2Response response = await this.Client.ListObjectsV2Async(request, cancellationToken);
+                ListObjectsV2Response response = await this.Client.ListObjectsV2Async(request, cancellationToken).ConfigureAwait(false);
 
                 foreach (S3Object obj in response.S3Objects)
                 {
@@ -144,17 +143,17 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
 
     public async Task MoveFileAsync(Uri oldUri, Uri newUri, bool overwrite, CancellationToken cancellationToken)
     {
-        await this.CopyFileAsync(oldUri, newUri, overwrite, cancellationToken);
-        await this.DeleteFileAsync(oldUri, cancellationToken);
+        await this.CopyFileAsync(oldUri, newUri, overwrite, cancellationToken).ConfigureAwait(false);
+        await this.DeleteFileAsync(oldUri, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task PutFileAsync(Uri uri, Stream stream, bool overwrite, CancellationToken cancellationToken)
     {
-        if (!overwrite && await this.DoesFileExistAsync(uri, cancellationToken))
+        if (!overwrite && await this.DoesFileExistAsync(uri, cancellationToken).ConfigureAwait(false))
             throw new FileExistsException(uri);
 
         (string bucketName, string key) = DeconstructUri(uri);
-        await this.TryCreateBucketIfNotExistsAsync(bucketName, cancellationToken);
+        await this.TryCreateBucketIfNotExistsAsync(bucketName, cancellationToken).ConfigureAwait(false);
 
         PutObjectRequest request = new()
         {
@@ -162,19 +161,19 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
             BucketName = bucketName,
             Key = key,
         };
-        PutObjectResponse response = await this.Client.PutObjectAsync(request, cancellationToken);
+        PutObjectResponse response = await this.Client.PutObjectAsync(request, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<bool> DoesFileExistAsync(Uri uri, CancellationToken cancellationToken)
     {
         (string bucket, _) = DeconstructUri(uri);
 
-        bool bucketExists = await AmazonS3Util.DoesS3BucketExistV2Async(this.Client, bucket);
+        bool bucketExists = await AmazonS3Util.DoesS3BucketExistV2Async(this.Client, bucket).ConfigureAwait(false);
         if (!bucketExists) return false;
 
         try
         {
-            await this.GetFileMetadataAsync(uri, cancellationToken);
+            await this.GetFileMetadataAsync(uri, cancellationToken).ConfigureAwait(false);
             return true;
         }
         catch (FileNotExistsException)
@@ -218,7 +217,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
     {
         if (this.Settings.GetBoolValue("CreateBucketIfNotExists", () => null) ?? false)
         {
-            await this.Client.EnsureBucketExistsAsync(bucketName);
+            await this.Client.EnsureBucketExistsAsync(bucketName).ConfigureAwait(false);
         }
     }
 }

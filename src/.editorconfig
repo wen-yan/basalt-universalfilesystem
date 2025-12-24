@@ -1,0 +1,3 @@
+[*.cs]
+dotnet_diagnostic.VSTHRD111.severity = error
+dotnet_analyzer_diagnostic.category-VSTHRD.severity = warning

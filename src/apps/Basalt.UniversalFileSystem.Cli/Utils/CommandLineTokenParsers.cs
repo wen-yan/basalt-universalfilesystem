@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Basalt.UniversalFileSystem.Cli.Utils;
 
-public static class CommandLineTokenParsers
+internal static class CommandLineTokenParsers
 {
     public static Uri? UriParser(SymbolResult result)
     {

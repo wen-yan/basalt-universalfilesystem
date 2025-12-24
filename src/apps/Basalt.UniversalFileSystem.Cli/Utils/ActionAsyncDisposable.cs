@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Basalt.UniversalFileSystem.Cli.Utils;
 
-public class ActionAsyncDisposable : IAsyncDisposable
+internal class ActionAsyncDisposable : IAsyncDisposable
 {
     public ActionAsyncDisposable(Func<ValueTask> action)
     {

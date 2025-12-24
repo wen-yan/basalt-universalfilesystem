@@ -46,6 +46,6 @@ class RemoveCommand : FileSystemCommand<RemoveCommandOptions>
     {
         // bool deleted = await this.UniversalFileSystem.DeleteObjectAsync(this.Options.Uri, this.CancellationToken);
         bool deleted = true;
-        await this.OutputWriter.WriteLineAsync(deleted ? "Deleted object" : "Failed to delete object", this.CancellationToken);
+        await this.OutputWriter.WriteLineAsync(deleted ? "Deleted object" : "Failed to delete object", this.CancellationToken).ConfigureAwait(false);
     }
 }

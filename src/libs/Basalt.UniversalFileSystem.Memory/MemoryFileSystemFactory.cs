@@ -10,7 +10,6 @@ namespace Basalt.UniversalFileSystem.Memory;
       UriRegexPattern: ^memory:///.*$
       FileSystemFactoryClass: Basalt.UniversalFileSystem.Memory.MemoryFileSystemFactory
     """)]
-[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class MemoryFileSystemFactory : IFileSystemFactory
 {
     public IFileSystem Create(IConfigurationSection configuration)

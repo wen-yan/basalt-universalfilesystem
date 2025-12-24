@@ -8,7 +8,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace Basalt.UniversalFileSystem.Cli.Bootstrap;
 
-public class AppHostBuilder
+internal class AppHostBuilder
 {
     private readonly string[] _profiles;
 

@@ -1,7 +1,15 @@
 <Project>
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
 
+    <ItemGroup>
+        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="$(Microsoft_VisualStudio_Threading_Analyzers_Version)" PrivateAssets="all"/>
+    </ItemGroup>
+
     <!-- nuget package -->
+    <PropertyGroup>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
     <ItemGroup>
         <None Include="../../build/nuget-readme-libs.md" Pack="true" PackagePath="\readme.md" />
     </ItemGroup>

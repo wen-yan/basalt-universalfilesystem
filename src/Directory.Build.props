@@ -5,7 +5,7 @@
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <LangVersion>12</LangVersion>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-        <NoWarn>NU1900</NoWarn> <!-- Error occurred while getting package vulnerability data: Object reference not set to an instance of an object. --> <!-- this happens when use local nuget repo -->
+        <!--<NoWarn>NU1900</NoWarn>  Error occurred while getting package vulnerability data: Object reference not set to an instance of an object. --> <!-- this happens when use local nuget repo -->
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(OutputType)' == 'Exe' ">
@@ -19,6 +19,7 @@
 
     <PropertyGroup>
         <System_Linq_Async_Version>6.0.1</System_Linq_Async_Version>
+        <Microsoft_VisualStudio_Threading_Analyzers_Version>17.14.15</Microsoft_VisualStudio_Threading_Analyzers_Version>
         <Microsoft_Extensions_Configuration_Abstractions_Version>8.0.0</Microsoft_Extensions_Configuration_Abstractions_Version>
         <Microsoft_Extensions_Configuration_Yaml_Version>2.0.0-preview2</Microsoft_Extensions_Configuration_Yaml_Version>
         <Microsoft_Extensions_DependencyInjection_Abstractions_Version>8.0.1</Microsoft_Extensions_DependencyInjection_Abstractions_Version>
@@ -53,7 +54,6 @@
 
         <PackageIcon>icon.png</PackageIcon>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
-        <!-- <GenerateDocumentationFile>true</GenerateDocumentationFile> -->
         <PackageTags>filesystem;commandline;cloudstorage;dotnet</PackageTags>
     </PropertyGroup>
 

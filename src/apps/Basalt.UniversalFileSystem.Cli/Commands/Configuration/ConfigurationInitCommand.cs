@@ -54,7 +54,7 @@ class ConfigurationInitCommand : CommandBase<ConfigureInitCommandOptions>
             using StringReader reader = new StringReader(allFactoryTemplates);
             while (true)
             {
-                string? line = await reader.ReadLineAsync();
+                string? line = await reader.ReadLineAsync().ConfigureAwait(false);
                 if (line == null) break;
 
                 for (int i = 0; i < indent; i++) builder.Append(' ');
@@ -70,17 +70,19 @@ class ConfigurationInitCommand : CommandBase<ConfigureInitCommandOptions>
                                         throw new ApplicationException("Can't load configuration template");
 
             using TextReader reader = new StreamReader(stream);
-            return await reader.ReadToEndAsync();
+            return await reader.ReadToEndAsync().ConfigureAwait(false);
         }
 
-        string allFactoryTemplates = await GetAllFactoryTemplatesAsync(4);
-        string template = await GetTemplateAsync();
+        string allFactoryTemplates = await GetAllFactoryTemplatesAsync(4).ConfigureAwait(false);
+        string template = await GetTemplateAsync().ConfigureAwait(false);
         string result = template.Replace("<allFactoryTemplates>", allFactoryTemplates);
 
         string configFilePath = Program.GetConfigurationFilePath("config-template.yaml");
         Directory.CreateDirectory(Path.GetDirectoryName(configFilePath)!);
-        await System.IO.File.WriteAllTextAsync(configFilePath, result, this.CancellationToken);
+        await System.IO.File.WriteAllTextAsync(configFilePath, result, this.CancellationToken).ConfigureAwait(false);
         
-        await this.OutputWriter.WriteLineAsync($"Configuration is saved in file `{configFilePath}`. You need to update it and copy/move to {Program.GetConfigurationFilePath()} to start using it.", this.CancellationToken);
+        await this.OutputWriter
+            .WriteLineAsync($"Configuration is saved in file `{configFilePath}`. You need to update it and copy/move to {Program.GetConfigurationFilePath()} to start using it.", this.CancellationToken)
+            .ConfigureAwait(false);
     }
 }

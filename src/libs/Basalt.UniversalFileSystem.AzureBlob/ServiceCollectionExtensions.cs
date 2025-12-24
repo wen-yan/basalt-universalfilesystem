@@ -5,8 +5,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Basalt.UniversalFileSystem.AzureBlob;
 
+/// <summary>
+/// Extension methods of ServiceCollection to add Azure blob filesystem support.
+/// </summary>
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Add Azure blob filesystem to service collection.
+    /// </summary>
+    /// <param name="services">ServiceCollection object.</param>
+    /// <returns>ServiceCollection object.</returns>
     public static IServiceCollection AddAzureBlobFileSystem(this IServiceCollection services)
     {
         return services
@@ -14,6 +22,13 @@ public static class ServiceCollectionExtensions
             .AddSingleton<IFileSystemFactory>(serviceProvider => serviceProvider.GetRequiredKeyedService<IFileSystemFactory>(typeof(AzureBlobFileSystemFactory).FullName));
     }
 
+    /// <summary>
+    /// Add Azure blob custom client to service collection.
+    /// </summary>
+    /// <param name="services">ServiceCollection object.</param>
+    /// <param name="name">Name of custom client.</param>
+    /// <param name="implementationFactory">Custom client factory.</param>
+    /// <returns>ServiceCollection object.</returns>
     public static IServiceCollection AddAzureBlobCustomClient(this IServiceCollection services, string name, Func<IServiceProvider, BlobServiceClient> implementationFactory)
     {
         string key = AzureBlobFileSystemFactory.GetCustomClientServiceKey(name);

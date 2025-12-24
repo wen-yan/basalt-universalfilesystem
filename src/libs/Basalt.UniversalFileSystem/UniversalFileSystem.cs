@@ -9,7 +9,6 @@ using Basalt.UniversalFileSystem.Core.Disposing;
 
 namespace Basalt.UniversalFileSystem;
 
-[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
 {
     public UniversalFileSystem(IFileSystemStore implStore)
@@ -62,16 +61,16 @@ class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
 
         if (!IsSameFileSystem(impl1, impl2))
         {
-            await using (Stream stream = await impl1.GetFileAsync(oldUri, cancellationToken))
+            await using (Stream stream = await impl1.GetFileAsync(oldUri, cancellationToken).ConfigureAwait(false))
             {
-                await impl2.PutFileAsync(newUri, stream, overwrite, cancellationToken);
+                await impl2.PutFileAsync(newUri, stream, overwrite, cancellationToken).ConfigureAwait(false);
             }
 
-            await impl1.DeleteFileAsync(oldUri, cancellationToken);
+            await impl1.DeleteFileAsync(oldUri, cancellationToken).ConfigureAwait(false);
         }
         else
         {
-            await impl1.MoveFileAsync(oldUri, newUri, overwrite, cancellationToken);
+            await impl1.MoveFileAsync(oldUri, newUri, overwrite, cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -83,12 +82,12 @@ class UniversalFileSystem : AsyncDisposable, IUniversalFileSystem
 
         if (!IsSameFileSystem(impl1, impl2))
         {
-            await using Stream stream = await impl1.GetFileAsync(sourceUri, cancellationToken);
-            await impl2.PutFileAsync(destUri, stream, overwrite, cancellationToken);
+            await using Stream stream = await impl1.GetFileAsync(sourceUri, cancellationToken).ConfigureAwait(false);
+            await impl2.PutFileAsync(destUri, stream, overwrite, cancellationToken).ConfigureAwait(false);
         }
         else
         {
-            await impl1.CopyFileAsync(sourceUri, destUri, overwrite, cancellationToken);
+            await impl1.CopyFileAsync(sourceUri, destUri, overwrite, cancellationToken).ConfigureAwait(false);
         }
     }
 

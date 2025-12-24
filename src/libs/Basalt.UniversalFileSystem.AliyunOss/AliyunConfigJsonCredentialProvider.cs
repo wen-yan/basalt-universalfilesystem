@@ -7,10 +7,19 @@ using Aliyun.OSS.Common.Authentication;
 
 namespace Basalt.UniversalFileSystem.AliyunOss;
 
+/// <summary>
+/// Aliyun credential provider for config json file.
+/// </summary>
 public class AliyunConfigJsonCredentialProvider : ICredentialsProvider
 {
     private readonly Lazy<ICredentials> _credentials;
     
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="profile">Profile name.</param>
+    /// <param name="configJsonPath">Config json file path.</param>
+    /// <exception cref="Exception">Throw exceptions when fail to get credentials.</exception>
     public AliyunConfigJsonCredentialProvider(string? profile, string? configJsonPath = null)
     {
         _credentials = new(() =>
@@ -41,12 +50,14 @@ public class AliyunConfigJsonCredentialProvider : ICredentialsProvider
             return new DefaultCredentials(accessKeyId, accessKeySecret, securityToken);
         }, LazyThreadSafetyMode.ExecutionAndPublication);
     }
-    
+
+    /// <inheritdoc />
     public void SetCredentials(ICredentials creds)
     {
         throw new NotImplementedException();
     }
 
+    /// <inheritdoc />
     public ICredentials GetCredentials()
     {
         return _credentials.Value;

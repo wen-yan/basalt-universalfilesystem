@@ -15,7 +15,6 @@ using ObjectMetadata = Basalt.UniversalFileSystem.Core.ObjectMetadata;
 
 namespace Basalt.UniversalFileSystem.AliyunOss;
 
-[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class AliyunOssFileSystem : AsyncDisposable, IFileSystem
 {
     public AliyunOssFileSystem(IOss client, IConfiguration settings)
@@ -34,10 +33,10 @@ class AliyunOssFileSystem : AsyncDisposable, IFileSystem
         if (sourceUri == destUri)
             throw new ArgumentException("Can't copy file to itself.");
 
-        if (!await this.DoesFileExistAsync(sourceUri, cancellationToken))
+        if (!await this.DoesFileExistAsync(sourceUri, cancellationToken).ConfigureAwait(false))
             throw new FileNotExistsException(sourceUri);
 
-        if (!overwrite && await this.DoesFileExistAsync(destUri, cancellationToken))
+        if (!overwrite && await this.DoesFileExistAsync(destUri, cancellationToken).ConfigureAwait(false))
             throw new FileExistsException(destUri);
 
         (string sourceBucketName, string sourceKey) = DeconstructUri(sourceUri);
@@ -45,12 +44,11 @@ class AliyunOssFileSystem : AsyncDisposable, IFileSystem
 
         CopyObjectRequest request = new(sourceBucketName, sourceKey, destBucketName, destKey);
         CopyObjectResult result =
-            await Task<CopyObjectResult>.Factory.FromAsync(this.Client.BeginCopyObject, this.Client.EndCopyResult, request, null);
+            await Task<CopyObjectResult>.Factory.FromAsync(this.Client.BeginCopyObject, this.Client.EndCopyResult, request, null).ConfigureAwait(false);
     }
 
     public async IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
         (string bucketName, string keyPrefix) = DeconstructUri(prefix);
 
         if (!this.Client.DoesBucketExist(bucketName))
@@ -70,7 +68,7 @@ class AliyunOssFileSystem : AsyncDisposable, IFileSystem
             while (true)
             {
                 ObjectListing result = await Task<ObjectListing>.Factory
-                    .FromAsync(this.Client.BeginListObjects, this.Client.EndListObjects, request, null);
+                    .FromAsync(this.Client.BeginListObjects, this.Client.EndListObjects, request, null).ConfigureAwait(false);
 
                 foreach (OssObjectSummary obj in result.ObjectSummaries)
                 {
@@ -108,32 +106,32 @@ class AliyunOssFileSystem : AsyncDisposable, IFileSystem
 
     public async Task<Stream> GetFileAsync(Uri uri, CancellationToken cancellationToken)
     {
-        if (!await this.DoesFileExistAsync(uri, cancellationToken))
+        if (!await this.DoesFileExistAsync(uri, cancellationToken).ConfigureAwait(false))
             throw new FileNotExistsException(uri);
 
         (string bucketName, string key) = DeconstructUri(uri);
         GetObjectRequest request = new(bucketName, key);
 
         OssObject ossObject = await Task<OssObject>.Factory.FromAsync(
-            this.Client.BeginGetObject, this.Client.EndGetObject, request, null);
+            this.Client.BeginGetObject, this.Client.EndGetObject, request, null).ConfigureAwait(false);
 
         return new LinkedDisposingStream(ossObject.ResponseStream, [], [ossObject]);
     }
 
     public async Task PutFileAsync(Uri uri, Stream stream, bool overwrite, CancellationToken cancellationToken)
     {
-        if (!overwrite && await this.DoesFileExistAsync(uri, cancellationToken))
+        if (!overwrite && await this.DoesFileExistAsync(uri, cancellationToken).ConfigureAwait(false))
             throw new FileExistsException(uri);
 
         (string bucketName, string key) = DeconstructUri(uri);
 
-        await this.TryCreateBucketIfNotExistsAsync(bucketName, cancellationToken);
-        await Task<PutObjectResult>.Factory.FromAsync(this.Client.BeginPutObject, this.Client.EndPutObject, bucketName, key, stream, null);
+        await this.TryCreateBucketIfNotExistsAsync(bucketName, cancellationToken).ConfigureAwait(false);
+        await Task<PutObjectResult>.Factory.FromAsync(this.Client.BeginPutObject, this.Client.EndPutObject, bucketName, key, stream, null).ConfigureAwait(false);
     }
 
     public async Task<bool> DeleteFileAsync(Uri uri, CancellationToken cancellationToken)
     {
-        if (!await this.DoesFileExistAsync(uri, cancellationToken))
+        if (!await this.DoesFileExistAsync(uri, cancellationToken).ConfigureAwait(false))
             return false;
 
         (string bucketName, string key) = DeconstructUri(uri);
@@ -144,8 +142,8 @@ class AliyunOssFileSystem : AsyncDisposable, IFileSystem
 
     public async Task MoveFileAsync(Uri oldUri, Uri newUri, bool overwrite, CancellationToken cancellationToken)
     {
-        await this.CopyFileAsync(oldUri, newUri, overwrite, cancellationToken);
-        await this.DeleteFileAsync(oldUri, cancellationToken);
+        await this.CopyFileAsync(oldUri, newUri, overwrite, cancellationToken).ConfigureAwait(false);
+        await this.DeleteFileAsync(oldUri, cancellationToken).ConfigureAwait(false);
     }
 
     public Task<bool> DoesFileExistAsync(Uri uri, CancellationToken cancellationToken)

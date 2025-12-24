@@ -67,6 +67,6 @@ class LsCommand : FileSystemCommand<LsCommandOptions>
                 ContentSize = metadata.ContentSize
             });
 
-        await this.OutputWriter.WriteDatasetAsync(results, this.CancellationToken);
+        await this.OutputWriter.WriteDatasetAsync(results, this.CancellationToken).ConfigureAwait(false);
     }
 }
