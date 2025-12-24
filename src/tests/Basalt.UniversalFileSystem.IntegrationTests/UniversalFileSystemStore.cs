@@ -64,7 +64,7 @@ public static class UniversalFileSystemStore
             CreateUriWrapper(ufs, "s3-custom-client", "s3://ufs-it-s3-custom-client"),
             CreateUriWrapper(ufs, "abfss", "abfss://ufs-it-abfss"),
             CreateUriWrapper(ufs, "abfss-custom-client", "abfss://ufs-it-abfss-custom-client"),
-            // CreateUriWrapper(ufs, "oss", "oss://ufs-it-oss"),   # Can't find a oss emulator which works
+            // CreateUriWrapper(ufs, "oss", "oss://ufs-it-oss"),   // Can't find an oss emulator which works
         ];
         return wrappers;
     }

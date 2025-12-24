@@ -38,7 +38,7 @@ UniversalFileSystem-Cli:
         Client:
           Endpoint: http://127.0.0.1:8280
           Credentials:
-            Type: Default
+            Type: Basic
             AccessKey: AccessKeyId
             SecretKey: AccessKeySecret
         Settings:

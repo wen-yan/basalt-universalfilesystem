@@ -5,6 +5,7 @@
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <LangVersion>12</LangVersion>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <NoWarn>NU1900</NoWarn> <!-- Error occurred while getting package vulnerability data: Object reference not set to an instance of an object. --> <!-- this happens when use local nuget repo -->
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(OutputType)' == 'Exe' ">
@@ -40,4 +41,28 @@
         <MSTest_TestFramework_Version>3.1.1</MSTest_TestFramework_Version>
         <Moq_Version>4.20.72</Moq_Version>
     </PropertyGroup>
+
+    <!-- nuget package -->
+    <PropertyGroup>
+        <Company>Basalt</Company>
+
+        <Authors>Yan Wen</Authors>
+        <Copyright>Copyright (c) Yan Wen 2024.</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/wen-yan/basalt-universalfilesystem</PackageProjectUrl>
+
+        <PackageIcon>icon.png</PackageIcon>
+        <PackageReadmeFile>readme.md</PackageReadmeFile>
+        <!-- <GenerateDocumentationFile>true</GenerateDocumentationFile> -->
+        <PackageTags>filesystem;commandline;cloudstorage;dotnet</PackageTags>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="../../build/basalt.png" Pack="true" PackagePath="\icon.png" />
+    </ItemGroup>
 </Project>

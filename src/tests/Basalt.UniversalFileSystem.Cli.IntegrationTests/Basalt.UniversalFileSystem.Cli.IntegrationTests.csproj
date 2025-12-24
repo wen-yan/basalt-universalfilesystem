@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Basalt.UniversalFileSystem.Cli\Basalt.UniversalFileSystem.Cli.csproj" />
+    <ProjectReference Include="..\..\apps\Basalt.UniversalFileSystem.Cli\Basalt.UniversalFileSystem.Cli.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Basalt.UniversalFileSystem.IntegrationTests\it-settings.yaml">

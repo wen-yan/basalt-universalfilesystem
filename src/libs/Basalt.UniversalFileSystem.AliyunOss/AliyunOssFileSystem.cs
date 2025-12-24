@@ -63,7 +63,7 @@ class AliyunOssFileSystem : AsyncDisposable, IFileSystem
         {
             ListObjectsRequest request = new(bucketName)
             {
-                Prefix = keyPrefix,
+                Prefix = keyPrefixQueue.Dequeue(),
                 Delimiter = "/",
             };
 
@@ -170,7 +170,7 @@ class AliyunOssFileSystem : AsyncDisposable, IFileSystem
     private static (string Bucket, string Key) DeconstructUri(Uri uri)
     {
         string bucket = uri.Host;
-        string key = uri.AbsolutePath;
+        string key = uri.AbsolutePath.Substring(1);
         return (bucket, key);
     }
 

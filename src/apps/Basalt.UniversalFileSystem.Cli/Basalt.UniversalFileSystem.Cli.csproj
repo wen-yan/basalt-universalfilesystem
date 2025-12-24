@@ -2,6 +2,8 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>ufs</ToolCommandName>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,16 +16,18 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Basalt.UniversalFileSystem.AliyunOss\Basalt.UniversalFileSystem.AliyunOss.csproj" />
-        <ProjectReference Include="..\Basalt.UniversalFileSystem.AzureBlob\Basalt.UniversalFileSystem.AzureBlob.csproj" />
-        <ProjectReference Include="..\Basalt.UniversalFileSystem.Bootstrap\Basalt.UniversalFileSystem.Bootstrap.csproj" />
-        <ProjectReference Include="..\Basalt.UniversalFileSystem.File\Basalt.UniversalFileSystem.File.csproj" />
-        <ProjectReference Include="..\Basalt.UniversalFileSystem.AwsS3\Basalt.UniversalFileSystem.AwsS3.csproj" />
-        <ProjectReference Include="..\Basalt.UniversalFileSystem\Basalt.UniversalFileSystem.csproj" />
+        <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.AliyunOss\Basalt.UniversalFileSystem.AliyunOss.csproj" />
+        <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.AzureBlob\Basalt.UniversalFileSystem.AzureBlob.csproj" />
+        <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.File\Basalt.UniversalFileSystem.File.csproj" />
+        <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.AwsS3\Basalt.UniversalFileSystem.AwsS3.csproj" />
+        <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem\Basalt.UniversalFileSystem.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="appsettings-test.yaml">
+        <None Update="appsettings-testenv.yaml">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="appsettings-prodtest.yaml">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
@@ -31,10 +35,6 @@
     <ItemGroup>
       <None Remove="Commands\Configure\ConfigurationTemplate.yaml" />
       <EmbeddedResource Include="Commands\Configuration\ConfigurationTemplate.yaml" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="DependencyInjection\" />
     </ItemGroup>
 
 </Project>

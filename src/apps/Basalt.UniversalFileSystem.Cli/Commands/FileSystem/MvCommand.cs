@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Basalt.CommandLine;
 using Basalt.CommandLine.Annotations;
 using Basalt.UniversalFileSystem.Cli.Output;
+using Basalt.UniversalFileSystem.Cli.Utils;
 using Basalt.UniversalFileSystem.Core;
 using Basalt.UniversalFileSystem.Core.Exceptions;
 
@@ -25,10 +26,12 @@ partial class MvCommandBuilder : CliCommandBuilder<MvCommand, MvCommandOptions>
         this.SourceOption = new("--source", "-s")
         {
             Description = "Source file or prefix",
+            CustomParser = CommandLineTokenParsers.UriParser,
         };
         this.DestinationOption = new("--dest", "-d")
         {
             Description = "Destination",
+            CustomParser = CommandLineTokenParsers.UriParser,
         };
         this.OverwriteOption = new("--overwrite")
         {

@@ -1,0 +1,17 @@
+UniversalFileSystem-Cli:
+  UniversalFileSystem:
+    FileSystems:
+      
+      File:
+        UriRegexPattern: ^file:///.*$
+        FileSystemFactoryClass: Basalt.UniversalFileSystem.File.FileFileSystemFactory
+        
+      Oss:
+        UriRegexPattern: ^oss://.*$
+        FileSystemFactoryClass: Basalt.UniversalFileSystem.AliyunOss.AliyunOssFileSystemFactory
+        Client:
+          Endpoint: https://oss-cn-shanghai.aliyuncs.com
+          Credentials:
+            Type: ConfigJsonProfile
+        Settings:
+          CreateBucketIfNotExists: false
