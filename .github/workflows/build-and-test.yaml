@@ -24,25 +24,8 @@ jobs:
           configuration: ${{ matrix.configuration }}
           working-directory: ./src
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Set up Docker Compose
-        uses: docker/setup-qemu-action@v2
-
-      - name: Setup test environment
-        run: |
-          chmod +x ./localstack/startup.sh
-          docker compose up --detach --build --wait
-        working-directory: ./src/test-env
-
-      - name: Run tests - ${{ matrix.configuration }}
-        uses: wen-yan/basalt-shared/.github/actions/dotnet-command@v1
+      - name: Test solution - ${{ matrix.configuration }}
+        uses: ./.github/actions/test-solution
         with:
-          command: test
-          configuration: ${{ matrix.configuration }}
           working-directory: ./src
-
-      - name: Stop test environment
-        run: docker compose down
-        working-directory: ./src/test-env
+          configuration: ${{ matrix.configuration }}
