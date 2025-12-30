@@ -36,12 +36,11 @@ jobs:
           version-prefix: ${{ steps.get-version.outputs.version-prefix }}
           version-suffix: ${{ steps.get-version.outputs.version-suffix }}
 
-      - name: Test
-        uses: wen-yan/basalt-shared/.github/actions/dotnet-command@v1
+      - name: Test solution - ${{ matrix.configuration }}
+        uses: ./.github/actions/test-solution
         with:
-          command: test
-          configuration: Release
           working-directory: ./src
+          configuration: ${{ matrix.configuration }}
           version-prefix: ${{ steps.get-version.outputs.version-prefix }}
           version-suffix: ${{ steps.get-version.outputs.version-suffix }}
 
