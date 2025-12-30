@@ -15,24 +15,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check branch name
-        run: |
-          BRANCH_NAME=${{ github.event.pull_request.head.ref }}
-          branch_name_regex="^dev-([0-9]+)-[a-zA-Z0-9_-]+$"
-          if [[ "$BRANCH_NAME" =~ $branch_name_regex ]]; then
-            issue_id=${BASH_REMATCH[1]}
-            echo "ISSUE_ID=$issue_id" >> $GITHUB_ENV
-            echo "pull request branch name '$BRANCH_NAME' matches the required pattern '$branch_name_regex', issue id: '$issue_id'."
-          else
-            echo "Error: pull request branch name '$BRANCH_NAME' does not match the required pattern '$branch_name_regex'."
-            exit 1
-          fi
-      - name: Link issue to PR
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          body=$(gh pr view ${{ github.event.pull_request.number }} --json body -q '.body')
-          new_body=$(printf "%s\nRelated to #%s" "$body" "$ISSUE_ID")
-          gh pr edit ${{ github.event.pull_request.number }} --body "$new_body"
+        uses: wen-yan/basalt-shared/.github/actions/check-pr-branch-name@v1
 
   pr-build:
     uses: ./.github/workflows/build-and-test.yaml
@@ -41,7 +24,6 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Auto approve if author is specific user
-        if: github.event.pull_request.user.login == 'wen-yan'
-        uses: hmarr/auto-approve-action@v2
+        uses: wen-yan/basalt-shared/.github/actions/auto-approve-pr@v1
         with:
-          github-token: ${{ secrets.PR_AUTO_APPROVE_BOT_TOKEN }}
+          pr-auto-approve-bot-token: ${{ secrets.PR_AUTO_APPROVE_BOT_TOKEN }}
