@@ -54,6 +54,8 @@ class CopyCommand : FileSystemCommand<CopyCommandOptions>
 
     public override async ValueTask ExecuteAsync()
     {
-        await this.UniversalFileSystem.CopyFilesRecursivelyAsync(this.Options.Source, this.Options.Destination, this.Options.Overwrite, this.CancellationToken);
+        await this.UniversalFileSystem
+            .CopyFilesRecursivelyAsync(this.Options.Source, this.Options.Destination, this.Options.Overwrite, this.CancellationToken)
+            .ConfigureAwait(false);
     }
 }

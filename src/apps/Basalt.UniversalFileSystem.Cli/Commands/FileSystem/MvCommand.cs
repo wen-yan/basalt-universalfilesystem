@@ -49,14 +49,11 @@ class MvCommand : FileSystemCommand<MvCommandOptions>
 
     public override async ValueTask ExecuteAsync()
     {
-        ObjectMetadata? metadata = await this.UniversalFileSystem.GetFileMetadataAsync(this.Options.Source, this.CancellationToken);
-        if (metadata == null)
+        ObjectMetadata metadata = await this.UniversalFileSystem.GetFileMetadataAsync(this.Options.Source, this.CancellationToken).ConfigureAwait(false);
+
+        if (metadata.ObjectType == ObjectType.File)
         {
-            throw new FileNotExistsException(this.Options.Source);
-        }
-        else if (metadata.ObjectType == ObjectType.File)
-        {
-            await this.MoveObjectAsync(this.Options.Source, this.Options.Destination);
+            await this.MoveObjectAsync(this.Options.Source, this.Options.Destination).ConfigureAwait(false);
         }
         else
         {
@@ -66,7 +63,7 @@ class MvCommand : FileSystemCommand<MvCommandOptions>
                 bool success = Uri.TryCreate(this.Options.Destination, relativeUri, out Uri? destUri);
                 if (success && destUri != null)
                 {
-                    await this.MoveObjectAsync(obj.Uri, destUri);
+                    await this.MoveObjectAsync(obj.Uri, destUri).ConfigureAwait(false);
                 }
                 else
                 {
@@ -78,7 +75,7 @@ class MvCommand : FileSystemCommand<MvCommandOptions>
 
     private async ValueTask MoveObjectAsync(Uri source, Uri destination)
     {
-        await this.UniversalFileSystem.MoveFileAsync(source, destination, this.Options.Overwrite, this.CancellationToken);
-        await this.OutputWriter.WriteLineAsync($"Moved file {source} to {destination}", this.CancellationToken);
+        await this.UniversalFileSystem.MoveFileAsync(source, destination, this.Options.Overwrite, this.CancellationToken).ConfigureAwait(false);
+        await this.OutputWriter.WriteLineAsync($"Moved file {source} to {destination}", this.CancellationToken).ConfigureAwait(false);
     }
 }

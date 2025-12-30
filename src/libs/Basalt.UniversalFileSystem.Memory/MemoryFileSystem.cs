@@ -13,7 +13,6 @@ namespace Basalt.UniversalFileSystem.Memory;
 
 record File(byte[] Content, DateTime LastModifiedTimeUtc);
 
-[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class MemoryFileSystem : AsyncDisposable, IFileSystem
 {
     private ConcurrentDictionary<string, File> _files = new();
@@ -74,11 +73,11 @@ class MemoryFileSystem : AsyncDisposable, IFileSystem
 
     public async Task PutFileAsync(Uri uri, Stream stream, bool overwrite, CancellationToken cancellationToken)
     {
-        if (!overwrite && await this.DoesFileExistAsync(uri, cancellationToken))
+        if (!overwrite && await this.DoesFileExistAsync(uri, cancellationToken).ConfigureAwait(false))
             throw new FileExistsException(uri);
 
         await using MemoryStream memoryStream = new();
-        await stream.CopyToAsync(memoryStream, cancellationToken);
+        await stream.CopyToAsync(memoryStream, cancellationToken).ConfigureAwait(false);
         _files[uri.AbsolutePath] = new File(memoryStream.ToArray(), DateTime.UtcNow);
     }
 
@@ -96,7 +95,7 @@ class MemoryFileSystem : AsyncDisposable, IFileSystem
         if (!oldExists)
             throw new FileNotExistsException(oldUri);
 
-        if (!overwrite && await this.DoesFileExistAsync(newUri, cancellationToken))
+        if (!overwrite && await this.DoesFileExistAsync(newUri, cancellationToken).ConfigureAwait(false))
             throw new FileExistsException(newUri);
 
         _files.Remove(oldUri.AbsolutePath, out _);
@@ -111,7 +110,7 @@ class MemoryFileSystem : AsyncDisposable, IFileSystem
         if (!_files.TryGetValue(sourceUri.AbsolutePath, out File? file))
             throw new FileNotExistsException(sourceUri);
 
-        if (!overwrite && await this.DoesFileExistAsync(destUri, cancellationToken))
+        if (!overwrite && await this.DoesFileExistAsync(destUri, cancellationToken).ConfigureAwait(false))
             throw new FileExistsException(destUri);
 
         _files[destUri.AbsolutePath] = new File(file!.Content, DateTime.UtcNow);

@@ -34,7 +34,7 @@ class ConsoleOutputWriter : IOutputWriter
     }
 
     public async ValueTask WriteAsync(string message, CancellationToken cancellationToken)
-        => await Console.Out.WriteAsync(message.ToCharArray(), cancellationToken);
+        => await Console.Out.WriteAsync(message.ToCharArray(), cancellationToken).ConfigureAwait(false);
 
     public ValueTask WriteDatasetAsync<T>(IAsyncEnumerable<T> dataset, CancellationToken cancellationToken)
         => this.DatasetWriter.WriteAsync(dataset, cancellationToken);

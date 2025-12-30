@@ -10,7 +10,6 @@ namespace Basalt.UniversalFileSystem.File;
       UriRegexPattern: ^file:///.*$
       FileSystemFactoryClass: Basalt.UniversalFileSystem.File.FileFileSystemFactory
     """)]
-[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class FileFileSystemFactory : IFileSystemFactory
 {
     public IFileSystem Create(IConfigurationSection configuration)

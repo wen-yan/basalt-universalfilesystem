@@ -1,0 +1,92 @@
+name: release
+on:
+  workflow_dispatch:
+
+jobs:
+  publish-nuget-package:
+    if: ${{ github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-22.04
+    outputs:
+      version-prefix: ${{ steps.get-version.outputs.version-prefix }}
+      version-suffix: ${{ steps.get-version.outputs.version-suffix }}
+      version-package: ${{ steps.get-version.outputs.version-package }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Setup Dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 6.0.428
+
+      - name: Get version
+        id: get-version
+        uses: wen-yan/basalt-shared/.github/actions/get-version@v1
+        with:
+          version-file-path: "src/Version.props"
+
+      - name: Build
+        uses: wen-yan/basalt-shared/.github/actions/dotnet-command@v1
+        with:
+          command: build
+          configuration: Release
+          working-directory: ./src
+          version-prefix: ${{ steps.get-version.outputs.version-prefix }}
+          version-suffix: ${{ steps.get-version.outputs.version-suffix }}
+
+      - name: Test
+        uses: wen-yan/basalt-shared/.github/actions/dotnet-command@v1
+        with:
+          command: test
+          configuration: Release
+          working-directory: ./src
+          version-prefix: ${{ steps.get-version.outputs.version-prefix }}
+          version-suffix: ${{ steps.get-version.outputs.version-suffix }}
+
+      - name: Pack
+        uses: wen-yan/basalt-shared/.github/actions/dotnet-command@v1
+        with:
+          command: pack
+          configuration: Release
+          working-directory: ./src
+          version-prefix: ${{ steps.get-version.outputs.version-prefix }}
+          version-suffix: ${{ steps.get-version.outputs.version-suffix }}
+
+      - name: Publish
+        run: |
+          packages=(
+            Basalt.UniversalFileSystem.Core
+            Basalt.UniversalFileSystem.Memory
+            Basalt.UniversalFileSystem.File
+            Basalt.UniversalFileSystem.AwsS3
+            Basalt.UniversalFileSystem.AzureBlob
+            Basalt.UniversalFileSystem.AliyunOss
+            Basalt.UniversalFileSystem
+          )
+          for pkg in "${packages[@]}"; do
+            dotnet nuget push ./src/libs/$pkg/bin/Release/$pkg.${{ steps.get-version.outputs.version-package }}.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+          done
+
+          dotnet nuget push ./src/apps/Basalt.UniversalFileSystem.Cli/bin/Release/Basalt.UniversalFileSystem.Cli.${{ steps.get-version.outputs.version-package }}.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+
+  create-release:
+    needs: [publish-nuget-package]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create Github Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create release-${{ needs.publish-nuget-package.outputs.version-package }} --generate-notes ${{ needs.publish-nuget-package.outputs.version-suffix == '' && '' || '--prerelease' }}
+
+  non-master-branch:
+    if: ${{ github.ref != 'refs/heads/master' }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Show failure message
+        run: core.setFailed('Release workflow can only work on `master` branch, current is ${{ github.ref }}'')

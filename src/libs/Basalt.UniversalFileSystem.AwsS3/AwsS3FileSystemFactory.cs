@@ -37,7 +37,6 @@ enum ClientCredentialType
       Settings:
         CreateBucketIfNotExists: false  # Optional, boolean, default is false
     """)]
-[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class AwsS3FileSystemFactory : IFileSystemFactory
 {
     public AwsS3FileSystemFactory(IServiceProvider serviceProvider)

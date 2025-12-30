@@ -16,7 +16,6 @@ interface IFileSystemStore
     IFileSystem Create(Uri uri);
 }
 
-[AsyncMethodBuilder(typeof(ContinueOnAnyAsyncMethodBuilder))]
 class DefaultFileSystemStore : IFileSystemStore
 {
     private readonly ConcurrentDictionary<string /* name */, Regex> _uriRegexes = new();
