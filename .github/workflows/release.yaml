@@ -36,11 +36,11 @@ jobs:
           version-prefix: ${{ steps.get-version.outputs.version-prefix }}
           version-suffix: ${{ steps.get-version.outputs.version-suffix }}
 
-      - name: Test solution - ${{ matrix.configuration }}
+      - name: Test
         uses: ./.github/actions/test-solution
         with:
           working-directory: ./src
-          configuration: ${{ matrix.configuration }}
+          configuration: Release
           version-prefix: ${{ steps.get-version.outputs.version-prefix }}
           version-suffix: ${{ steps.get-version.outputs.version-suffix }}
 
