@@ -31,8 +31,8 @@ enum ClientCredentialType
           SecretKey:                    # Required     | Not Required         | Not Required
           Profile:                      # Not Required | Not Required         | Optional, default: `default`
         Options:
-          RegionEndpoint:               # Required or ServiceURL
-          ServiceURL:                   # Required or RegionEndpoint, for example http://localhost:4566 for LocalStack
+          Region:                       # Required or ServiceURL
+          ServiceURL:                   # Required or Region, for example http://localhost:4566 for LocalStack
           ForcePathStyle:               # Optional, boolean
       Settings:
         CreateBucketIfNotExists: false  # Optional, boolean, default is false
@@ -75,11 +75,11 @@ class AwsS3FileSystemFactory : IFileSystemFactory
 
         // config
         AmazonS3Config config = new();
-        string? regionEndpoint = clientConfiguration.GetValue<string>("Options:RegionEndpoint", () => null);
+        string? region = clientConfiguration.GetValue<string>("Options:Region", () => null);
         string? serviceUrl = clientConfiguration.GetValue<string>("Options:ServiceURL", () => null);
         bool? forcePathStyle = clientConfiguration.GetBoolValue("Options:ForcePathStyle", () => null);
 
-        if (regionEndpoint != null) config.RegionEndpoint = RegionEndpoint.GetBySystemName(regionEndpoint);
+        if (region != null) config.RegionEndpoint = RegionEndpoint.GetBySystemName(region);
         if (serviceUrl != null) config.ServiceURL = serviceUrl;
         if (forcePathStyle != null) config.ForcePathStyle = forcePathStyle.Value;
 

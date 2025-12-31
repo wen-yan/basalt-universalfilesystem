@@ -1,3 +1,26 @@
 [![ci](https://github.com/wen-yan/basalt-universalfilesystem/actions/workflows/ci.yaml/badge.svg?branch=master)](https://github.com/wen-yan/basalt-universalfilesystem/actions/workflows/ci.yaml)
+[![release](https://github.com/wen-yan/basalt-universalfilesystem/actions/workflows/release.yaml/badge.svg)](https://github.com/wen-yan/basalt-universalfilesystem/actions/workflows/release.yaml)
 
 # Basalt.UniversalFileSystem
+This repository contains code for the `Basalt.UniversalFileSystem` libraries and `Basalt.UniversalFileSystem.Cli` command line.
+`Basalt.UniversalFileSystem` libraries provide a uniform way to access different filesystems. `Basalt.UniversalFileSystem.Cli` is built on top of it to access different filesystems from command line.
+
+## Documentation
+The Basalt.UniversalFileSystem documentation can now be found [here](./docs/Basalt.UniversalFileSystem-overview.md).
+
+## Packages
+| Package                              | Version                                                                                                                                              | Description                                                                  | Document                                                                                  |
+|--------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
+| Basalt.UniversalFileSystem           | [![Nuget](https://img.shields.io/nuget/v/Basalt.UniversalFileSystem.svg)](https://nuget.org/packages/Basalt.UniversalFileSystem)                     | Uniform interface for access filesystems.                                    | [Basalt.UniversalFileSystem.md](./docs/Basalt.UniversalFileSystem.md)                     |
+| Basalt.UniversalFileSystem.Core      | [![Nuget](https://img.shields.io/nuget/v/Basalt.UniversalFileSystem.Core.svg)](https://nuget.org/packages/Basalt.UniversalFileSystem.Core)           | Common interfaces and classess for all filesystem implementations.           | [Basalt.UniversalFileSystem.Core.md](./docs/Basalt.UniversalFileSystem.Core.md)           |
+| Basalt.UniversalFileSystem.File      | [![Nuget](https://img.shields.io/nuget/v/Basalt.UniversalFileSystem.File.svg)](https://nuget.org/packages/Basalt.UniversalFileSystem.File)           | Local filesystem.                                                            | [Basalt.UniversalFileSystem.File.md](./docs/Basalt.UniversalFileSystem.File.md)           |
+| Basalt.UniversalFileSystem.Memory    | [![Nuget](https://img.shields.io/nuget/v/Basalt.UniversalFileSystem.Memory.svg)](https://nuget.org/packages/Basalt.UniversalFileSystem.Memory)       | Filesystem simulation using memory. For testing purpose.                     | [Basalt.UniversalFileSystem.Memory.md](./docs/Basalt.UniversalFileSystem.Memory.md)       |
+| Basalt.UniversalFileSystem.AwsS3     | [![Nuget](https://img.shields.io/nuget/v/Basalt.UniversalFileSystem.AwsS3.svg)](https://nuget.org/packages/Basalt.UniversalFileSystem.AwsS3)         | AWS S3.                                                                      | [Basalt.UniversalFileSystem.AwsS3.md](./docs/Basalt.UniversalFileSystem.AwsS3.md)         |
+| Basalt.UniversalFileSystem.AzureBlob | [![Nuget](https://img.shields.io/nuget/v/Basalt.UniversalFileSystem.AzureBlob.svg)](https://nuget.org/packages/Basalt.UniversalFileSystem.AzureBlob) | Azure blob.                                                                  | [Basalt.UniversalFileSystem.AzureBlob.md](./docs/Basalt.UniversalFileSystem.AzureBlob.md) |
+| Basalt.UniversalFileSystem.AliyunOss | [![Nuget](https://img.shields.io/nuget/v/Basalt.UniversalFileSystem.AliyunOss.svg)](https://nuget.org/packages/Basalt.UniversalFileSystem.AliyunOss) | Aliyun OSS.                                                                  | [Basalt.UniversalFileSystem.AliyunOss.md](./docs/Basalt.UniversalFileSystem.AliyunOss.md) |
+| Basalt.UniversalFileSystem.Cli       | [![Nuget](https://img.shields.io/nuget/v/Basalt.UniversalFileSystem.Cli.svg)](https://nuget.org/packages/Basalt.UniversalFileSystem.Cli)             | Commandline of `Basalt.UniversalFileSystem`. It's also a demo project of it. | [Basalt.UniversalFileSystem.Cli.md](./docs/Basalt.UniversalFileSystem.Cli.md)             |
+
+
+## License
+
+This project is licensed under the [MIT license](./LICENSE).

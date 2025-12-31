@@ -37,4 +37,8 @@
       <EmbeddedResource Include="Commands\Configuration\ConfigurationTemplate.yaml" />
     </ItemGroup>
 
+    <!-- nuget package -->
+    <ItemGroup>
+        <None Include="../../../docs/Basalt.UniversalFileSystem.Cli.md" Pack="true" PackagePath="\readme.md" />
+    </ItemGroup>
 </Project>

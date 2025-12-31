@@ -40,10 +40,10 @@ services:
     environment:
       - AZURITE_ACCOUNTS=account1:a2V5MQ==;account2:a2V5Mg==
 
-  oss-emulator:
-    build:
-      context: ./oss-emulator
-    container_name: oss-emulator
-    hostname: oss-emulator
-    ports:
-      - 8280:8280
+  # oss-emulator:
+  #   build:
+  #     context: ./oss-emulator
+  #   container_name: oss-emulator
+  #   hostname: oss-emulator
+  #   ports:
+  #     - 8280:8280

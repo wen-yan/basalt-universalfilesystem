@@ -59,6 +59,9 @@ public interface IUniversalFileSystem : IAsyncDisposable
     
     /// <summary>
     /// Move/rename file.
+    /// Warning:
+    ///   File will be downloaded to local and uploaded to the destination if the configurations of source and dest URI are different.
+    ///   It could be slow when the file is large.
     /// </summary>
     /// <param name="oldUri">Old file URI.</param>
     /// <param name="newUri">New file URI.</param>
@@ -69,6 +72,9 @@ public interface IUniversalFileSystem : IAsyncDisposable
     
     /// <summary>
     /// Copy file.
+    /// Warning:
+    ///   File will be downloaded to local and uploaded to the destination if the configurations of source and dest URI are different.
+    ///   It could be slow when the file is large.
     /// </summary>
     /// <param name="sourceUri">Source file URI.</param>
     /// <param name="destUri">Destination file URI.</param>

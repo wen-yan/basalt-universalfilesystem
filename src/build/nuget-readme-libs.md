@@ -15,4 +15,4 @@ Access local files, Amazon S3, Azure Blob Storage, and Aliyun OSS through a sing
 | Basalt.UniversalFileSystem.Memory    | Memory filesystem. Can be used for testing                                       |
 
 
-More information can be found from https://github.com/wen-yan/basalt-universalfilesystem
+More information can be found from https://github.com/wen-yan/basalt-universalfilesystem.

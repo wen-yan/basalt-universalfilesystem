@@ -17,15 +17,22 @@ jobs:
         with:
           dotnet-version: 6.0.428
 
-      - name: Build solution - ${{ matrix.configuration }}
+      - name: Build - ${{ matrix.configuration }}
         uses: wen-yan/basalt-shared/.github/actions/dotnet-command@v1
         with:
           command: build
           configuration: ${{ matrix.configuration }}
           working-directory: ./src
 
-      - name: Test solution - ${{ matrix.configuration }}
+      - name: Test - ${{ matrix.configuration }}
         uses: ./.github/actions/test-solution
         with:
+          working-directory: ./src
+          configuration: ${{ matrix.configuration }}
+
+      - name: Pack - ${{ matrix.configuration }}
+        uses: wen-yan/basalt-shared/.github/actions/dotnet-command@v1
+        with:
+          command: pack
           working-directory: ./src
           configuration: ${{ matrix.configuration }}
