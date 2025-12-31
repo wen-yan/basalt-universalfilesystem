@@ -44,6 +44,10 @@ jobs:
           version-prefix: ${{ steps.get-version.outputs.version-prefix }}
           version-suffix: ${{ steps.get-version.outputs.version-suffix }}
 
+      - name: Download Basalt icon
+        run: |
+          curl -L https://raw.githubusercontent.com/wen-yan/basalt-shared/v1/icons/basalt-128x128.png -o ./src/build/basalt.png
+
       - name: Pack
         uses: wen-yan/basalt-shared/.github/actions/dotnet-command@v1
         with:
