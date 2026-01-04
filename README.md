@@ -3,7 +3,7 @@
 
 # Basalt.UniversalFileSystem
 This repository contains code for the `Basalt.UniversalFileSystem` libraries and `Basalt.UniversalFileSystem.Cli` command line.
-`Basalt.UniversalFileSystem` libraries provide a uniform way to access different filesystems. `Basalt.UniversalFileSystem.Cli` is built on top of it to access different filesystems from command line.
+`Basalt.UniversalFileSystem` libraries provide a unified way to access different filesystems. `Basalt.UniversalFileSystem.Cli` is built on top of it to access different filesystems from command line.
 
 ## Documentation
 The Basalt.UniversalFileSystem documentation can now be found [here](./docs/Basalt.UniversalFileSystem-overview.md).
@@ -11,7 +11,7 @@ The Basalt.UniversalFileSystem documentation can now be found [here](./docs/Basa
 ## Packages
 | Package                              | Version                                                                                                                                              | Description                                                                  | Document                                                                                  |
 |--------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
-| Basalt.UniversalFileSystem           | [![Nuget](https://img.shields.io/nuget/v/Basalt.UniversalFileSystem.svg)](https://nuget.org/packages/Basalt.UniversalFileSystem)                     | Uniform interface for access filesystems.                                    | [Basalt.UniversalFileSystem.md](./docs/Basalt.UniversalFileSystem.md)                     |
+| Basalt.UniversalFileSystem           | [![Nuget](https://img.shields.io/nuget/v/Basalt.UniversalFileSystem.svg)](https://nuget.org/packages/Basalt.UniversalFileSystem)                     | Interface for accessing filesystems.                                         | [Basalt.UniversalFileSystem.md](./docs/Basalt.UniversalFileSystem.md)                     |
 | Basalt.UniversalFileSystem.Core      | [![Nuget](https://img.shields.io/nuget/v/Basalt.UniversalFileSystem.Core.svg)](https://nuget.org/packages/Basalt.UniversalFileSystem.Core)           | Common interfaces and classess for all filesystem implementations.           | [Basalt.UniversalFileSystem.Core.md](./docs/Basalt.UniversalFileSystem.Core.md)           |
 | Basalt.UniversalFileSystem.File      | [![Nuget](https://img.shields.io/nuget/v/Basalt.UniversalFileSystem.File.svg)](https://nuget.org/packages/Basalt.UniversalFileSystem.File)           | Local filesystem.                                                            | [Basalt.UniversalFileSystem.File.md](./docs/Basalt.UniversalFileSystem.File.md)           |
 | Basalt.UniversalFileSystem.Memory    | [![Nuget](https://img.shields.io/nuget/v/Basalt.UniversalFileSystem.Memory.svg)](https://nuget.org/packages/Basalt.UniversalFileSystem.Memory)       | Filesystem simulation using memory. For testing purpose.                     | [Basalt.UniversalFileSystem.Memory.md](./docs/Basalt.UniversalFileSystem.Memory.md)       |

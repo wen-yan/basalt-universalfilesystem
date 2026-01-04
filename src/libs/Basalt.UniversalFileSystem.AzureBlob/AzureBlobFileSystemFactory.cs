@@ -25,9 +25,9 @@ enum ClientCredentialType
       Client:                           # Use custom client if missing
         ServiceUri:                     # For example, http://localhost:10000/account1
         Credentials:
-          Type:                         # DefaultAzure/StorageSharedKey
-          AccountName:                  # Required when Type = StorageSharedKey
-          AccountKey:                   # Required when Type = StorageSharedKey
+          Type:                         # DefaultAzure | StorageSharedKey
+          AccountName:                  # Not Required | Required
+          AccountKey:                   # Not Required | Required
       Settings:
         CreateBlobContainerIfNotExists: false   # Optional, boolean, default is false
     """)]

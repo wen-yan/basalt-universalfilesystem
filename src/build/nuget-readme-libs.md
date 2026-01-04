@@ -1,4 +1,4 @@
-This package is part of `Basalt.UniversalFileSystem` which is a uniform, cross‑cloud filesystem abstraction for .NET.
+This package is part of `Basalt.UniversalFileSystem` which is a unified, cross‑cloud filesystem abstraction for .NET.
 
 Access local files, Amazon S3, Azure Blob Storage, and Aliyun OSS through a single, consistent API — without vendor‑specific SDK complexity. `Basalt.UniversalFileSystem` is designed for developers who want a simple, reliable, and provider‑agnostic way to work with files across multiple storage backends.
 
