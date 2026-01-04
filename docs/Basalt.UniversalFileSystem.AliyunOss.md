@@ -21,3 +21,16 @@ Except [common configuration](./Basalt.UniversalFileSystem.md#common-configurati
 Notes:
 - When `FileSystems:<fs-name>:Client` is missing, `IOss` is fetched/created from dependency injection using key `Basalt.UniversalFileSystem.AliyunOss.AliyunOssFileSystemFactory.CustomOssClient.<fs-name>`.
 - Extension method `AddAliyunOssServiceClient` of `IServiceCollection` can be used to register custom `IOss` instance.
+
+#### Configuration example
+
+```yaml
+FileSystems:
+  Oss:
+    UriRegexPattern: ^oss://.*$
+    FileSystemFactoryClass: Basalt.UniversalFileSystem.AliyunOss.AliyunOssFileSystemFactory
+    Client:
+      Endpoint: https://oss-cn-shanghai.aliyuncs.com
+      Credentials:
+        Type: ConfigJsonProfile
+```

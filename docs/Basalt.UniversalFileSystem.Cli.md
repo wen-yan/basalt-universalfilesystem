@@ -1,6 +1,6 @@
 ﻿# Basalt.UniversalFileSystem.Cli
 
-This is a command line tool for access different filesystems using a uniform way, which is built on top of `Basalt.UniversalFileSystem`.
+This is a command‑line tool built on top of `Basalt.UniversalFileSystem`. It allows different file systems to be accessed in a unified way. It also serves as an example demonstrating how to build applications or services using `Basalt.UniversalFileSystem`.
 
 ## How to install it
 ```bash

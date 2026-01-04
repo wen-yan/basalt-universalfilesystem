@@ -21,3 +21,21 @@ Except [common configuration](./Basalt.UniversalFileSystem.md#common-configurati
 Notes:
 - When `FileSystems:<fs-name>:Client` is missing, `IAmazonS3` is fetched/created from dependency injection using key `Basalt.UniversalFileSystem.AwsS3.AwsS3FileSystemFactory.CustomS3Client.<fs-name>`.
 - Extension method `AddAwsS3CustomClient` of `IServiceCollection` can be used to register custom `IAmazonS3` instance.
+
+#### Configuration example
+
+```yaml
+FileSystems:
+  S3:
+    UriRegexPattern: ^s3://.*$
+    FileSystemFactoryClass: Basalt.UniversalFileSystem.AwsS3.AwsS3FileSystemFactory
+    Client:
+      # configurations for Localstack
+      Credentials:
+        Type: Basic
+        AccessKey: test
+        SecretKey: test
+      Options:
+        ServiceURL: http://localhost:4566
+        ForcePathStyle: true
+```

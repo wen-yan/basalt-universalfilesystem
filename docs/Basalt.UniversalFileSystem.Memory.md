@@ -5,3 +5,12 @@ This package contains implementations for memory filesystem. Usually it should n
 ## Configurations
 
 `Basalt.UniversalFileSystem.Memory` doesn't need extra configurations. All it needs are [common configuration](./Basalt.UniversalFileSystem.md#common-configurations).
+
+#### Configuration example
+
+```yaml
+FileSystems:
+  Memory:
+    UriRegexPattern: ^memory:///.*$
+    FileSystemFactoryClass: Basalt.UniversalFileSystem.Memory.MemoryFileSystemFactory
+```

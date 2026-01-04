@@ -1,7 +1,7 @@
 ﻿
 # Basalt.UniversalFileSystem Repository Overview
 
-- `Basalt.UniversalFileSystem` libraries provide a uniform way to access different filesystems via interfaces and configurations.
+- `Basalt.UniversalFileSystem` libraries provide a unified way to access different filesystems via interfaces and configurations.
 - `Basalt.UniversalFileSystem.Cli` is built on top of `Basalt.UniversalFileSystem` library to access different filesystems from command line.
 
 ## Architecture
