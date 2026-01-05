@@ -1,0 +1,16 @@
+name: add new issue to project
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  add-issue-to-project:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Add issue to project
+        uses: wen-yan/basalt-shared/.github/actions/auto-add-issue-to-project@v1
+        with:
+          github-token: ${{ secrets.WORKFLOW_AUTO_ADD_NEW_ISSUES_TO_PROJECT_PAT }}
