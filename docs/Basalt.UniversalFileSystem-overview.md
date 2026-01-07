@@ -29,4 +29,5 @@
 - [Basalt.UniversalFileSystem.AwsS3](./Basalt.UniversalFileSystem.AwsS3.md)
 - [Basalt.UniversalFileSystem.AzureBlob](./Basalt.UniversalFileSystem.AzureBlob.md)
 - [Basalt.UniversalFileSystem.AliyunOss](./Basalt.UniversalFileSystem.AliyunOss.md)
+- [Basalt.UniversalFileSystem.Sftp](./Basalt.UniversalFileSystem.Sftp.md)
 - [Basalt.UniversalFileSystem.Cli](./Basalt.UniversalFileSystem.Cli.md)

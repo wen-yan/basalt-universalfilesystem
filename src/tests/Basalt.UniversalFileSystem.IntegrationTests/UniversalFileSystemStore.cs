@@ -8,9 +8,12 @@ using Basalt.UniversalFileSystem.AzureBlob;
 using Basalt.UniversalFileSystem.Core;
 using Basalt.UniversalFileSystem.File;
 using Basalt.UniversalFileSystem.Memory;
+using Basalt.UniversalFileSystem.Sftp;
 using Microsoft.Extensions.Configuration.Yaml;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Renci.SshNet;
+using Renci.SshNet.Sftp;
 
 namespace Basalt.UniversalFileSystem.IntegrationTests;
 
@@ -65,6 +68,8 @@ public static class UniversalFileSystemStore
             CreateUriWrapper(ufs, "abfss", "abfss://ufs-it-abfss"),
             CreateUriWrapper(ufs, "abfss-custom-client", "abfss://ufs-it-abfss-custom-client"),
             // CreateUriWrapper(ufs, "oss", "oss://ufs-it-oss"),   // Can't find an oss emulator which works
+            CreateUriWrapper(ufs, "sftp", "sftp://localhost/sftp/ufs-it-sftp/"),
+            CreateUriWrapper(ufs, "sftp-custom-client", "sftp://localhost/sftp/ufs-it-sftp-custom-client/"),
         ];
         return wrappers;
     }
@@ -91,7 +96,14 @@ public static class UniversalFileSystemStore
                     .AddAzureBlobCustomClient("AzureBlobCustomClient", _ =>
                         new BlobServiceClient(new Uri("http://localhost:10000/account2"),
                             new StorageSharedKeyCredential("account2", "a2V5Mg==")))
-                    .AddAliyunOssFileSystem();
+                    .AddAliyunOssFileSystem()
+                    .AddSftpFileSystem()
+                    .AddSftpCustomClient("SftpCustomClient", _ =>
+                    {
+                        SftpClient client = new("localhost", 2222, "demo", "demo");
+                        client.Connect();
+                        return client;
+                    });
             })
             .Build();
         return host.Services.GetRequiredService<IUniversalFileSystem>();
@@ -116,6 +128,36 @@ public static class UniversalFileSystemStore
             {
                 Directory.Delete(root, true);
             }
+        }
+        else if (uriWrapper.BaseUri.Scheme.StartsWith("sftp"))
+        {
+            string root = uriWrapper.BaseUri.LocalPath.TrimEnd('/');
+
+            using SftpClient client = new("localhost", 2222, "demo", "demo");
+            client.Connect();
+
+            void DeleteSftpDirectory(string directory)
+            {
+                if (!client.Exists(directory))
+                    return;
+
+                foreach (SftpFile file in client.ListDirectory(directory))
+                {
+                    if (file.Name == "." || file.Name == "..")
+                        continue;
+
+                    Console.WriteLine(file.FullName);
+
+                    if (file.IsDirectory)
+                        DeleteSftpDirectory(file.FullName);
+                    else
+                        client.DeleteFile(file.FullName);
+                }
+
+                client.DeleteDirectory(directory);
+            }
+
+            DeleteSftpDirectory(root);
         }
         else
         {

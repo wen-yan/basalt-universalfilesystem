@@ -210,7 +210,7 @@ public class ListObjectsTests
             ],
             objects);
     }
-    
+
     [DataTestMethod]
     [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
     public async Task ListObjects_PartialFilename(IUniversalFileSystem ufs, UriWrapper u)

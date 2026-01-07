@@ -12,6 +12,7 @@ Access local files, Amazon S3, Azure Blob Storage, and Aliyun OSS through a sing
 | Basalt.UniversalFileSystem.AwsS3     | AWS S3                                                                           |
 | Basalt.UniversalFileSystem.AzureBlob | Azure blob                                                                       |
 | Basalt.UniversalFileSystem.AliyunOss | Aliyun OSS                                                                       |
+| Basalt.UniversalFileSystem.Sftp      | SFTP                                                                             |
 | Basalt.UniversalFileSystem.Memory    | Memory filesystem. Can be used for testing                                       |
 
 
