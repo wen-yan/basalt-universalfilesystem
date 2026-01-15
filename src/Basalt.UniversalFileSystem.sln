@@ -35,6 +35,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apps", "apps", "{EA784EC4-5
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.Cli", "apps\Basalt.UniversalFileSystem.Cli\Basalt.UniversalFileSystem.Cli.csproj", "{7B33EC38-CE2E-4141-A56A-AB1248726DC0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basalt.UniversalFileSystem.Sftp", "libs\Basalt.UniversalFileSystem.Sftp\Basalt.UniversalFileSystem.Sftp.csproj", "{E08C1721-83B0-45A6-A6AB-EDA8719A950E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{7B33EC38-CE2E-4141-A56A-AB1248726DC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B33EC38-CE2E-4141-A56A-AB1248726DC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B33EC38-CE2E-4141-A56A-AB1248726DC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E08C1721-83B0-45A6-A6AB-EDA8719A950E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E08C1721-83B0-45A6-A6AB-EDA8719A950E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E08C1721-83B0-45A6-A6AB-EDA8719A950E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E08C1721-83B0-45A6-A6AB-EDA8719A950E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -111,5 +117,6 @@ Global
 		{46878B0D-03AF-4812-BE4F-3A60E900D0FE} = {13929D5B-7301-4101-8FD1-3246FDEDD279}
 		{6887D22F-B6A4-424C-B550-E85B4A16E517} = {13929D5B-7301-4101-8FD1-3246FDEDD279}
 		{7B33EC38-CE2E-4141-A56A-AB1248726DC0} = {EA784EC4-5B28-4E73-91EA-4AF1845A29C7}
+		{E08C1721-83B0-45A6-A6AB-EDA8719A950E} = {7955D5E3-0739-4EA7-AA7E-A015D1300D1A}
 	EndGlobalSection
 EndGlobal

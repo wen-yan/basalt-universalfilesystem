@@ -33,6 +33,7 @@
         <Azure_Identity_Version>1.13.2</Azure_Identity_Version>
         <Azure_Storage_Blobs_Version>12.23.0</Azure_Storage_Blobs_Version>
         <Aliyun_OSS_SDK_NetCore_Version>2.14.1</Aliyun_OSS_SDK_NetCore_Version>
+        <Renci_SshNet_Async_Version>1.4.0</Renci_SshNet_Async_Version>
     </PropertyGroup>
 
     <!-- packages for tests -->

@@ -47,3 +47,14 @@ services:
   #   hostname: oss-emulator
   #   ports:
   #     - 8280:8280
+
+
+  sftp:
+    image: emberstack/sftp
+    container_name: sftp
+    hostname: sftp
+    ports:
+      - "2222:22"
+    # volumes:
+      # - ./sftp/sftp.json:/app/config/sftp.json
+    # user/password = demo/demo
