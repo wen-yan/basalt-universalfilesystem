@@ -11,6 +11,7 @@
         <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.AzureBlob\Basalt.UniversalFileSystem.AzureBlob.csproj"/>
         <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.File\Basalt.UniversalFileSystem.File.csproj"/>
         <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.Memory\Basalt.UniversalFileSystem.Memory.csproj" />
+        <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.Sftp\Basalt.UniversalFileSystem.Sftp.csproj" />
         <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem\Basalt.UniversalFileSystem.csproj"/>
         <ProjectReference Include="..\Basalt.UniversalFileSystem.TestUtils\Basalt.UniversalFileSystem.TestUtils.csproj"/>
     </ItemGroup>

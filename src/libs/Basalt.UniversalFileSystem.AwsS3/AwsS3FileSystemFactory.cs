@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using Amazon;
 using Amazon.Runtime;
 using Amazon.Runtime.CredentialManagement;

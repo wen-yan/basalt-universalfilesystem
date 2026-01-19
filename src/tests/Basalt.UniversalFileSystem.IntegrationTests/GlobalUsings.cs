@@ -4,3 +4,6 @@ global using System.IO;
 global using System.Linq;
 global using System.Threading.Tasks;
 global using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+
+[assembly: Parallelize(Workers = 1, Scope = ExecutionScope.MethodLevel)]
