@@ -92,8 +92,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
         }
     }
 
-    public async IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive,
-        [EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<ObjectMetadata> ListObjectsAsync(Uri prefix, bool recursive, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         (string bucketName, string keyPrefix) = DeconstructUri(prefix);
 

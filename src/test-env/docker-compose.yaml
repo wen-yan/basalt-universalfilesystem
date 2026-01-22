@@ -40,6 +40,14 @@ services:
     environment:
       - AZURITE_ACCOUNTS=account1:a2V5MQ==;account2:a2V5Mg==
 
+  gcs:
+    image: fsouza/fake-gcs-server:1.52.3
+    container_name: gcs
+    hostname: gcs
+    ports:
+      - 4443:4443
+    command: ["-scheme", "http", "-port", "4443", "-external-url", "http://localhost:4443", "-backend", "memory"]
+
   # oss-emulator:
   #   build:
   #     context: ./oss-emulator
@@ -50,11 +58,9 @@ services:
 
 
   sftp:
-    image: emberstack/sftp
+    image: emberstack/sftp:5.1.71
     container_name: sftp
     hostname: sftp
     ports:
       - "2222:22"
-    # volumes:
-      # - ./sftp/sftp.json:/app/config/sftp.json
     # user/password = demo/demo

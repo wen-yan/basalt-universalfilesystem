@@ -54,6 +54,24 @@ UniversalFileSystemStore:
       #     AccountKey: a2V5Mg==
       Settings:
         CreateBlobContainerIfNotExists: true
+        
+    GoogleCloudStorage:
+      UriRegexPattern: ^gs://ufs-it-gs/.*$
+      FileSystemFactoryClass: Basalt.UniversalFileSystem.GoogleCloudStorage.GoogleCloudStorageFileSystemFactory
+      Client:
+        Credentials:
+          Type: None
+        Uri: http://localhost:4443/storage/v1/
+      Settings:
+        ProjectId: test-project-id
+        CreateBucketIfNotExists: true
+        
+    GoogleCloudStorageCustomClient:
+      UriRegexPattern: ^gs://ufs-it-gs-custom-client/.*$
+      FileSystemFactoryClass: Basalt.UniversalFileSystem.GoogleCloudStorage.GoogleCloudStorageFileSystemFactory
+      Settings:
+        ProjectId: test-project-id-custom-client
+        CreateBucketIfNotExists: true
 
     Oss:
       UriRegexPattern: ^oss://ufs-it-oss/.*$

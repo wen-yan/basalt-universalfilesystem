@@ -7,8 +7,10 @@ using Basalt.UniversalFileSystem.AwsS3;
 using Basalt.UniversalFileSystem.AzureBlob;
 using Basalt.UniversalFileSystem.Core;
 using Basalt.UniversalFileSystem.File;
+using Basalt.UniversalFileSystem.GoogleCloudStorage;
 using Basalt.UniversalFileSystem.Memory;
 using Basalt.UniversalFileSystem.Sftp;
+using Google.Cloud.Storage.V1;
 using Microsoft.Extensions.Configuration.Yaml;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -67,6 +69,8 @@ public static class UniversalFileSystemStore
             CreateUriWrapper(ufs, "s3-custom-client", "s3://ufs-it-s3-custom-client"),
             CreateUriWrapper(ufs, "abfss", "abfss://ufs-it-abfss"),
             CreateUriWrapper(ufs, "abfss-custom-client", "abfss://ufs-it-abfss-custom-client"),
+            CreateUriWrapper(ufs, "gs", "gs://ufs-it-gs"),
+            CreateUriWrapper(ufs, "gs-custom-client", "gs://ufs-it-gs-custom-client"),
             // CreateUriWrapper(ufs, "oss", "oss://ufs-it-oss"),   // Can't find an oss emulator which works
             CreateUriWrapper(ufs, "sftp", "sftp://localhost/sftp/ufs-it-sftp/"),
             CreateUriWrapper(ufs, "sftp-custom-client", "sftp://localhost/sftp/ufs-it-sftp-custom-client/"),
@@ -96,6 +100,13 @@ public static class UniversalFileSystemStore
                     .AddAzureBlobCustomClient("AzureBlobCustomClient", _ =>
                         new BlobServiceClient(new Uri("http://localhost:10000/account2"),
                             new StorageSharedKeyCredential("account2", "a2V5Mg==")))
+                    .AddGoogleCloudStorageFileSystem()
+                    .AddGoogleCloudStorageCustomClient("GoogleCloudStorageCustomClient", _ =>
+                        new StorageClientBuilder()
+                        {
+                            UnauthenticatedAccess = true,
+                            BaseUri = "http://localhost:4443/storage/v1/",
+                        }.Build())
                     .AddAliyunOssFileSystem()
                     .AddSftpFileSystem()
                     .AddSftpCustomClient("SftpCustomClient", _ =>
