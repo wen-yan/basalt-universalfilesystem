@@ -4,16 +4,17 @@ Access local files, Amazon S3, Azure Blob Storage, and Aliyun OSS through a sing
 
 `Basalt.UniversalFileSystem` includes these packages.
 
-| Package name                         | Description                                                                      |
-|--------------------------------------|----------------------------------------------------------------------------------|
-| Basalt.UniversalFileSystem           | The interface to use UniversalFileSystem                                         |
-| Basalt.UniversalFileSystem.Core      | Provider abstract interfaces and classes for implements of different filesystems |
-| Basalt.UniversalFileSystem.File      | Local filesystem                                                                 |
-| Basalt.UniversalFileSystem.AwsS3     | AWS S3                                                                           |
-| Basalt.UniversalFileSystem.AzureBlob | Azure blob                                                                       |
-| Basalt.UniversalFileSystem.AliyunOss | Aliyun OSS                                                                       |
-| Basalt.UniversalFileSystem.Sftp      | SFTP                                                                             |
-| Basalt.UniversalFileSystem.Memory    | Memory filesystem. Can be used for testing                                       |
+| Package name                                   | Description                                                                      |
+|------------------------------------------------|----------------------------------------------------------------------------------|
+| Basalt.UniversalFileSystem                     | The interface to use UniversalFileSystem                                         |
+| Basalt.UniversalFileSystem.Core                | Provider abstract interfaces and classes for implements of different filesystems |
+| Basalt.UniversalFileSystem.File                | Local filesystem                                                                 |
+| Basalt.UniversalFileSystem.AwsS3               | AWS S3                                                                           |
+| Basalt.UniversalFileSystem.AzureBlob           | Azure blob                                                                       |
+| Basalt.UniversalFileSystem.GoogleCloudStorage  | Google Cloud Storage                                                             |
+| Basalt.UniversalFileSystem.AliyunOss           | Aliyun OSS                                                                       |
+| Basalt.UniversalFileSystem.Sftp                | SFTP                                                                             |
+| Basalt.UniversalFileSystem.Memory              | Memory filesystem. Can be used for testing                                       |
 
 
 More information can be found from https://github.com/wen-yan/basalt-universalfilesystem.

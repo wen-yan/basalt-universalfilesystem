@@ -86,16 +86,16 @@ class AwsS3FileSystemFactory : IFileSystemFactory
     }
 
     // Create client
-    private static AWSCredentials CreateBasicAWSCredentials(IConfiguration implementationConfiguration)
+    private static AWSCredentials CreateBasicAWSCredentials(IConfiguration clientConfiguration)
     {
-        string accessKey = implementationConfiguration.GetValue<string>("Credentials:AccessKey");
-        string secretKey = implementationConfiguration.GetValue<string>("Credentials:SecretKey");
+        string accessKey = clientConfiguration.GetValue<string>("Credentials:AccessKey");
+        string secretKey = clientConfiguration.GetValue<string>("Credentials:SecretKey");
         return new BasicAWSCredentials(accessKey, secretKey);
     }
 
-    private static AWSCredentials CreateStoredProfileAWSCredentials(IConfiguration implementationConfiguration)
+    private static AWSCredentials CreateStoredProfileAWSCredentials(IConfiguration clientConfiguration)
     {
-        string profile = implementationConfiguration.GetValue<string>("Credentials:Profile", () => SharedCredentialsFile.DefaultProfileName)!;
+        string profile = clientConfiguration.GetValue<string>("Credentials:Profile", () => SharedCredentialsFile.DefaultProfileName)!;
 
         SharedCredentialsFile credentialsFile = new SharedCredentialsFile();
         CredentialProfile? credentialProfile = credentialsFile.TryGetProfile(profile, out CredentialProfile value) ? value : null;

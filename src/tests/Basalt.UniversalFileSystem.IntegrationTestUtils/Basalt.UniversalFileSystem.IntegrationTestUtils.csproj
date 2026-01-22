@@ -9,6 +9,7 @@
         <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.AliyunOss\Basalt.UniversalFileSystem.AliyunOss.csproj" />
         <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.AwsS3\Basalt.UniversalFileSystem.AwsS3.csproj"/>
         <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.AzureBlob\Basalt.UniversalFileSystem.AzureBlob.csproj"/>
+        <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.GoogleCloudStorage\Basalt.UniversalFileSystem.GoogleCloudStorage.csproj"/>
         <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.File\Basalt.UniversalFileSystem.File.csproj"/>
         <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.Memory\Basalt.UniversalFileSystem.Memory.csproj" />
         <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.Sftp\Basalt.UniversalFileSystem.Sftp.csproj" />
