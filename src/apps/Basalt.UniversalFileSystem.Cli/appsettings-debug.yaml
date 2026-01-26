@@ -31,6 +31,17 @@ UniversalFileSystem-Cli:
             AccountKey: Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
         Settings:
           CreateBlobContainerIfNotExists: false
+          
+      GoogleCloudStorage:
+        UriRegexPattern: ^gs://ufs-it-gs/.*$
+        FileSystemFactoryClass: Basalt.UniversalFileSystem.GoogleCloudStorage.GoogleCloudStorageFileSystemFactory
+        Client:
+          Credentials:
+            Type: None
+          Uri: http://localhost:4443/storage/v1/
+        Settings:
+          ProjectId: test-project-id
+          CreateBucketIfNotExists: true
       
       Oss:
         UriRegexPattern: ^oss://.*$
@@ -43,3 +54,12 @@ UniversalFileSystem-Cli:
             SecretKey: AccessKeySecret
         Settings:
           CreateBucketIfNotExists: false
+
+      Sftp:
+        UriRegexPattern: ^sftp://localhost/sftp/ufs-it-sftp/.*$
+        FileSystemFactoryClass: Basalt.UniversalFileSystem.Sftp.SftpFileSystemFactory
+        Client:
+          Host: localhost
+          Port: 2222
+          Username: demo
+          Password: demo

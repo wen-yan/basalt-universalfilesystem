@@ -20,11 +20,13 @@
         <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.AzureBlob\Basalt.UniversalFileSystem.AzureBlob.csproj" />
         <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.File\Basalt.UniversalFileSystem.File.csproj" />
         <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.AwsS3\Basalt.UniversalFileSystem.AwsS3.csproj" />
+        <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.GoogleCloudStorage\Basalt.UniversalFileSystem.GoogleCloudStorage.csproj" />
+        <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.Sftp\Basalt.UniversalFileSystem.Sftp.csproj" />
         <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem\Basalt.UniversalFileSystem.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="appsettings-testenv.yaml">
+        <None Update="appsettings-debug.yaml">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="appsettings-prodtest.yaml">
