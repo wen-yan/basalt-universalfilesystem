@@ -15,9 +15,7 @@ public class ListObjectsTests
         await ufs.PutFileAsync(u.GetFullUri("test2.txt"), "test content 2", true);
 
         // test
-        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri(""), false)
-            .OrderBy(x => x.Uri.ToString())
-            .ToListAsync();
+        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri(""), false).ToListAsync();
 
         // verify
         this.AssertObjectMetadataListAreEquivalent(
@@ -37,9 +35,7 @@ public class ListObjectsTests
         await ufs.PutFileAsync(u.GetFullUri("dir/test2.txt"), "test content 2", true);
 
         // test
-        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri(""), false)
-            .OrderBy(x => x.Uri.ToString())
-            .ToListAsync();
+        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri(""), false).ToListAsync();
 
         // verify
         this.AssertObjectMetadataListAreEquivalent(
@@ -58,9 +54,7 @@ public class ListObjectsTests
         await ufs.PutFileAsync(u.GetFullUri("dir1/test2.txt"), "test content 2", true);
 
         // test
-        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri("dir1/"), false)
-            .OrderBy(x => x.Uri.ToString())
-            .ToListAsync();
+        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri("dir1/"), false).ToListAsync();
 
         // verify
         this.AssertObjectMetadataListAreEquivalent(
@@ -80,9 +74,7 @@ public class ListObjectsTests
         await ufs.PutFileAsync(u.GetFullUri("dir1/test2.txt"), "test content 2", true);
 
         // test
-        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri("dir1"), false)
-            .OrderBy(x => x.Uri.ToString())
-            .ToListAsync();
+        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri("dir1"), false).ToListAsync();
 
         // verify
         this.AssertObjectMetadataListAreEquivalent(
@@ -101,9 +93,7 @@ public class ListObjectsTests
         await ufs.PutFileAsync(u.GetFullUri("dir1/test2.txt"), "test content 2", true);
 
         // test
-        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri("dir1/"), true)
-            .OrderBy(x => x.Uri.ToString())
-            .ToListAsync();
+        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri("dir1/"), true).ToListAsync();
 
         // verify
         this.AssertObjectMetadataListAreEquivalent(
@@ -124,9 +114,7 @@ public class ListObjectsTests
         await ufs.PutFileAsync(u.GetFullUri("dir1/test2.txt"), "test content 2", true);
 
         // test
-        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri("dir1"), true)
-            .OrderBy(x => x.Uri.ToString())
-            .ToListAsync();
+        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri("dir1"), true).ToListAsync();
 
         // verify
         this.AssertObjectMetadataListAreEquivalent(
@@ -150,9 +138,7 @@ public class ListObjectsTests
         await ufs.PutFileAsync(u.GetFullUri("dir1/test4.txt"), "test content 4", true);
 
         // test
-        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri("dir1/"), true)
-            .OrderBy(x => x.Uri.ToString())
-            .ToListAsync();
+        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri("dir1/"), true).ToListAsync();
 
         // verify
         this.AssertObjectMetadataListAreEquivalent(
@@ -177,9 +163,7 @@ public class ListObjectsTests
         await ufs.PutFileAsync(u.GetFullUri("dir1/test4.txt"), "test content 4", true);
 
         // test
-        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri("di"), false)
-            .OrderBy(x => x.Uri.ToString())
-            .ToListAsync();
+        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri("di"), false).ToListAsync();
 
         // verify
         this.AssertObjectMetadataListAreEquivalent(
@@ -198,9 +182,7 @@ public class ListObjectsTests
         await ufs.PutFileAsync(u.GetFullUri("dir1/test4.txt"), "test content 4", true);
 
         // test
-        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri("dir1/tes"), false)
-            .OrderBy(x => x.Uri.ToString())
-            .ToListAsync();
+        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri("dir1/tes"), false).ToListAsync();
 
         // verify
         this.AssertObjectMetadataListAreEquivalent(
@@ -222,9 +204,7 @@ public class ListObjectsTests
         await ufs.PutFileAsync(u.GetFullUri("dir1/yytest/test5.txt"), "test content 5", true);
 
         // test
-        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri("dir1/tes"), false)
-            .OrderBy(x => x.Uri.ToString())
-            .ToListAsync();
+        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri("dir1/tes"), false).ToListAsync();
 
         // verify
         this.AssertObjectMetadataListAreEquivalent(
@@ -233,6 +213,29 @@ public class ListObjectsTests
                 ufs.MakeObjectMetadata(u.GetFullUri("dir1/test4.txt"), ObjectType.File, "test content 4".Length),
             ],
             objects);
+    }
+
+    [DataTestMethod]
+    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    public async Task ListObjects_ManyItems(IUniversalFileSystem ufs, UriWrapper u)
+    {
+        if (!new[] { "s3", "gs" }.Contains(u.Name))
+            return;
+        
+        // setup
+        await ufs.PutFileAsync(u.GetFullUri("test0.txt"), "test content", true);
+
+        int itemCount = 2000;
+        for (int i = 1; i < itemCount; i++)
+        {
+            await ufs.CopyFileAsync(u.GetFullUri("test0.txt"), u.GetFullUri($"test{i}.txt"), true);
+        }
+
+        // test
+        List<ObjectMetadata> objects = await ufs.ListObjectsAsync(u.GetFullUri(""), false).ToListAsync();
+
+        // verify
+        this.AssertObjectMetadataListAreEquivalent(Enumerable.Range(0, itemCount).Select(x => ufs.MakeObjectMetadata(u.GetFullUri($"test{x}.txt"), ObjectType.File, "test content".Length)), objects);
     }
 
     private void AssertObjectMetadataListAreEquivalent(IEnumerable<ObjectMetadata> expected, IEnumerable<ObjectMetadata> actual)

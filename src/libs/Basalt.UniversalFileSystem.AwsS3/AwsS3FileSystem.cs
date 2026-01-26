@@ -135,7 +135,7 @@ class AwsS3FileSystem : AsyncDisposable, IFileSystem
                 if (!response.IsTruncated)
                     break;
 
-                request.ContinuationToken = response.ContinuationToken;
+                request.ContinuationToken = response.NextContinuationToken;
             }
         }
     }

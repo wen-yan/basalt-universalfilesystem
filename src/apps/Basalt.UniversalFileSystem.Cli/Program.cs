@@ -24,12 +24,9 @@ static class Program
 {
     private static async Task<int> Main(string[] args)
     {
-# if DEBUG
-        string profile = "Debug";
-#else
-            string profile = "Production";
-#endif
-        using IHost host = new AppHostBuilder(profile).Build(args);
+        string? profiles = Environment.GetEnvironmentVariable("UFS_PROFILES");
+
+        using IHost host = new AppHostBuilder(profiles).Build(args);
         RootCommand rootCommand = host.Services.GetRequiredService<RootCommand>();
 
         int exitCode = await rootCommand.Parse(args).InvokeAsync().ConfigureAwait(false);
@@ -48,8 +45,7 @@ static class Program
     public static void ProductionAppConfiguration(HostBuilderContext context, IConfigurationBuilder builder)
     {
         builder
-            .AddYamlFile(GetConfigurationFilePath(), true, false)
-            ;
+            .AddYamlFile(GetConfigurationFilePath(), true, false);
     }
 
     [Profiles("Debug")]
