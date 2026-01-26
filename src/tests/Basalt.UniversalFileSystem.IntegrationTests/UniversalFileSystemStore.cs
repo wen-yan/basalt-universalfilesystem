@@ -24,7 +24,7 @@ public static class UniversalFileSystemStore
     public static IEnumerable<object[]> GetSingleUniversalFileSystem()
     {
         IUniversalFileSystem ufs = CreateUniversalFileSystem();
-        IEnumerable<UriWrapper> uriWrappers = CreateUriWrappers(ufs);
+        List<UriWrapper> uriWrappers = CreateUriWrappers(ufs);
 
         return uriWrappers
             .Select(x =>
@@ -37,21 +37,23 @@ public static class UniversalFileSystemStore
     public static IEnumerable<object[]> GetTwoUniversalFileSystem()
     {
         IUniversalFileSystem ufs = CreateUniversalFileSystem();
-        IEnumerable<UriWrapper> uriWrappers = CreateUriWrappers(ufs);
+        List<UriWrapper> uriWrappers = CreateUriWrappers(ufs);
+        UriWrapper memoryUriWrapper = uriWrappers.First(x => x.Name == "memory");
+        List<UriWrapper> nonMemoryUriWrappers = uriWrappers.Where(x => x.Name != "memory").ToList();
 
-        return uriWrappers.Join(uriWrappers, _ => true, _ => true, (x, y) =>
+        var firstUriWrappers = nonMemoryUriWrappers.Select(x => (x, memoryUriWrapper));
+        var secondUriWrappers = nonMemoryUriWrappers.Select(x => (memoryUriWrapper, x));
+        var selfUriWrappers = uriWrappers.Select(x => (x, x));
+
+        return firstUriWrappers.Concat(secondUriWrappers).Concat(selfUriWrappers)
+            .Select(x =>
             {
-                // This is used for debugging
-                // if (x.ToString() != "abfss" || y.ToString() != "abfss2")
-                //     return null;
-                InitializeUfsWrappersAsync(ufs, x, y).Wait();
-                return new object[] { ufs, x, y };
-            })
-            .Where(x => x != null)
-            .Cast<object[]>();
+                InitializeUfsWrappersAsync(ufs, x.Item1, x.Item2).Wait();
+                return new object[] { ufs, x.Item1, x.Item2 };
+            });
     }
 
-    private static IEnumerable<UriWrapper> CreateUriWrappers(IUniversalFileSystem ufs)
+    private static List<UriWrapper> CreateUriWrappers(IUniversalFileSystem ufs)
     {
         UriWrapper CreateUriWrapper(IUniversalFileSystem ufs, string name, string baseUri) => new(name, baseUri);
 
