@@ -10,6 +10,8 @@ using Basalt.UniversalFileSystem.AzureBlob;
 using Basalt.UniversalFileSystem.Cli.Bootstrap;
 using Basalt.UniversalFileSystem.Cli.Output;
 using Basalt.UniversalFileSystem.File;
+using Basalt.UniversalFileSystem.GoogleCloudStorage;
+using Basalt.UniversalFileSystem.Sftp;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Yaml;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +24,12 @@ static class Program
 {
     private static async Task<int> Main(string[] args)
     {
-        using IHost host = new AppHostBuilder().Build(args);
+# if DEBUG
+        string profile = "Debug";
+#else
+            string profile = "Production";
+#endif
+        using IHost host = new AppHostBuilder(profile).Build(args);
         RootCommand rootCommand = host.Services.GetRequiredService<RootCommand>();
 
         int exitCode = await rootCommand.Parse(args).InvokeAsync().ConfigureAwait(false);
@@ -32,7 +39,7 @@ static class Program
     public static string GetConfigurationFilePath(string fileName = "config.yaml")
     {
         string configPath = Environment.GetEnvironmentVariable("UFS_CONFIG_PATH")
-               ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".ufs", fileName);
+                            ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".ufs", fileName);
         return configPath;
     }
 
@@ -41,11 +48,17 @@ static class Program
     public static void ProductionAppConfiguration(HostBuilderContext context, IConfigurationBuilder builder)
     {
         builder
-#if DEBUG
-            .SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new ApplicationException())
-#endif
             .AddYamlFile(GetConfigurationFilePath(), true, false)
             ;
+    }
+
+    [Profiles("Debug")]
+    [AppConfigurationConfigurator]
+    public static void DebugAppConfiguration(HostBuilderContext context, IConfigurationBuilder builder)
+    {
+        builder
+            .SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new ApplicationException())
+            .AddYamlFile("appsettings-debug.yaml", false, false);
     }
 
     [ServicesConfigurator]
@@ -60,11 +73,13 @@ static class Program
             .AddFileFileSystem()
             .AddAwsS3FileSystem()
             .AddAzureBlobFileSystem()
-            .AddAliyunOssFileSystem();
+            .AddGoogleCloudStorageFileSystem()
+            .AddAliyunOssFileSystem()
+            .AddSftpFileSystem();
     }
-    
 
-    [Profiles("Production")]
+
+    [Profiles("Production", "Debug")]
     [ServicesConfigurator]
     public static void ProductionServices(HostBuilderContext context, ServiceCollection services)
     {
