@@ -7,12 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Basalt.CommandLine" Version="$(Basalt_CommandLine_Version)" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Yaml" Version="$(Microsoft_Extensions_Configuration_Yaml_Version)" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(Microsoft_Extensions_DependencyInjection_Version)" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="$(Microsoft_Extensions_Hosting_Version)" />
-        <PackageReference Include="Spectre.Console.Cli" Version="$(Spectre_Console_Cli_Version)" />
-        <PackageReference Include="System.Linq.Async" Version="$(System_Linq_Async_Version)" />
+        <PackageReference Include="Basalt.CommandLine" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Yaml" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" />
+        <PackageReference Include="Spectre.Console.Cli" />
+        <PackageReference Include="System.Linq.Async" />
     </ItemGroup>
 
     <ItemGroup>

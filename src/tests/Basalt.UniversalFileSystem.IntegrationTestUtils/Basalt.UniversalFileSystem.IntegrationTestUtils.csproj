@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <PackageReference Include="System.Linq.Async" Version="$(System_Linq_Async_Version)"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="$(Microsoft_Extensions_Hosting_Version)"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration.Yaml" Version="$(Microsoft_Extensions_Configuration_Yaml_Version)" />
+        <PackageReference Include="System.Linq.Async" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Yaml" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\libs\Basalt.UniversalFileSystem.AliyunOss\Basalt.UniversalFileSystem.AliyunOss.csproj" />
