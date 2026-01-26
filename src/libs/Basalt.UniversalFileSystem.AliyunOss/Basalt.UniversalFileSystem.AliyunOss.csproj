@@ -4,7 +4,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Aliyun.OSS.SDK.NetCore" Version="$(Aliyun_OSS_SDK_NetCore_Version)" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(Microsoft_Extensions_DependencyInjection_Abstractions_Version)" />
+        <PackageReference Include="Aliyun.OSS.SDK.NetCore" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     </ItemGroup>
 </Project>

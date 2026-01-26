@@ -5,8 +5,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(Microsoft_Extensions_DependencyInjection_Abstractions_Version)" />
-        <PackageReference Include="Renci.SshNet.Async" Version="$(Renci_SshNet_Async_Version)" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+        <PackageReference Include="Renci.SshNet.Async" />
     </ItemGroup>
 
 </Project>
