@@ -1,5 +1,6 @@
 using Basalt.UniversalFileSystem.Core;
 using Basalt.UniversalFileSystem.Core.Exceptions;
+using Basalt.UniversalFileSystem.IntegrationTests.Utils;
 using Basalt.UniversalFileSystem.TestUtils;
 
 namespace Basalt.UniversalFileSystem.IntegrationTests.TestMethods;
@@ -8,9 +9,11 @@ namespace Basalt.UniversalFileSystem.IntegrationTests.TestMethods;
 public class PutFileTests
 {
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [SingleUniversalFileSystemTestDataSource]
     public async Task PutFile_FileInRoot(IUniversalFileSystem ufs, UriWrapper u)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u);
+
         // test
         await ufs.PutFileAsync(u.GetFullUri("test.txt"), "test content", true);
 
@@ -19,9 +22,11 @@ public class PutFileTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [SingleUniversalFileSystemTestDataSource]
     public async Task PutFile_FileInSubDirectory(IUniversalFileSystem ufs, UriWrapper u)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u);
+
         // test
         await ufs.PutFileAsync(u.GetFullUri("dir/test.txt"), "test content", true);
 
@@ -30,9 +35,11 @@ public class PutFileTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [SingleUniversalFileSystemTestDataSource]
     public async Task PutFile_Overwrite(IUniversalFileSystem ufs, UriWrapper u)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u);
+
         // test
         await ufs.PutFileAsync(u.GetFullUri("test.txt"), "test content 1", false);
 
@@ -47,9 +54,11 @@ public class PutFileTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [SingleUniversalFileSystemTestDataSource]
     public async Task PutFile_NotOverwrite(IUniversalFileSystem ufs, UriWrapper u)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u);
+
         // test
         await ufs.PutFileAsync(u.GetFullUri("test.txt"), "test content 1", true);
 

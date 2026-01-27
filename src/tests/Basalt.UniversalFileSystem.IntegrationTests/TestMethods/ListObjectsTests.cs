@@ -1,4 +1,5 @@
 using Basalt.UniversalFileSystem.Core;
+using Basalt.UniversalFileSystem.IntegrationTests.Utils;
 using Basalt.UniversalFileSystem.TestUtils;
 
 namespace Basalt.UniversalFileSystem.IntegrationTests.TestMethods;
@@ -7,9 +8,11 @@ namespace Basalt.UniversalFileSystem.IntegrationTests.TestMethods;
 public class ListObjectsTests
 {
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [SingleUniversalFileSystemTestDataSource]
     public async Task ListObjects_InRoot(IUniversalFileSystem ufs, UriWrapper u)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u);
+
         // setup
         await ufs.PutFileAsync(u.GetFullUri("test1.txt"), "test content 1", true);
         await ufs.PutFileAsync(u.GetFullUri("test2.txt"), "test content 2", true);
@@ -27,9 +30,11 @@ public class ListObjectsTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [SingleUniversalFileSystemTestDataSource]
     public async Task ListObjects_InSubFolder(IUniversalFileSystem ufs, UriWrapper u)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u);
+
         // setup
         await ufs.PutFileAsync(u.GetFullUri("dir/test1.txt"), "test content 1", true);
         await ufs.PutFileAsync(u.GetFullUri("dir/test2.txt"), "test content 2", true);
@@ -46,9 +51,11 @@ public class ListObjectsTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [SingleUniversalFileSystemTestDataSource]
     public async Task ListObjects_InSubFolderBothFileAndPrefix(IUniversalFileSystem ufs, UriWrapper u)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u);
+
         // setup
         await ufs.PutFileAsync(u.GetFullUri("dir1/dir2/test1.txt"), "test content 1", true);
         await ufs.PutFileAsync(u.GetFullUri("dir1/test2.txt"), "test content 2", true);
@@ -66,9 +73,11 @@ public class ListObjectsTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [SingleUniversalFileSystemTestDataSource]
     public async Task ListObjects_PrefixWithoutSlash(IUniversalFileSystem ufs, UriWrapper u)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u);
+
         // setup
         await ufs.PutFileAsync(u.GetFullUri("dir1/dir2/test1.txt"), "test content 1", true);
         await ufs.PutFileAsync(u.GetFullUri("dir1/test2.txt"), "test content 2", true);
@@ -85,9 +94,11 @@ public class ListObjectsTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [SingleUniversalFileSystemTestDataSource]
     public async Task ListObjects_Recursive(IUniversalFileSystem ufs, UriWrapper u)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u);
+
         // setup
         await ufs.PutFileAsync(u.GetFullUri("dir1/dir2/test1.txt"), "test content 1", true);
         await ufs.PutFileAsync(u.GetFullUri("dir1/test2.txt"), "test content 2", true);
@@ -106,9 +117,11 @@ public class ListObjectsTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [SingleUniversalFileSystemTestDataSource]
     public async Task ListObjects_RecursiveWithoutSlash(IUniversalFileSystem ufs, UriWrapper u)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u);
+
         // setup
         await ufs.PutFileAsync(u.GetFullUri("dir1/dir2/test1.txt"), "test content 1", true);
         await ufs.PutFileAsync(u.GetFullUri("dir1/test2.txt"), "test content 2", true);
@@ -128,9 +141,11 @@ public class ListObjectsTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [SingleUniversalFileSystemTestDataSource]
     public async Task ListObjects_RecursiveMoreLevels(IUniversalFileSystem ufs, UriWrapper u)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u);
+
         // setup
         await ufs.PutFileAsync(u.GetFullUri("dir1/dir2/test1.txt"), "test content 1", true);
         await ufs.PutFileAsync(u.GetFullUri("dir1/dir3/test2.txt"), "test content 2", true);
@@ -155,9 +170,11 @@ public class ListObjectsTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [SingleUniversalFileSystemTestDataSource]
     public async Task ListObjects_HalfPrefix(IUniversalFileSystem ufs, UriWrapper u)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u);
+
         // setup
         await ufs.PutFileAsync(u.GetFullUri("dir1/dir2/test1.txt"), "test content 1", true);
         await ufs.PutFileAsync(u.GetFullUri("dir1/test4.txt"), "test content 4", true);
@@ -174,9 +191,11 @@ public class ListObjectsTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [SingleUniversalFileSystemTestDataSource]
     public async Task ListObjects_HalfFilename(IUniversalFileSystem ufs, UriWrapper u)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u);
+
         // setup
         await ufs.PutFileAsync(u.GetFullUri("dir1/test/test1.txt"), "test content 1", true);
         await ufs.PutFileAsync(u.GetFullUri("dir1/test4.txt"), "test content 4", true);
@@ -194,9 +213,11 @@ public class ListObjectsTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [SingleUniversalFileSystemTestDataSource]
     public async Task ListObjects_PartialFilename(IUniversalFileSystem ufs, UriWrapper u)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u);
+
         // setup
         await ufs.PutFileAsync(u.GetFullUri("dir1/test/test1.txt"), "test content 1", true);
         await ufs.PutFileAsync(u.GetFullUri("dir1/test4.txt"), "test content 4", true);
@@ -216,11 +237,10 @@ public class ListObjectsTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [SingleUniversalFileSystemTestDataSource("s3", "gs")]
     public async Task ListObjects_ManyItems(IUniversalFileSystem ufs, UriWrapper u)
     {
-        if (!new[] { "s3", "gs" }.Contains(u.Name))
-            return;
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u);
         
         // setup
         await ufs.PutFileAsync(u.GetFullUri("test0.txt"), "test content", true);

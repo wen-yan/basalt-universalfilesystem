@@ -1,4 +1,5 @@
 using Basalt.UniversalFileSystem.Core;
+using Basalt.UniversalFileSystem.IntegrationTests.Utils;
 
 namespace Basalt.UniversalFileSystem.IntegrationTests.TestMethods;
 
@@ -6,9 +7,11 @@ namespace Basalt.UniversalFileSystem.IntegrationTests.TestMethods;
 public class CopyFilesRecursivelyTests
 {
     [TestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetTwoUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DoubleUniversalFileSystemTestDataSource]
     public async Task CopyFilesRecursively_ToDiffDirectory(IUniversalFileSystem ufs, UriWrapper u1, UriWrapper u2)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u1, u2);
+
         // setup
         await ufs.PutFileAsync(u1.GetFullUri("src/test1.txt"), "test content1", false);
         await ufs.PutFileAsync(u1.GetFullUri("src/test2.txt"), "test content2", false);
@@ -28,9 +31,11 @@ public class CopyFilesRecursivelyTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetTwoUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DoubleUniversalFileSystemTestDataSource]
     public async Task CopyFilesRecursively_Overwrite(IUniversalFileSystem ufs, UriWrapper u1, UriWrapper u2)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u1, u2);
+
         // setup
         await ufs.PutFileAsync(u1.GetFullUri("src/test1.txt"), "test content1", false);
         await ufs.PutFileAsync(u1.GetFullUri("src/test2.txt"), "test content2", false);
@@ -54,9 +59,11 @@ public class CopyFilesRecursivelyTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetTwoUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DoubleUniversalFileSystemTestDataSource]
     public async Task CopyFilesRecursively_NotOverwrite(IUniversalFileSystem ufs, UriWrapper u1, UriWrapper u2)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u1, u2);
+
         // setup
         await ufs.PutFileAsync(u1.GetFullUri("src/test1.txt"), "test content1", false);
         await ufs.PutFileAsync(u1.GetFullUri("src/test2.txt"), "test content2", false);
