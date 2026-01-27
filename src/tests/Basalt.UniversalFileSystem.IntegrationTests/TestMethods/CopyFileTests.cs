@@ -1,5 +1,6 @@
 using Basalt.UniversalFileSystem.Core;
 using Basalt.UniversalFileSystem.Core.Exceptions;
+using Basalt.UniversalFileSystem.IntegrationTests.Utils;
 using Basalt.UniversalFileSystem.TestUtils;
 
 namespace Basalt.UniversalFileSystem.IntegrationTests.TestMethods;
@@ -8,9 +9,11 @@ namespace Basalt.UniversalFileSystem.IntegrationTests.TestMethods;
 public class CopyFileTests
 {
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetTwoUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DoubleUniversalFileSystemTestDataSource]
     public async Task CopyFile_ToSameDirectory(IUniversalFileSystem ufs, UriWrapper u1, UriWrapper u2)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u1, u2);
+
         // setup
         await ufs.PutFileAsync(u1.GetFullUri("test1.txt"), "test content", false);
 
@@ -23,9 +26,11 @@ public class CopyFileTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetTwoUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DoubleUniversalFileSystemTestDataSource]
     public async Task CopyFile_ToDifferentDirectory(IUniversalFileSystem ufs, UriWrapper u1, UriWrapper u2)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u1, u2);
+
         // setup
         await ufs.PutFileAsync(u1.GetFullUri("test1.txt"), "test content", false);
 
@@ -38,9 +43,11 @@ public class CopyFileTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetTwoUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DoubleUniversalFileSystemTestDataSource]
     public async Task CopyFile_Overwrite(IUniversalFileSystem ufs, UriWrapper u1, UriWrapper u2)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u1, u2);
+
         // setup
         await ufs.PutFileAsync(u1.GetFullUri("test1.txt"), "test content 1", false);
         await ufs.PutFileAsync(u2.GetFullUri("test2.txt"), "test content 2", false);
@@ -54,9 +61,11 @@ public class CopyFileTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetTwoUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DoubleUniversalFileSystemTestDataSource]
     public async Task CopyFile_NotOverwrite(IUniversalFileSystem ufs, UriWrapper u1, UriWrapper u2)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u1, u2);
+
         // setup
         await ufs.PutFileAsync(u1.GetFullUri("test1.txt"), "test content 1", false);
         await ufs.PutFileAsync(u2.GetFullUri("test2.txt"), "test content 2", false);
@@ -70,9 +79,11 @@ public class CopyFileTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [SingleUniversalFileSystemTestDataSource]
     public async Task CopyFile_CopyToItself(IUniversalFileSystem ufs, UriWrapper u)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u);
+
         // setup
         await ufs.PutFileAsync(u.GetFullUri("test1.txt"), "test content 1", false);
 
@@ -84,9 +95,11 @@ public class CopyFileTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetTwoUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [DoubleUniversalFileSystemTestDataSource]
     public async Task CopyFile_SourceNotExist(IUniversalFileSystem ufs, UriWrapper u1, UriWrapper u2)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u1, u2);
+
         // setup
         await ufs.PutFileAsync(u1.GetFullUri("test1.txt"), "test content 1", false);
 

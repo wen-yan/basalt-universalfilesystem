@@ -1,3 +1,4 @@
+using Basalt.UniversalFileSystem.IntegrationTests.Utils;
 
 namespace Basalt.UniversalFileSystem.IntegrationTests.TestMethods;
 
@@ -5,9 +6,11 @@ namespace Basalt.UniversalFileSystem.IntegrationTests.TestMethods;
 public class DeleteFileTests
 {
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [SingleUniversalFileSystemTestDataSource]
     public async Task DeleteFile_FileInRoot(IUniversalFileSystem ufs, UriWrapper u)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u);
+
         // setup
         await ufs.PutFileAsync(u.GetFullUri("test.txt"), "test content", true);
         Assert.IsTrue(await ufs.DoesFileExistAsync(u.GetFullUri("test.txt")));
@@ -21,9 +24,11 @@ public class DeleteFileTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [SingleUniversalFileSystemTestDataSource]
     public async Task DeleteFile_FileInSubDirectory(IUniversalFileSystem ufs, UriWrapper u)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u);
+
         // setup
         await ufs.PutFileAsync(u.GetFullUri("dir/test.txt"), "test content", true);
         Assert.IsTrue(await ufs.DoesFileExistAsync(u.GetFullUri("dir/test.txt")));
@@ -37,9 +42,11 @@ public class DeleteFileTests
     }
 
     [DataTestMethod]
-    [DynamicData(nameof(UniversalFileSystemStore.GetSingleUniversalFileSystem), typeof(UniversalFileSystemStore), DynamicDataSourceType.Method)]
+    [SingleUniversalFileSystemTestDataSource]
     public async Task DeleteFile_FileNotExist(IUniversalFileSystem ufs, UriWrapper u)
     {
+        using var _ = await UniversalFileSystemUtils.InitializeFileSystemsAsync(ufs, u);
+
         // setup
         Assert.IsFalse(await ufs.DoesFileExistAsync(u.GetFullUri("test.txt")));
 
