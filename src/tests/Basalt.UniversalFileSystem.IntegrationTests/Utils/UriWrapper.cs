@@ -59,7 +59,7 @@ public class UriWrapper
 
     public static readonly IEnumerable<UriWrapper> NonMemoryUriWrappers =
     [
-        // File,  // TODO: #38
+        File,  // TODO: #38
         S3, S3CustomClient, Abfss, AbfssCustomClient, Gs, GsCustomClient, Sftp, SftpCustomClient
     ];
 
